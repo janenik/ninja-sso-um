@@ -1,5 +1,8 @@
+target
+dependency-reduced-pom.xml
+.idea
 *.class
-
+*.iml
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
