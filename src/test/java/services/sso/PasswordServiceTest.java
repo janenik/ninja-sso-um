@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Tests for {@link PasswordService}.
+ */
 public class PasswordServiceTest {
 
     PasswordService passwordService = new PasswordService();

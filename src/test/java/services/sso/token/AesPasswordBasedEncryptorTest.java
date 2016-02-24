@@ -62,7 +62,7 @@ public class AesPasswordBasedEncryptorTest {
             total += duration;
             min = Math.min(min, duration);
             max = Math.max(max, duration);
-            if (i > 0 && i %  1000 == 0) {
+            if (i > 0 && i % 1000 == 0) {
                 logger.info("Testing {}...", i);
             }
         }
@@ -100,6 +100,12 @@ public class AesPasswordBasedEncryptorTest {
         }
     }
 
+    /**
+     * Returns true if unlimited policy is enabled.
+     *
+     * @return whether unlimited policy is enabled.
+     * @throws NoSuchAlgorithmException Should not happen.
+     */
     static boolean isUnlimitedStrengthCrypto() throws NoSuchAlgorithmException {
         return Cipher.getMaxAllowedKeyLength("AES") > 128;
     }
