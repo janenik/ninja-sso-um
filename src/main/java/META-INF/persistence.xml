@@ -31,9 +31,9 @@
             <property name="hibernate.connection.driver_class" value="org.h2.Driver" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
             <!-- you may want to enable the ddl if you do not use migrations. -->
-            <!--  <property name="hibernate.hbm2ddl.auto" value="create" /> -->
-            <property name="hibernate.show_sql" value="false" />
-            <property name="hibernate.format_sql" value="false" />
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
             
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class"
@@ -75,15 +75,17 @@
     </persistence-unit>
 
     <!-- The following config is an example config for postgresql -->
-    <persistence-unit name="postgresql" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <persistence-unit name="mysql-dev" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <properties>
-            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
 
+            <!-- you may want to enable the ddl if you do not use migrations. -->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
             <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" /> 
+            <property name="hibernate.format_sql" value="true" />
             
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class"
@@ -98,14 +100,41 @@
         </properties>
     </persistence-unit>
 
-    <!-- And another persistence unit that you can set and use on your production servers.
-            Quite handy because in production you may want to tune the connection pooling and so on. -->
-    <persistence-unit name="production" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <!-- The following config is an example config for postgresql -->
+    <persistence-unit name="postgresql-dev" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <properties>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect" />
+
+
+            <!-- you may want to enable the ddl if you do not use migrations. -->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+
+            <!-- Connection Pooling settings -->
+            <property name="hibernate.connection.provider_class"
+                      value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
+
+            <property name="hibernate.c3p0.max_size" value="100" />
+            <property name="hibernate.c3p0.min_size" value="0" />
+            <property name="hibernate.c3p0.acquire_increment" value="1" />
+            <property name="hibernate.c3p0.idle_test_period" value="300" />
+            <property name="hibernate.c3p0.max_statements" value="0" />
+            <property name="hibernate.c3p0.timeout" value="100" />
+        </properties>
+    </persistence-unit>
+
+    <!-- And another persistence unit that you can set and use on your production servers.
+            Quite handy because in production you may want to tune the connection pooling and so on. -->
+    <persistence-unit name="postgresql-prod" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect" />
 
              <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class"
