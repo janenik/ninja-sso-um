@@ -85,50 +85,110 @@ public class UserEvent implements Serializable {
         }
     }
 
+    /**
+     * Returns event data.
+     *
+     * @return Event data.
+     */
     public byte[] getData() {
         return data;
     }
 
+    /**
+     * Returns event data as UTF-8 string.
+     *
+     * @return Event data as UTF-8 string.
+     */
     public String getDataAsUtfString() {
         return new String(getData(), UTF8);
     }
 
+    /**
+     * Sets event data bytes.
+     *
+     * @param data Event data bytes.
+     */
     public void setData(byte[] data) {
         this.data = data;
     }
 
+    /**
+     * Sets data as UTF-8 string.
+     *
+     * @param data Data as UTF-8 string.
+     */
     public void setDataAsUtf8String(String data) {
         setData(data.getBytes(UTF8));
     }
 
+    /**
+     * Returns user that produced the event.
+     *
+     * @return User.
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets the user for the event.
+     *
+     * @param user User.
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Returns event type.
+     *
+     * @return Event type.
+     */
     public UserEventType getType() {
         return type;
     }
 
+    /**
+     * Sets event type.
+     *
+     * @param type Event type.
+     */
     public void setType(UserEventType type) {
         this.type = type;
     }
 
+    /**
+     * Returns event time.
+     *
+     * @return Event time.
+     */
     public ZonedDateTime getTime() {
         return time;
     }
 
+    /**
+     * Sets event time.
+     *
+     * @param time Event time.
+     */
     public void setTime(ZonedDateTime time) {
         this.time = time;
     }
 
+    /**
+     * Returns IP associated with the event.
+     *
+     * @return IP associated with the event.
+     */
     public String getIp() {
         return ip;
     }
 
+    /**
+     * Sets IP address of the event.
+     *
+     * @param ip IP address of the event.
+     */
     public void setIp(String ip) {
         this.ip = ip;
     }

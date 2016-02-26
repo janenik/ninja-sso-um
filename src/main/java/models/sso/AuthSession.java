@@ -57,34 +57,74 @@ public class AuthSession implements Serializable {
     @Column(nullable = false, updatable = false)
     ZonedDateTime created;
 
+    /**
+     * Returns access token associated with the authentication session.
+     *
+     * @return Access token.
+     */
     public String getAccessToken() {
         return accessToken;
     }
 
+    /**
+     * Sets access token.
+     *
+     * @param accessToken Access token.
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
+    /**
+     * Returns refresh token associated with the authentication session.
+     *
+     * @return Refresh token.
+     */
     public String getRefreshToken() {
         return refreshToken;
     }
 
+    /**
+     * Sets refresh token.
+     *
+     * @param refreshToken Refresh token.
+     */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    /**
+     * Returns the user from the authentication session.
+     *
+     * @return User.
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets user for the session.
+     *
+     * @param user User.
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Returns creation time of the session.
+     *
+     * @return Creation time.
+     */
     public ZonedDateTime getCreated() {
         return created;
     }
 
+    /**
+     * Sets creation time.
+     *
+     * @param created Creation time.
+     */
     public void setCreated(ZonedDateTime created) {
         this.created = created;
     }

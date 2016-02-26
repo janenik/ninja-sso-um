@@ -71,6 +71,9 @@ public interface PasswordBasedEncryptor {
         return bos.toByteArray();
     }
 
+    /**
+     * Encryption exception. See cause for details.
+     */
     class EncryptionException extends Exception {
 
         public EncryptionException(String message, Throwable cause) {
@@ -78,6 +81,9 @@ public interface PasswordBasedEncryptor {
         }
     }
 
+    /**
+     * Decryption exception. See cause for details.
+     */
     class DecryptionException extends Exception {
 
         public DecryptionException(String message, Throwable cause) {

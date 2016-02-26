@@ -36,7 +36,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     /**
      * Using thread local {@link SecureRandom} for efficiency and uniform distribution.
      */
-    static final ThreadLocal<SecureRandom> secureRandom = new ThreadLocal<SecureRandom>() {
+    private static final ThreadLocal<SecureRandom> secureRandom = new ThreadLocal<SecureRandom>() {
         @Override
         protected SecureRandom initialValue() {
             return new SecureRandom();
@@ -169,10 +169,10 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     /**
      * Encryption/decryption key plus salt.
      */
-    static class KeySpecAndSalt {
+    private static class KeySpecAndSalt {
 
-        final SecretKey encryptionKeySpec;
-        final byte[] salt;
+        private final SecretKey encryptionKeySpec;
+        private final byte[] salt;
 
         /**
          * Constructs key spec and with generated salt of given size.

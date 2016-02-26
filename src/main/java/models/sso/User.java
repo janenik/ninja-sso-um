@@ -237,6 +237,24 @@ public class User implements Serializable {
     }
 
     /**
+     * Returns user phone number.
+     *
+     * @return Phone number.
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * Sets user phone number.
+     *
+     * @param phone Phone number.
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
      * Sets user email.
      *
      * @param email Email.
@@ -245,46 +263,168 @@ public class User implements Serializable {
         this.email = email != null ? email.toLowerCase().trim() : null;
     }
 
+    /**
+     * User first name.
+     *
+     * @return First name.
+     */
     public String getFirstName() {
         return firstName;
     }
 
-
+    /**
+     * Sets first name.
+     *
+     * @param firstName First name.
+     */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * User last name.
+     *
+     * @return Last name.
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Sets user last name.
+     *
+     * @param lastName Last name.
+     */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    /**
+     * User middle name.
+     *
+     * @return Middle name.
+     */
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    /**
+     * Sets middle name. Null is possible.
+     *
+     * @param middleName Middle name.
+     */
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    /**
+     * Returns username.
+     *
+     * @return Username.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets username. Username will be trimmed and lowercased.
+     *
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username.toLowerCase().trim();
+    }
+
+    /**
+     * Returns country of the user.
+     *
+     * @return Country.
+     */
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * Sets country for the user.
+     *
+     * @param country Country.
+     */
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    /**
+     * Returns user date of birth.
+     *
+     * @return Date of birth.
+     */
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    /**
+     * Sets user date of birth.
+     *
+     * @param dateOfBirth Date of birth.
+     */
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    /**
+     * Returns user role.
+     *
+     * @return User role.
+     */
+    public UserRole getRole() {
+        return role;
+    }
+
+    /**
+     * Sets user role.
+     *
+     * @param role User role.
+     */
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    /**
+     * Password hash code.
+     *
+     * @return Password hash code.
+     */
     public byte[] getPasswordHash() {
         return passwordHash;
     }
 
+    /**
+     * Sets password hash code.
+     *
+     * @param passwordHash Password hash code.
+     */
     public void setPasswordHash(byte[] passwordHash) {
         this.passwordHash = passwordHash;
     }
 
+    /**
+     * Password salt.
+     *
+     * @return Password salt.
+     */
     public byte[] getPasswordSalt() {
         return passwordSalt;
     }
 
+    /**
+     * Sets password salt.
+     *
+     * @param passwordSalt Password salt.
+     */
     public void setPasswordSalt(byte[] passwordSalt) {
         this.passwordSalt = passwordSalt;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
     /**
      * Returns creation time since 1970 in seconds.
@@ -322,70 +462,61 @@ public class User implements Serializable {
         this.updated = updated;
     }
 
+    /**
+     * Returns user confirmation status.
+     *
+     * @return User confirmation status.
+     */
     public UserConfirmationState getConfirmationState() {
         return confirmationState;
     }
 
+    /**
+     * Sets user confirmation status.
+     *
+     * @param confirmationState User confirmation status.
+     */
     public void setConfirmationState(UserConfirmationState confirmationState) {
         this.confirmationState = confirmationState;
     }
 
+    /**
+     * Confirms the user: sets the status to {@link UserConfirmationState#CONFIRMED}.
+     */
     public void confirm() {
         confirmationState = UserConfirmationState.CONFIRMED;
     }
 
+    /**
+     * Sets the status to {@link UserConfirmationState#UNCONFIRMED}.
+     */
     public void unconfirm() {
         confirmationState = UserConfirmationState.UNCONFIRMED;
     }
 
+    /**
+     * Checks if the user has confirmed his/her email or phone.
+     *
+     * @return Whether the status is confirmed.
+     */
     public boolean isConfirmed() {
         return UserConfirmationState.CONFIRMED.equals(confirmationState);
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username.toLowerCase().trim();
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
+    /**
+     * Version of the object.
+     *
+     * @return Version.
+     */
     public int getVersion() {
         return version;
     }
 
+    /**
+     * Sets object version.
+     *
+     * @param version Version.
+     */
     public void setVersion(int version) {
         this.version = version;
     }
