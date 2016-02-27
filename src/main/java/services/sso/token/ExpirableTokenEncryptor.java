@@ -48,16 +48,22 @@ public final class ExpirableTokenEncryptor {
      *
      * @param token Token to encrypt.
      * @return Encrypted expirable token as string.
+     * @throws PasswordBasedEncryptor.EncryptionException When the problem with encryption happens.
+     * @throws IllegalStateException In case of internal JSON processing problem.
      */
-    public String encrypt(ExpirableToken token)
-            throws JsonProcessingException, PasswordBasedEncryptor.EncryptionException {
+    public String encrypt(ExpirableToken token) throws PasswordBasedEncryptor.EncryptionException {
         if (token == null) {
             throw new IllegalArgumentException("Expecting token to encrypt.");
         }
         if (!token.hasAttributes()) {
             throw new IllegalArgumentException("Token is expected to contain some data.");
         }
-        return baseEncoding.encode(encryptor.encrypt(objectMapper.writeValueAsBytes(token)));
+        try {
+            System.out.println(objectMapper.writeValueAsString(token));
+            return baseEncoding.encode(encryptor.encrypt(objectMapper.writeValueAsBytes(token)));
+        } catch (JsonProcessingException jpe) {
+            throw new IllegalStateException("Unable to build JSON from the given token.", jpe);
+        }
     }
 
     /**

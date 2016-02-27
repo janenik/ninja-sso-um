@@ -15,23 +15,31 @@ public final class ExpirableToken implements Serializable {
     /**
      * Creation time of the token. In seconds, since January, 1, 1970, GMT.
      */
-    private final long created;
+    private long created;
     /**
      * Time to live, in seconds.
      */
-    private final long timeToLive;
+    private long timeToLive;
     /**
      * Token type.
      */
-    private final ExpirableTokenType type;
+    private ExpirableTokenType type;
     /**
      * Scope of the token (like project name, domain, etc).
      */
-    private final String scope;
+    private String scope;
     /**
      * Attributes map.
      */
-    private final Map<String, String> attributes;
+    private Map<String, String> attributes;
+
+    public ExpirableToken() {
+        created = 0;
+        timeToLive = 0;
+        type = null;
+        scope = null;
+        attributes = null;
+    }
 
     /**
      * Constructs expirable token.
@@ -198,6 +206,15 @@ public final class ExpirableToken implements Serializable {
         return created + timeToLive >= clock.millis() / 1000L;
     }
 
+    /**
+     * Tests whether the token is expired with system UTC clock.
+     *
+     * @return Whether the token is expired.
+     */
+    /*public boolean isExpired() {
+        return created + timeToLive >= Clock.systemUTC().millis() / 1000L;
+    }*/
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -240,7 +257,7 @@ public final class ExpirableToken implements Serializable {
      * @param scope      Token scope.
      * @param attrName   Attribute name.
      * @param attrValue  Attribute value.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newToken(ExpirableTokenType type, String scope, String attrName, String attrValue,
@@ -259,7 +276,7 @@ public final class ExpirableToken implements Serializable {
      * @param type       Token type.
      * @param scope      Token scope.
      * @param data       Attributes for the token.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newToken(ExpirableTokenType type, String scope, Map<String, String> data, long
@@ -278,7 +295,7 @@ public final class ExpirableToken implements Serializable {
      * @param scope      Token scope.
      * @param attrName   Attribute name.
      * @param attrValue  Attribute value.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newAccessToken(String scope, String attrName, String attrValue, long timeToLive) {
@@ -295,7 +312,7 @@ public final class ExpirableToken implements Serializable {
      *
      * @param scope      Token scope.
      * @param data       Attributes for the token.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newAccessToken(String scope, Map<String, String> data, long timeToLive) {
@@ -312,7 +329,7 @@ public final class ExpirableToken implements Serializable {
      *
      * @param scope      Token scope.
      * @param data       Attributes for the token.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newRefreshToken(String scope, Map<String, String> data, long timeToLive) {
@@ -330,7 +347,7 @@ public final class ExpirableToken implements Serializable {
      * @param scope      Token scope.
      * @param attrName   Attribute name.
      * @param attrValue  Attribute value.
-     * @param timeToLive Time to live.
+     * @param timeToLive Time to live, in seconds.
      * @return Expiratble token.
      */
     public static ExpirableToken newRefreshToken(String scope, String attrName, String attrValue, long timeToLive) {
