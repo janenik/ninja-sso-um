@@ -70,6 +70,6 @@ public class ExpirableTokenEncryptorTest {
                 "9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ";
         assertEquals(expected2, base64Encoded2);
 
-        assertEquals(json2, BaseEncoding.base64Url().decode(expected2));
+        assertArrayEquals(jsonBytes2, BaseEncoding.base64Url().decode(expected2));
     }
 }
