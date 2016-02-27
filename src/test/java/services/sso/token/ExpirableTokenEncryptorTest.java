@@ -38,12 +38,13 @@ public class ExpirableTokenEncryptorTest {
 
     /**
      * Runs tests for rfc7519 specification.
-     * @throws UnsupportedEncodingException If UTF-8 is not supported.
+     *
+     * @throws UnsupportedEncodingException when UTF-8 is not supported.
      */
     @Test
     public void testBase64UrlFromRFC7519() throws UnsupportedEncodingException {
-        String json ="{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}";
-        byte[] jsonBytes = new byte[] {123, 34, 116, 121, 112, 34, 58, 34, 74, 87, 84, 34, 44, 13, 10, 32,
+        String json = "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}";
+        byte[] jsonBytes = new byte[]{123, 34, 116, 121, 112, 34, 58, 34, 74, 87, 84, 34, 44, 13, 10, 32,
                 34, 97, 108, 103, 34, 58, 34, 72, 83, 50, 53, 54, 34, 125};
 
         assertArrayEquals(json.getBytes("UTF-8"), jsonBytes);
@@ -54,7 +55,7 @@ public class ExpirableTokenEncryptorTest {
         String json2 = "{\"iss\":\"joe\",\r\n" +
                 " \"exp\":1300819380,\r\n" +
                 " \"http://example.com/is_root\":true}";
-        byte[] jsonBytes2 = new byte[] {123, 34, 105, 115, 115, 34, 58, 34, 106, 111, 101, 34, 44, 13, 10,
+        byte[] jsonBytes2 = new byte[]{123, 34, 105, 115, 115, 34, 58, 34, 106, 111, 101, 34, 44, 13, 10,
                 32, 34, 101, 120, 112, 34, 58, 49, 51, 48, 48, 56, 49, 57, 51, 56,
                 48, 44, 13, 10, 32, 34, 104, 116, 116, 112, 58, 47, 47, 101, 120, 97,
                 109, 112, 108, 101, 46, 99, 111, 109, 47, 105, 115, 95, 114, 111,
@@ -69,6 +70,6 @@ public class ExpirableTokenEncryptorTest {
                 "9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ";
         assertEquals(expected2, base64Encoded2);
 
-        assertEquals(json2,  BaseEncoding.base64Url().decode(expected2));
+        assertEquals(json2, BaseEncoding.base64Url().decode(expected2));
     }
 }
