@@ -1,5 +1,6 @@
 package services.sso.token;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
@@ -27,7 +28,7 @@ public final class ExpirableTokenEncryptor {
     private final BaseEncoding baseEncoding;
 
     /**
-     * JSON object mapperd.
+     * JSON object mapper.
      */
     private final ObjectMapper objectMapper;
 
@@ -40,6 +41,13 @@ public final class ExpirableTokenEncryptor {
         this.encryptor = encryptor;
         this.baseEncoding = BaseEncoding.base64Url();
         this.objectMapper = new ObjectMapper();
+        // Set up serialization/deserialization to use fields, not methods.
+        this.objectMapper.setVisibilityChecker(this.objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
     }
 
     /**
