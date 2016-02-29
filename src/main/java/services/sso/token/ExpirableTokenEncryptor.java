@@ -67,7 +67,6 @@ public final class ExpirableTokenEncryptor {
             throw new IllegalArgumentException("Token is expected to contain some data.");
         }
         try {
-            System.out.println(objectMapper.writeValueAsString(token));
             return baseEncoding.encode(encryptor.encrypt(objectMapper.writeValueAsBytes(token)));
         } catch (JsonProcessingException jpe) {
             throw new IllegalStateException("Unable to build JSON from the given token.", jpe);
