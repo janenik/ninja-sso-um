@@ -5,20 +5,29 @@ import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Test for {@link ExpirableTokenEncryptor}.
  */
 public class ExpirableTokenEncryptorTest {
 
-    private static final char[] PASSWORD = "someUnicornPasswordForEncryption1098".toCharArray();
+    static final char[] PASSWORD = "someUnicornPasswordForEncryption1098123129380980980980293909==+=<>09".toCharArray();
+    static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
 
-    private ExpirableTokenEncryptor encryptor;
+    /**
+     * Encryptor.
+     */
+    ExpirableTokenEncryptor encryptor;
 
     public ExpirableTokenEncryptorTest() {
         this.encryptor = new ExpirableTokenEncryptor(new AesPasswordBasedEncryptor(PASSWORD));
@@ -27,13 +36,45 @@ public class ExpirableTokenEncryptorTest {
     @Test
     public void testBasics()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
-        ExpirableToken accessToken =
-                ExpirableToken.newAccessToken("scope1", "userId", "qwerower1213234", 30L);
+        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "qwerower1213234", 30L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
+        assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+    }
+
+    @Test
+    public void testBiggerToken()
+            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("origin", "http://example.org/");
+        attributes.put("sub", "12345678901234567890");
+        attributes.put("name", "Christine Luisetta Castelli-Johns");
+        attributes.put("role", "admin");
+        attributes.put("location", "-22.3123123123,-23.124234234234");
+        attributes.put("addressLine1", "707 Continental Circle");
+        attributes.put("addressLine2", "841");
+        attributes.put("city", "Mountain View");
+        attributes.put("state", "California");
+        attributes.put("country", "United States");
+        attributes.put("flag1", "value1");
+        attributes.put("flag2", "very_very_long_value_21234567890");
+
+        // Total length of map.toString() + 6 characters ("":"",) for each entry.
+        int unencryptedTokenJsonLengthEstimation =
+                attributes.toString().length() + (attributes.size() + 4) * 6;
+
+        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope365", attributes, 30L);
+
+        String encrypted = encryptor.encrypt(accessToken);
+        ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
+
+        assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
+        assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        logger.info("JSON token size estimation: {}, encrypted token size: {}, password length: {}",
+                unencryptedTokenJsonLengthEstimation, encrypted.length(), PASSWORD.length);
     }
 
     /**

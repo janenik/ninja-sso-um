@@ -17,12 +17,28 @@
 package conf;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import ninja.utils.NinjaProperties;
+import services.sso.token.AesPasswordBasedEncryptor;
+import services.sso.token.PasswordBasedEncryptor;
 
 @Singleton
 public class Module extends AbstractModule {
 
+    @Inject
+    NinjaProperties properties;
+
     protected void configure() {
         bind(StartupActions.class);
+    }
+
+    @Provides
+    PasswordBasedEncryptor passwordBasedEncryptor() {
+        char[] key = properties.getOrDie("application.tokens.encryption.aes.key").toCharArray();
+        short strength = Short.valueOf(
+                properties.getWithDefault("application.tokens.encryption.aes.strength", "128"));
+        return new AesPasswordBasedEncryptor(key, strength);
     }
 }

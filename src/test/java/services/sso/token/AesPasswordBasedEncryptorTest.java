@@ -17,8 +17,8 @@ import static org.junit.Assert.assertArrayEquals;
  */
 public class AesPasswordBasedEncryptorTest {
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
+    static final Charset UTF8 = Charset.forName("UTF-8");
+    static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
 
     byte[] data;
     char[] passwordCharacters;
@@ -32,32 +32,32 @@ public class AesPasswordBasedEncryptorTest {
     /**
      * AES-128 bit encryption is supposed to be supported without JCE Unlimited Strength Jurisdiction Policy.
      *
-     * @throws PasswordBasedEncryptor.EncryptionException
+     * @throws NoSuchAlgorithmException In case of exception.
      */
     @Test
     public void testAes128() throws NoSuchAlgorithmException {
-        invokeAesTest((short) 128);
+        invokeAesTest((short) 128, true);
     }
 
     @Test
     public void testAes192() throws NoSuchAlgorithmException {
-        invokeAesTest((short) 192);
+        invokeAesTest((short) 192, true);
     }
 
     @Test
     public void testAes256() throws NoSuchAlgorithmException {
-        invokeAesTest((short) 256);
+        invokeAesTest((short) 256, true);
     }
 
     @Test
     public void testAes128Speed() throws NoSuchAlgorithmException {
         int iterations = 100;
         long start;
-        double duration = 0.0D, total = 0.0D, max = Double.MIN_VALUE, min = Double.MAX_VALUE;
-        invokeAesTest((short) 128);
+        double duration, total = 0.0D, max = Double.MIN_VALUE, min = Double.MAX_VALUE;
+        invokeAesTest((short) 128, false);
         for (int i = 0; i < iterations; i++) {
             start = System.nanoTime();
-            invokeAesTest((short) 128);
+            invokeAesTest((short) 128, false);
             duration = (System.nanoTime() - start) / 1e9;
             total += duration;
             min = Math.min(min, duration);
@@ -74,9 +74,10 @@ public class AesPasswordBasedEncryptorTest {
      * Starts AES encryption test with given key size.
      *
      * @param keySize Key size, bits.
+     * @param logSuccess Whether to log success or not.
      * @throws NoSuchAlgorithmException If there is no AES algorithm.
      */
-    private void invokeAesTest(short keySize) throws NoSuchAlgorithmException {
+    private void invokeAesTest(short keySize, boolean logSuccess) throws NoSuchAlgorithmException {
         if (keySize > 128 && !isUnlimitedStrengthCrypto()) {
             logger.warn("Unlimited policy is not installed: {} bit encryption is not expected to work.", keySize);
         }
@@ -88,13 +89,16 @@ public class AesPasswordBasedEncryptorTest {
             byte[] decrypted = encryptor.decrypt(encrypted);
 
             assertArrayEquals("Decrypted data must match the original.", data, decrypted);
+            if (logSuccess) {
+                logger.info("Encryption test of {} bits succeeded.", keySize);
+            }
         } catch (PasswordBasedEncryptor.EncryptionException | PasswordBasedEncryptor.DecryptionException ee) {
             logger.warn("{} bit encryption does not work: {} / {}",
                     keySize,
                     ee.getMessage(),
                     ee.getCause().getMessage());
             if (keySize <= 128) {
-                // Propagate exception in base case.
+                // Propagate exception except base case.
                 Throwables.propagate(ee);
             }
         }
