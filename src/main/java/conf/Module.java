@@ -21,7 +21,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import ninja.utils.NinjaProperties;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import services.sso.token.AesPasswordBasedEncryptor;
+import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
 @Singleton
@@ -32,6 +35,18 @@ public class Module extends AbstractModule {
 
     protected void configure() {
         bind(StartupActions.class);
+
+        // Configure expirable token encryptor.
+        bind(ExpirableTokenEncryptor.class);
+
+        // Configure Dozer.
+        bind(Mapper.class).toInstance(new DozerBeanMapper());
+    }
+
+    private void configureSso() {
+    }
+
+    private void configureUserManagement() {
     }
 
     @Provides

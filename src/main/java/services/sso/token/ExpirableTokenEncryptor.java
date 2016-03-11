@@ -41,7 +41,7 @@ public final class ExpirableTokenEncryptor {
     @Inject
     public ExpirableTokenEncryptor(PasswordBasedEncryptor encryptor) {
         this.encryptor = encryptor;
-        this.baseEncoding = BaseEncoding.base64Url();
+        this.baseEncoding = BaseEncoding.base64Url().omitPadding();
         this.objectMapper = new ObjectMapper();
         // Set up serialization/deserialization to use fields, not methods.
         this.objectMapper.setVisibilityChecker(this.objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -70,7 +70,7 @@ public final class ExpirableTokenEncryptor {
             throw new IllegalArgumentException("Token is expected to contain some data.");
         }
         try {
-            return baseEncoding.omitPadding().encode(encryptor.encrypt(objectMapper.writeValueAsBytes(token)));
+            return baseEncoding.encode(encryptor.encrypt(objectMapper.writeValueAsBytes(token)));
         } catch (JsonProcessingException jpe) {
             throw new IllegalStateException("Unable to build JSON from the given token.", jpe);
         }

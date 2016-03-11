@@ -155,6 +155,16 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.liferay</groupId>
+            <artifactId>nl.captcha.simplecaptcha</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>tinymce-jquery</artifactId>
             <version>4.0.16</version>
