@@ -3,12 +3,13 @@ package dto.sso;
 import java.util.regex.Pattern;
 
 /**
- * Constants for DTO and validation. Must match the data in {@link models.sso.User}.
+ * Constants for DTO and validation. Must match the data in {@link models.sso.User}. Please, verify the validation tests
+ * after modification.
  */
 public interface Constants {
 
     /**
-     * Email pattern, as string.
+     * Email pattern, as string. Simple sub-set with US ASCII characters, excluding characters like {}#, etc.
      */
     String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
@@ -30,7 +31,7 @@ public interface Constants {
     /**
      * Username pattern, as string.
      */
-    String USERNAME_PATTERN = "^[A-Za-z]+([\\._A-Za-z0-9-]+)*$";
+    String USERNAME_PATTERN = "^[A-Za-z]+(\\.?[_A-Za-z0-9-]+)*$";
 
     /**
      * Username pattern.
@@ -50,7 +51,8 @@ public interface Constants {
     /**
      * Pattern for phone, as string.
      */
-    String PHONE_PATTERN = "^[0-9\\+\\(\\)]+([\\.ext0-9-\\(\\)]+)*$";
+    String PHONE_PATTERN = "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\\\\\/]?)?((?:\\(?\\d{1,}\\)" +
+            "?[\\-\\.\\ \\\\\\/]?){0,})(?:[\\-\\.\\ \\\\\\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\\\\\/]?(\\d+))?$";
 
     /**
      * Max length for the phone.
