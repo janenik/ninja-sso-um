@@ -17,20 +17,44 @@ import javax.persistence.Query;
 @Singleton
 public class UserService {
 
+    /**
+     * Logger.
+     */
     final Logger logger;
 
+    /**
+     * Entity manager provider.
+     */
     final Provider<EntityManager> entityManagerProvider;
 
+    /**
+     * Constructs user service.
+     *
+     * @param entityManagerProvider Entity manager provider.
+     * @param logger Logger.
+     */
     @Inject
     public UserService(Provider<EntityManager> entityManagerProvider, Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
         this.logger = logger;
     }
 
+    /**
+     * Returns user by given id or null.
+     *
+     * @param id Id of the user.
+     * @return User or null when the user was not found.
+     */
     public User get(Long id) {
         return entityManagerProvider.get().find(User.class, id);
     }
 
+    /**
+     * Returns user with given email or null if there is no such user.
+     *
+     * @param email Email.
+     * @return User with given email or null if there is no such user.
+     */
     public User getByEmail(String email) {
         if (Strings.isNullOrEmpty(email)) {
             return null;
@@ -45,6 +69,12 @@ public class UserService {
         }
     }
 
+    /**
+     * Returns user with given username or null if there is no such user.
+     *
+     * @param username Username.
+     * @return User with given username or null if there is no such user.
+     */
     public User getByUsername(String username) {
         if (Strings.isNullOrEmpty(username)) {
             return null;
@@ -59,6 +89,12 @@ public class UserService {
         }
     }
 
+    /**
+     * Returns user with given phone or null if there is no such user.
+     *
+     * @param phone Phone.
+     * @return User with given phone or null if there is no such user.
+     */
     public User getByPhone(String phone) {
         if (Strings.isNullOrEmpty(phone)) {
             return null;
@@ -77,31 +113,29 @@ public class UserService {
      * Saves user into the database.
      *
      * @param user User to save.
-     * @param password Password to set.
      * @return Saved user.
      */
-    public User save(User user, String password) {
-        //user.setNewPassword(password);
+    public User save(User user) {
         entityManagerProvider.get().persist(user);
         return user;
     }
 
     /**
-     * Updates password for the given user.
+     * Updates user.
      *
-     * @param user User.
-     * @param newPassword New password.
+     * @param user User to updated.
      */
-    public void updatePassword(User user, String newPassword) {
-        //user.setNewPassword(newPassword);
-        update(user);
-    }
-
     public void update(User user) {
         entityManagerProvider.get().persist(user);
     }
 
 
+    /**
+     * Detaches given user from current session.
+     *
+     * @param user User to detach.
+     * @return Detached user (same as argument).
+     */
     public User detach(User user) {
         entityManagerProvider.get().detach(user);
         return user;
