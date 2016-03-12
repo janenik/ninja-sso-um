@@ -1,6 +1,5 @@
 package services.sso;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -50,15 +49,26 @@ public class UserService {
     }
 
     /**
+     * Returns user by string that contains username or email.
+     *
+     * @param emailOrUsername String with email or username.
+     * @return User or null if there is no such user in database.
+     */
+    public User getUserByEmailOrUsername(String emailOrUsername) {
+        emailOrUsername = emailOrUsername.toLowerCase().trim();
+        if (emailOrUsername.indexOf('@') >= 0) {
+            return getByEmail(emailOrUsername);
+        }
+        return getByUsername(emailOrUsername);
+    }
+
+    /**
      * Returns user with given email or null if there is no such user.
      *
      * @param email Email.
      * @return User with given email or null if there is no such user.
      */
     public User getByEmail(String email) {
-        if (Strings.isNullOrEmpty(email)) {
-            return null;
-        }
         Query q = entityManagerProvider.get().createNamedQuery("User.getByEmail");
         q.setParameter("email", email.toLowerCase().trim());
         q.setMaxResults(1);
@@ -76,9 +86,6 @@ public class UserService {
      * @return User with given username or null if there is no such user.
      */
     public User getByUsername(String username) {
-        if (Strings.isNullOrEmpty(username)) {
-            return null;
-        }
         Query q = entityManagerProvider.get().createNamedQuery("User.getByUsername");
         q.setParameter("username", username.toLowerCase().trim());
         q.setMaxResults(1);
@@ -96,9 +103,6 @@ public class UserService {
      * @return User with given phone or null if there is no such user.
      */
     public User getByPhone(String phone) {
-        if (Strings.isNullOrEmpty(phone)) {
-            return null;
-        }
         Query q = entityManagerProvider.get().createNamedQuery("User.getByPhone");
         q.setParameter("phone", phone.toLowerCase().trim());
         q.setMaxResults(1);
@@ -121,9 +125,9 @@ public class UserService {
     }
 
     /**
-     * Updates user.
+     * Updates existing user.
      *
-     * @param user User to updated.
+     * @param user User to update.
      */
     public void update(User user) {
         entityManagerProvider.get().persist(user);

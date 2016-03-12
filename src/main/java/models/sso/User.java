@@ -24,13 +24,13 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
- * User entity.
+ * User entity. User email and username must be unique and lower-cased.
  */
 @Entity
 @Table(name = "users", indexes = {
         @Index(name = "username_idx", columnList = "username", unique = true),
         @Index(name = "email_idx", columnList = "email", unique = true),
-        @Index(name = "phone_idx", columnList = "phone", unique = true)
+        @Index(name = "phone_idx", columnList = "phone", unique = false)
 })
 @NamedQueries({
         @NamedQuery(name = "User.getByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
@@ -251,7 +251,7 @@ public class User implements Serializable {
      * @param phone Phone number.
      */
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phone = phone.toLowerCase().trim();
     }
 
     /**
@@ -329,7 +329,7 @@ public class User implements Serializable {
     /**
      * Sets username. Username will be trimmed and lowercased.
      *
-     * @param username
+     * @param username Username.
      */
     public void setUsername(String username) {
         this.username = username.toLowerCase().trim();

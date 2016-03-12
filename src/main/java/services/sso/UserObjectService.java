@@ -31,17 +31,17 @@ public class UserObjectService {
     /**
      * Entity manager provider.
      */
-    final Provider<EntityManager> entitiyManager;
+    final Provider<EntityManager> entityManagerProvider;
 
     /**
      * Constructs user object service.
      *
-     * @param entitiyManager Entity manager provider.
+     * @param entityManagerProvider Entity manager provider.
      * @param logger Logger.
      */
     @Inject
-    public UserObjectService(Provider<EntityManager> entitiyManager, Logger logger) {
-        this.entitiyManager = entitiyManager;
+    public UserObjectService(Provider<EntityManager> entityManagerProvider, Logger logger) {
+        this.entityManagerProvider = entityManagerProvider;
         this.logger = logger;
     }
 
@@ -66,7 +66,7 @@ public class UserObjectService {
      * @return User object or null if was not found.
      */
     public UserObject get(PK pk) {
-        return entitiyManager.get().find(UserObject.class, pk);
+        return entityManagerProvider.get().find(UserObject.class, pk);
     }
 
     /**
@@ -102,7 +102,7 @@ public class UserObjectService {
             old.setData(data.getBytes(UTF8));
             return save(old);
         } else {
-            entitiyManager.get().remove(old);
+            entityManagerProvider.get().remove(old);
             return null;
         }
     }
@@ -114,7 +114,7 @@ public class UserObjectService {
      * @return Saved/updated user object.
      */
     public UserObject save(UserObject UserObject) {
-        entitiyManager.get().persist(UserObject);
+        entityManagerProvider.get().persist(UserObject);
         return UserObject;
     }
 }
