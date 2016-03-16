@@ -16,19 +16,21 @@
 
 package conf;
 
+import com.google.inject.Inject;
+import conf.sso.SsoRoutes;
+import controllers.ApplicationController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
 import ninja.utils.NinjaProperties;
 
-import com.google.inject.Inject;
-
-import controllers.ApplicationController;
-
 public class Routes implements ApplicationRoutes {
 
     @Inject
     NinjaProperties ninjaProperties;
+
+    @Inject
+    SsoRoutes ssoRoutes;
 
     /**
      * Using a (almost) nice DSL we can configure the router.
@@ -46,8 +48,8 @@ public class Routes implements ApplicationRoutes {
             router.GET().route("/setup").with(ApplicationController.class, "setup");
         }
 
-        initSsoRoutes(router);
-        initUserManagementRoutes(router);
+        // Add SSO routes.
+        ssoRoutes.init(router);
 
         ///////////////////////////////////////////////////////////////////////
         // Assets (pictures / javascript)
@@ -59,21 +61,5 @@ public class Routes implements ApplicationRoutes {
         // Index / Catchall shows index page
         ///////////////////////////////////////////////////////////////////////
         router.GET().route("/.*").with(ApplicationController.class, "index");
-    }
-
-    /**
-     * Initializes routes for SSO.
-     *
-     * @param router Router.
-     */
-    private void initSsoRoutes(Router router) {
-    }
-
-    /**
-     * Initializes routes for user management.
-     *
-     * @param router Router.
-     */
-    private void initUserManagementRoutes(Router router) {
     }
 }

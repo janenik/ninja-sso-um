@@ -110,7 +110,7 @@ public class User implements Serializable {
     /**
      * Role of the user.
      */
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     UserRole role;
 

@@ -27,10 +27,19 @@ import java.security.spec.KeySpec;
  */
 public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
 
+    /**
+     * Encryption algorithm.
+     */
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
+    /**
+     * Encryption algorithm for key.
+     */
     private static final String ALGORITHM_FOR_KEY_SPEC = "AES";
 
+    /**
+     * Key generator algortithm.
+     */
     private static final String KEY_GENERATOR = "PBKDF2WithHmacSHA1";
 
     /**
@@ -43,10 +52,29 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
         }
     };
 
+    /**
+     * Password for encryption.
+     */
     private final char[] password;
+
+    /**
+     * Key size.
+     */
     private final short keySize;
+
+    /**
+     * Salt size.
+     */
     private final short saltSize;
+
+    /**
+     * Number of iterations to generate hash from the password.
+     */
     private final int passwordIterations;
+
+    /**
+     * Buffer size for reading.
+     */
     private final int readBufferSize;
 
     /**
@@ -171,7 +199,14 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
      */
     private static class KeySpecAndSalt {
 
+        /**
+         * Encryption specification.
+         */
         private final SecretKey encryptionKeySpec;
+
+        /**
+         * Salt.
+         */
         private final byte[] salt;
 
         /**

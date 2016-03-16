@@ -18,14 +18,9 @@ package conf;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import conf.sso.SsoModule;
 import ninja.utils.NinjaProperties;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
-import services.sso.token.AesPasswordBasedEncryptor;
-import services.sso.token.ExpirableTokenEncryptor;
-import services.sso.token.PasswordBasedEncryptor;
 
 @Singleton
 public class Module extends AbstractModule {
@@ -34,26 +29,6 @@ public class Module extends AbstractModule {
     NinjaProperties properties;
 
     protected void configure() {
-        bind(StartupActions.class);
-
-        // Configure expirable token encryptor.
-        bind(ExpirableTokenEncryptor.class);
-
-        // Configure Dozer.
-        bind(Mapper.class).toInstance(new DozerBeanMapper());
-    }
-
-    private void configureSso() {
-    }
-
-    private void configureUserManagement() {
-    }
-
-    @Provides
-    PasswordBasedEncryptor passwordBasedEncryptor() {
-        char[] key = properties.getOrDie("application.tokens.encryption.aes.key").toCharArray();
-        short strength = Short.valueOf(
-                properties.getWithDefault("application.tokens.encryption.aes.strength", "128"));
-        return new AesPasswordBasedEncryptor(key, strength);
+        install(new SsoModule());
     }
 }

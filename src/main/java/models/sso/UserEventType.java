@@ -9,5 +9,6 @@ public enum UserEventType {
     CONFIRMATION,
     PASSWORD_CHANGE,
     UPDATE,
-    REMOVE
+    REMOVE,
+    ACCESS
 }

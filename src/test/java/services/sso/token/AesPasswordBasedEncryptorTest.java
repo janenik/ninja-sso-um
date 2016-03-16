@@ -71,7 +71,7 @@ public class AesPasswordBasedEncryptorTest {
     }
 
     /**
-     * Starts AES encryption test with given key size.
+     * Starts AES encryption checkLimit with given key size.
      *
      * @param keySize Key size, bits.
      * @param logSuccess Whether to log success or not.
