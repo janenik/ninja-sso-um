@@ -10,7 +10,9 @@ import javax.inject.Inject;
 
 /**
  * Checks if number of requests from given IP is exceeded and places special boolean attribute
- * {@link HitsPerIpCheckFilter#HITS_PER_IP_LIMIT_EXCEEDED} into the request.
+ * <p>
+ * {@link HitsPerIpCheckFilter#HITS_PER_IP_LIMIT_EXCEEDED} into the request. Must be invoked after
+ * {@link IpAddressFilter}.
  */
 public class HitsPerIpCheckFilter implements Filter {
 

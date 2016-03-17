@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Helps class for all controllers. Contains templates for RESTful responses.
+ * Helper class for all controllers. Contains convenient templates for RESTful responses, validation.
  */
 public final class Controllers {
 
@@ -84,7 +84,7 @@ public final class Controllers {
      * @param context Context.
      * @return JSON or JSONP result.
      */
-    public static Result jsonOnJsonp(Object object, Context context) {
+    public static Result jsonOrJsonp(Object object, Context context) {
         return jsonOrJsonpResponse(context, TypedRestResponse.<Object>newResponse(object));
     }
 
@@ -98,6 +98,13 @@ public final class Controllers {
         return jsonOrJsonpResponse(context, TypedRestResponse.<String>newResponse("success"));
     }
 
+    /**
+     * Checks if the the "callback" parameter is present then renders JSONP instead of JSON.
+     *
+     * @param context Context.
+     * @param response Response.
+     * @return JSON or JSONP.
+     */
     private static Result jsonOrJsonpResponse(Context context, TypedRestResponse<?> response) {
         if (context.getParameter("callback") != null) {
             return Results.jsonp().render(response);

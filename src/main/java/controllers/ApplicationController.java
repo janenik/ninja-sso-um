@@ -16,14 +16,34 @@
 
 package controllers;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import controllers.sso.filters.HitsPerIpCheckFilter;
+import controllers.sso.filters.IpAddressFilter;
+import controllers.sso.filters.LanguageFilter;
+import ninja.Context;
+import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
+import services.sso.limits.IPCounterService;
 
-import java.util.Collections;
-
-
+@Singleton
+@FilterWith({
+        LanguageFilter.class,
+        IpAddressFilter.class,
+        HitsPerIpCheckFilter.class
+})
 public class ApplicationController {
 
+    /**
+     * IP counter service.
+     */
+    @Inject
+    IPCounterService ipCounterService;
+
+    /**
+     * Constructs application controller.
+     */
     public ApplicationController() {
     }
 
@@ -41,9 +61,12 @@ public class ApplicationController {
      *
      * @return Index page.
      */
-    public Result index() {
+    public Result index(Context context) {
+        String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         return Results.html()
-                .render("frontArticle", new Object())
-                .render("olderArticles", Collections.emptyList());
+                .render("lang", context.getAttribute(LanguageFilter.LANG))
+                .render("remoteIp", ip)
+                .render("ipHits", ipCounterService.getIpHits(ip))
+                .render("ipHitsExceeded", context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED));
     }
 }

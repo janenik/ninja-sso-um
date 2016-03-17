@@ -21,27 +21,27 @@ public class IpAddressFilter implements Filter {
     /**
      * Header name to extract IP address from. Used when remote address from request context is undefined or localhost.
      */
-    public static final String IP_HEADER_NAME = "x-real-ip";
+    private static final String IP_HEADER_NAME = "x-real-ip";
 
     /**
      * Default IP remote address, v4.
      */
-    public static final String DEFAULT_IP = "127.0.0.1";
+    private static final String DEFAULT_IP = "127.0.0.1";
 
     /**
      * Default IP remote address, v6.
      */
-    public static final String DEFAULT_IP_V6 = "::1";
+    private static final String DEFAULT_IP_V6 = "::1";
 
     /**
      * Default IP remote address, v6 with subnet.
      */
-    public static final String DEFAULT_IP_V6_W_SUBNET = "::1/128";
+    private static final String DEFAULT_IP_V6_W_SUBNET = "::1/128";
 
     /**
      * Default full IP remote address, v6.
      */
-    public static final String DEFAULT_IP_V6_FULL = "0000:0000:0000:0000:0000:0000:0000:0001";
+    private static final String DEFAULT_IP_V6_FULL = "0000:0000:0000:0000:0000:0000:0000:0001";
 
     /**
      * Logger.
@@ -61,7 +61,7 @@ public class IpAddressFilter implements Filter {
         }
         context.setAttribute(REMOTE_IP, ip);
         if (logger.isInfoEnabled()) {
-            logger.info("{}: {}", context.getMethod(), context.getRequestPath());
+            logger.info("{} - {}:{}", ip, context.getMethod(), context.getRequestPath());
         }
         return filterChain.next(context);
     }
