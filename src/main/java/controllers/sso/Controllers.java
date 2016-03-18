@@ -1,6 +1,6 @@
 package controllers.sso;
 
-import controllers.sso.rest.TypedRestResponse;
+import controllers.sso.rest.RestResponse;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -31,7 +31,7 @@ public final class Controllers {
      */
     public static Result badRequest(String field, String message, Context context) {
         return jsonOrJsonpResponse(context,
-                TypedRestResponse.badRequestWithViolation(field, message, field + ": " + message));
+                RestResponse.badRequestWithViolation(field, message, field + ": " + message));
     }
 
     /**
@@ -43,7 +43,7 @@ public final class Controllers {
      * @return Bad request response.
      */
     public static Result badRequest(String field, Exception ex, Context context) {
-        return jsonOrJsonpResponse(context, TypedRestResponse.badRequestWithViolation(field, ex));
+        return jsonOrJsonpResponse(context, RestResponse.badRequestWithViolation(field, ex));
     }
 
     /**
@@ -53,7 +53,7 @@ public final class Controllers {
      * @return JSON response.
      */
     public static Result json(Object object) {
-        return Results.json().render(TypedRestResponse.newResponse(object));
+        return Results.json().render(RestResponse.newResponse(object));
     }
 
     /**
@@ -64,7 +64,7 @@ public final class Controllers {
      * @return JSON response.
      */
     public static Result json(Object object, String message) {
-        return Results.json().render(TypedRestResponse.newResponse(object, message));
+        return Results.json().render(RestResponse.newResponse(object, message));
     }
 
     /**
@@ -74,7 +74,7 @@ public final class Controllers {
      * @return JSONP response.
      */
     public static Result jsonp(Object object) {
-        return Results.jsonp().render(TypedRestResponse.newResponse(object));
+        return Results.jsonp().render(RestResponse.newResponse(object));
     }
 
     /**
@@ -85,7 +85,7 @@ public final class Controllers {
      * @return JSON or JSONP result.
      */
     public static Result jsonOrJsonp(Object object, Context context) {
-        return jsonOrJsonpResponse(context, TypedRestResponse.<Object>newResponse(object));
+        return jsonOrJsonpResponse(context, RestResponse.<Object>newResponse(object));
     }
 
     /**
@@ -95,7 +95,7 @@ public final class Controllers {
      * @return Common success response.
      */
     public static Result successJsonOrJsonp(Context context) {
-        return jsonOrJsonpResponse(context, TypedRestResponse.<String>newResponse("success"));
+        return jsonOrJsonpResponse(context, RestResponse.<String>newResponse("success"));
     }
 
     /**
@@ -105,7 +105,7 @@ public final class Controllers {
      * @param response Response.
      * @return JSON or JSONP.
      */
-    private static Result jsonOrJsonpResponse(Context context, TypedRestResponse<?> response) {
+    private static Result jsonOrJsonpResponse(Context context, RestResponse<?> response) {
         if (context.getParameter("callback") != null) {
             return Results.jsonp().render(response);
         } else {
