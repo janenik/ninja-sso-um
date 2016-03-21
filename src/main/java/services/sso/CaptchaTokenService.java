@@ -185,7 +185,7 @@ public class CaptchaTokenService {
      * @param token Token to invalidate.
      */
     private void invalidateToken(String token) {
-        cache.safeAdd(token, "", captchaTTLAsString);
+        cache.add(token, "", captchaTTLAsString);
     }
 
     /**
