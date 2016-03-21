@@ -14,6 +14,7 @@ import services.sso.token.PasswordBasedEncryptor;
  */
 public class SsoModule extends AbstractModule {
 
+    @Override
     protected void configure() {
         // Configure password and expirable token encryptors.
         bind(ExpirableTokenEncryptor.class);
@@ -25,11 +26,17 @@ public class SsoModule extends AbstractModule {
         bind(SsoStartupActions.class);
     }
 
+    /**
+     * Provides password based encryptor.
+     *
+     * @param properties Properties.
+     * @return Password based encryptor.
+     */
     @Provides
     PasswordBasedEncryptor providesPasswordBasedEncryptor(NinjaProperties properties) {
-        char[] key = properties.getOrDie("application.tokens.encryption.aes.key").toCharArray();
+        char[] key = properties.getOrDie("application.sso.tokens.encryption.aes.key").toCharArray();
         short strength = Short.valueOf(
-                properties.getWithDefault("application.tokens.encryption.aes.strength", "128"));
+                properties.getWithDefault("application.sso.tokens.encryption.aes.strength", "128"));
         return new AesPasswordBasedEncryptor(key, strength);
     }
 }

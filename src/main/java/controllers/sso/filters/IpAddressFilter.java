@@ -26,7 +26,7 @@ public class IpAddressFilter implements Filter {
      * Default header name to extract IP address from. Used when remote address from request context is undefined or
      * localhost.
      */
-    private static final String PROXY_PASS_IP_HEADER_NAME = "X-Real-IP";
+    private static final String DEFAULT_PROXY_PASS_IP_HEADER_NAME = "X-Real-IP";
 
     /**
      * Localhost address, v4.
@@ -70,7 +70,8 @@ public class IpAddressFilter implements Filter {
         this.properties = properties;
         this.logger = logger;
 
-        this.proxyIpHeaderName = properties.getWithDefault("app.proxy.ipHeaderName", PROXY_PASS_IP_HEADER_NAME);
+        this.proxyIpHeaderName = properties.getWithDefault("application.sso.proxy.ipHeaderName",
+                DEFAULT_PROXY_PASS_IP_HEADER_NAME);
         this.proxyIpHeaderNameLowerCased = proxyIpHeaderName.toLowerCase();
     }
 

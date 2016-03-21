@@ -2,12 +2,16 @@
 <@layout.myLayout "Home page">
 
     <div class="jumbotron">
-        <h1>Ninja application</h1>
+        <h1>Demo application</h1>
 
         <p><b>Current language:</b> ${lang}</p>
         <p><b>Remote IP:</b> ${remoteIp}</p>
         <p><b>IP hits:</b> ${ipHits}</p>
         <p><b>IP hits exceeded:</b> ${ipHitsExceeded?c}</p>
+
+        <p>
+            <img src="${contextPath}/auth/captcha?cpt=${captchaToken}" alt="captcha code"/>
+        </p>
 
     </div>
 

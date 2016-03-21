@@ -44,7 +44,8 @@ public final class ExpirableTokenEncryptor {
         this.baseEncoding = BaseEncoding.base64Url().omitPadding();
         this.objectMapper = new ObjectMapper();
         // Set up serialization/deserialization to use fields, not methods.
-        this.objectMapper.setVisibilityChecker(this.objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+        this.objectMapper.setVisibilityChecker(this.objectMapper.getSerializationConfig()
+                .getDefaultVisibilityChecker()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                 .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withGetterVisibility(JsonAutoDetect.Visibility.NONE)

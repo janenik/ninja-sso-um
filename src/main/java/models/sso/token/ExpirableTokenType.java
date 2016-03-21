@@ -33,10 +33,15 @@ public enum ExpirableTokenType {
     FORGOT_PASSWORD,
 
     /**
-     * Confirm password (sent to user via email).
-     * When changing emails.
+     * Confirm password: token is sent to user via email
+     * when changing emails.
      */
     CONFIRM_PASSWORD_CHANGE,
+
+    /**
+     * Captcha token.
+     */
+    CAPTCHA,
 
     /**
      * Custom token type.

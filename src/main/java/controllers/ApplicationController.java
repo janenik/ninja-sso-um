@@ -25,6 +25,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
+import services.sso.CaptchaTokenService;
 import services.sso.limits.IPCounterService;
 
 @Singleton
@@ -42,10 +43,10 @@ public class ApplicationController {
     IPCounterService ipCounterService;
 
     /**
-     * Constructs application controller.
+     * Captcha token service.
      */
-    public ApplicationController() {
-    }
+    @Inject
+    CaptchaTokenService captchaTokenService;
 
     /**
      * Method to put initial data in the db.
@@ -66,6 +67,7 @@ public class ApplicationController {
         return Results.html()
                 .render("lang", context.getAttribute(LanguageFilter.LANG))
                 .render("remoteIp", ip)
+                .render("captchaToken", captchaTokenService.newCaptchaToken())
                 .render("ipHits", ipCounterService.getIpHits(ip))
                 .render("ipHitsExceeded", context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED));
     }

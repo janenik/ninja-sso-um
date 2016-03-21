@@ -50,7 +50,7 @@ public class AuthorizationFilter implements Filter {
     @Inject
     public AuthorizationFilter(ExpirableTokenEncryptor encryptor, NinjaProperties properties) {
         this.encryptor = encryptor;
-        this.parameterName = properties.getOrDie("application.auth.cookie.name");
+        this.parameterName = properties.getOrDie("application.sso.cookie.name");
     }
 
     @Override

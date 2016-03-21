@@ -8,35 +8,38 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Expirable token than holds the token type, scope id, data fields and expiration time.
+ * Expirable token than holds the token type, scope id, data fields and exp time.
  */
 public final class ExpirableToken implements Serializable {
 
     /**
      * Expiration time. In milliseconds, since January, 1, 1970, GMT.
      */
-    private final long expiration;
+    private final long exp;
+
     /**
      * Token type.
      */
     private final ExpirableTokenType type;
+
     /**
      * Scope of the token (like project name, domain, etc).
      */
     private final String scope;
+
     /**
      * Attributes map.
      */
-    private final Map<String, String> attributes;
+    private final Map<String, String> attr;
 
     /**
      * Default constructor.
      */
     public ExpirableToken() {
-        expiration = 0L;
+        exp = 0L;
         type = ExpirableTokenType.CUSTOM;
         scope = "default";
-        attributes = Collections.emptyMap();
+        attr = Collections.emptyMap();
     }
 
     /**
@@ -45,13 +48,13 @@ public final class ExpirableToken implements Serializable {
      * @param type Token type.
      * @param scope Scope (like scope name, domain, etc).
      * @param attributes Attributes for the token.
-     * @param expiration Expiration time, in milliseconds since Jan 1, 1970 UTC.
+     * @param exp Expiration time, in milliseconds since Jan 1, 1970 UTC.
      */
-    public ExpirableToken(ExpirableTokenType type, String scope, Map<String, String> attributes, long expiration) {
-        this.expiration = expiration;
+    public ExpirableToken(ExpirableTokenType type, String scope, Map<String, String> attributes, long exp) {
+        this.exp = exp;
         this.type = type;
         this.scope = scope;
-        this.attributes =  Collections.unmodifiableMap(attributes);
+        this.attr = Collections.unmodifiableMap(attributes);
     }
 
     /**
@@ -59,8 +62,8 @@ public final class ExpirableToken implements Serializable {
      *
      * @return Creation time.
      */
-    public long getExpiration() {
-        return expiration;
+    public long getExpires() {
+        return exp;
     }
 
     /**
@@ -86,8 +89,8 @@ public final class ExpirableToken implements Serializable {
      *
      * @return Attributes for the expirable token.
      */
-    public Map<String, String> getAttributes() {
-        return attributes;
+    public Map<String, String> getAttr() {
+        return attr;
     }
 
     /**
@@ -97,7 +100,7 @@ public final class ExpirableToken implements Serializable {
      * @return attribute value for given name or null if there is no such attribute.
      */
     public String getAttributeValue(String name) {
-        return attributes.get(name);
+        return attr.get(name);
     }
 
     /**
@@ -108,7 +111,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value or default value if there is no attribute in token.`
      */
     public String getAttributeValue(String name, String defaultValue) {
-        String v = attributes.get(name);
+        String v = attr.get(name);
         if (v == null) {
             return defaultValue;
         }
@@ -122,7 +125,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as long.
      */
     public Long getAttributeAsLong(String name) {
-        String v = attributes.get(name);
+        String v = attr.get(name);
         if (v == null || v.isEmpty()) {
             return null;
         }
@@ -136,7 +139,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as double.
      */
     public Double getAttributeAsDouble(String name) {
-        String v = attributes.get(name);
+        String v = attr.get(name);
         if (v == null || v.isEmpty()) {
             return null;
         }
@@ -151,7 +154,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as long or default if there is no attribute value.
      */
     public long getAttributeAsLong(String name, long defaultValue) {
-        String v = attributes.get(name);
+        String v = attr.get(name);
         if (v == null || v.isEmpty()) {
             return defaultValue;
         }
@@ -166,7 +169,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as double or default if there is no attribute value.
      */
     public double getAttributeAsDouble(String name, double defaultValue) {
-        String v = attributes.get(name);
+        String v = attr.get(name);
         if (v == null || v.isEmpty()) {
             return defaultValue;
         }
@@ -174,12 +177,12 @@ public final class ExpirableToken implements Serializable {
     }
 
     /**
-     * Returns whether the token has attributes.
+     * Returns whether the token has attr.
      *
-     * @return whether the token has attributes.
+     * @return whether the token has attr.
      */
     public boolean hasAttributes() {
-        return !attributes.isEmpty();
+        return !attr.isEmpty();
     }
 
     /**
@@ -189,7 +192,7 @@ public final class ExpirableToken implements Serializable {
      * @return Whether the token is expired.
      */
     public boolean isExpired(Clock clock) {
-        return expiration >= clock.millis();
+        return exp >= clock.millis();
     }
 
     /**
@@ -198,16 +201,16 @@ public final class ExpirableToken implements Serializable {
      * @return Whether the token is expired.
      */
     public boolean isExpired() {
-        return expiration >= Clock.systemUTC().millis();
+        return exp >= Clock.systemUTC().millis();
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + (int) (this.expiration ^ (this.expiration >>> 32));
+        hash = 97 * hash + (int) (this.exp ^ (this.exp >>> 32));
         hash = 97 * hash + Objects.hashCode(this.type);
         hash = 97 * hash + Objects.hashCode(this.scope);
-        hash = 97 * hash + Objects.hashCode(this.attributes);
+        hash = 97 * hash + Objects.hashCode(this.attr);
         return hash;
     }
 
@@ -220,7 +223,7 @@ public final class ExpirableToken implements Serializable {
             return false;
         }
         final ExpirableToken other = (ExpirableToken) obj;
-        if (this.expiration != other.expiration) {
+        if (this.exp != other.exp) {
             return false;
         }
         if (this.type != other.type) {
@@ -229,11 +232,11 @@ public final class ExpirableToken implements Serializable {
         if (!Objects.equals(this.scope, other.scope)) {
             return false;
         }
-        return Objects.equals(this.attributes, other.attributes);
+        return Objects.equals(this.attr, other.attr);
     }
 
     /**
-     * Static factory for the token.
+     * Static factory for token.
      *
      * @param type Token type.
      * @param scope Token scope.
@@ -247,13 +250,13 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setScope(scope).
                 setType(type).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntry(attrName, attrValue).
                 build();
     }
 
     /**
-     * Static factory for the token.
+     * Static factory for token.
      *
      * @param type Token type.
      * @param scope Token scope.
@@ -261,18 +264,18 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newToken(ExpirableTokenType type, String scope, Map<String, String> data, long
-            timeToLive) {
+    public static ExpirableToken newToken(ExpirableTokenType type, String scope, Map<String, String> data,
+                                          long timeToLive) {
         return new Builder().
                 setScope(scope).
                 setType(type).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntries(data).
                 build();
     }
 
     /**
-     * Static factory for the access token.
+     * Static factory for access token.
      *
      * @param scope Token scope.
      * @param attrName Attribute name.
@@ -284,7 +287,7 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setScope(scope).
                 setType(ExpirableTokenType.AUTH).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntry(attrName, attrValue).
                 build();
     }
@@ -301,8 +304,25 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setScope(scope).
                 setType(ExpirableTokenType.AUTH).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntries(data).
+                build();
+    }
+
+    /**
+     * Static factory for captcha token.
+     *
+     * @param attrName Attribute name.
+     * @param attrValue Attribute value.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable captcha token.
+     */
+    public static ExpirableToken newCaptchaToken(String attrName, String attrValue, long timeToLive) {
+        return new Builder().
+                setScope(null).
+                setType(ExpirableTokenType.CAPTCHA).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntry(attrName, attrValue).
                 build();
     }
 
@@ -318,7 +338,7 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setScope(scope).
                 setType(ExpirableTokenType.REFRESH).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntries(data).
                 build();
     }
@@ -336,7 +356,7 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setScope(scope).
                 setType(ExpirableTokenType.REFRESH).
-                setExpiration(Clock.systemUTC().millis() + timeToLive).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntry(attrName, attrValue).
                 build();
     }
@@ -348,19 +368,19 @@ public final class ExpirableToken implements Serializable {
      */
     public static final class Builder {
 
-        private long expiration;
+        private long expires;
         private ExpirableTokenType type;
         private String scope;
         private Map<String, String> values;
 
         /**
-         * Sets expiration time in milliseconds since Unix epoch for the token.
+         * Sets expires time in milliseconds since Unix epoch for the token.
          *
-         * @param expiration Expiration time.
+         * @param expires Expiration time.
          * @return Current builder.
          */
-        public Builder setExpiration(long expiration) {
-            this.expiration = expiration;
+        public Builder setExpires(long expires) {
+            this.expires = expires;
             return this;
         }
 
@@ -445,7 +465,7 @@ public final class ExpirableToken implements Serializable {
          * @return Expirable token.
          */
         public ExpirableToken build() {
-            return new ExpirableToken(type, scope, values, expiration);
+            return new ExpirableToken(type, scope, values, expires);
         }
     }
 }
