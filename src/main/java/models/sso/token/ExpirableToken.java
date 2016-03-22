@@ -293,6 +293,22 @@ public final class ExpirableToken implements Serializable {
     }
 
     /**
+     * Static factory for scopeless access token.
+     *
+     * @param attrName Attribute name.
+     * @param attrValue Attribute value.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newAccessToken(String attrName, String attrValue, long timeToLive) {
+        return new Builder().
+                setType(ExpirableTokenType.ACCESS).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntry(attrName, attrValue).
+                build();
+    }
+
+    /**
      * Static factory for access token.
      *
      * @param scope Token scope.

@@ -111,7 +111,7 @@ public class ExpirableTokenEncryptorTest {
         String userId = "";
         for (int i = 1; i < 100; i++) {
             userId += i;
-            ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "u", userId, 30L);
+            ExpirableToken accessToken = ExpirableToken.newAccessToken("u", userId, 30L);
 
             String encrypted = encryptor.encrypt(accessToken);
             ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
