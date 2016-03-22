@@ -38,7 +38,7 @@ public final class ExpirableToken implements Serializable {
     public ExpirableToken() {
         exp = 0L;
         type = ExpirableTokenType.CUSTOM;
-        scope = "default";
+        scope = null;
         attr = Collections.emptyMap();
     }
 
@@ -89,7 +89,7 @@ public final class ExpirableToken implements Serializable {
      *
      * @return Attributes for the expirable token.
      */
-    public Map<String, String> getAttr() {
+    public Map<String, String> getAttributes() {
         return attr;
     }
 
@@ -286,7 +286,7 @@ public final class ExpirableToken implements Serializable {
     public static ExpirableToken newAccessToken(String scope, String attrName, String attrValue, long timeToLive) {
         return new Builder().
                 setScope(scope).
-                setType(ExpirableTokenType.AUTH).
+                setType(ExpirableTokenType.ACCESS).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntry(attrName, attrValue).
                 build();
@@ -303,7 +303,7 @@ public final class ExpirableToken implements Serializable {
     public static ExpirableToken newAccessToken(String scope, Map<String, String> data, long timeToLive) {
         return new Builder().
                 setScope(scope).
-                setType(ExpirableTokenType.AUTH).
+                setType(ExpirableTokenType.ACCESS).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
                 addDataEntries(data).
                 build();

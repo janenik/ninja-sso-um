@@ -7,17 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertArrayEquals;
 
 /**
- * Tests {@link AesPasswordBasedEncryptor} and encryption test.
+ * Tests and benchmarks {@link AesPasswordBasedEncryptor}.
  */
 public class AesPasswordBasedEncryptorTest {
 
-    static final Charset UTF8 = Charset.forName("UTF-8");
     static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
 
     byte[] data;
@@ -25,49 +24,68 @@ public class AesPasswordBasedEncryptorTest {
 
     @Before
     public void setUp() {
-        this.data = "(?) 1982 Some data to encrypt and decrypt. 1982 Some data to encrypt and decrypt.".getBytes(UTF8);
+        this.data = "(?) 1982 Some data to encrypt and decrypt. 1982 Some data to encrypt and decrypt.".
+                getBytes(StandardCharsets.UTF_8);
         this.passwordCharacters = "password_1234567890_1234567890_!@#$%^&*()_+<>?{}|".toCharArray();
     }
 
     /**
      * AES-128 bit encryption is supposed to be supported without JCE Unlimited Strength Jurisdiction Policy.
      *
-     * @throws NoSuchAlgorithmException In case of exception.
+     * @throws NoSuchAlgorithmException In case if algorithm is not supported.
      */
     @Test
     public void testAes128() throws NoSuchAlgorithmException {
         invokeAesTest((short) 128, true);
     }
 
+    /**
+     * AES-192 bit encryption is supposed to be supported with JCE Unlimited Strength Jurisdiction Policy only.
+     *
+     * @throws NoSuchAlgorithmException In case if algorithm is not supported.
+     */
     @Test
     public void testAes192() throws NoSuchAlgorithmException {
         invokeAesTest((short) 192, true);
     }
 
+    /**
+     * AES-256 bit encryption is supposed to be supported with JCE Unlimited Strength Jurisdiction Policy only.
+     *
+     * @throws NoSuchAlgorithmException In case if algorithm is not supported.
+     */
     @Test
     public void testAes256() throws NoSuchAlgorithmException {
         invokeAesTest((short) 256, true);
     }
 
+    /**
+     * Provides some information about speed of token encryption.
+     *
+     * @throws NoSuchAlgorithmException In case if algorithm is not supported.
+     */
     @Test
     public void testAes128Speed() throws NoSuchAlgorithmException {
         int iterations = 100;
         long start;
-        double duration, total = 0.0D, max = Double.MIN_VALUE, min = Double.MAX_VALUE;
+        double duration,
+                totalTime = 0.0D,
+                maxTime = Double.MIN_VALUE,
+                minTime = Double.MAX_VALUE;
         invokeAesTest((short) 128, false);
         for (int i = 0; i < iterations; i++) {
             start = System.nanoTime();
             invokeAesTest((short) 128, false);
             duration = (System.nanoTime() - start) / 1e9;
-            total += duration;
-            min = Math.min(min, duration);
-            max = Math.max(max, duration);
+            totalTime += duration;
+            minTime = Math.min(minTime, duration);
+            maxTime = Math.max(maxTime, duration);
             if (i > 0 && i % 1000 == 0) {
                 logger.info("Testing {}...", i);
             }
         }
         logger.info("Executed {} encryptions/decryptions.\n\tTotal: {} sec, avg: {} sec, min: {} sec, max: {} sec",
-                iterations, total, total / iterations, min, max);
+                iterations, totalTime, totalTime / iterations, minTime, maxTime);
     }
 
     /**
@@ -90,7 +108,8 @@ public class AesPasswordBasedEncryptorTest {
 
             assertArrayEquals("Decrypted data must match the original.", data, decrypted);
             if (logSuccess) {
-                logger.info("Encryption test of {} bits succeeded.", keySize);
+                logger.info("{} bits: success. Data: {}, encrypted: {} (bytes).", keySize, data
+                        .length, decrypted.length);
             }
         } catch (PasswordBasedEncryptor.EncryptionException | PasswordBasedEncryptor.DecryptionException ee) {
             logger.warn("{} bit encryption does not work: {} / {}",

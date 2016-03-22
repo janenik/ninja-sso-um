@@ -4,11 +4,13 @@ import com.google.common.io.BaseEncoding;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,20 +31,50 @@ public class ExpirableTokenEncryptorTest {
      */
     ExpirableTokenEncryptor encryptor;
 
+    /**
+     * Contructs test.
+     */
     public ExpirableTokenEncryptorTest() {
         this.encryptor = new ExpirableTokenEncryptor(new AesPasswordBasedEncryptor(PASSWORD));
     }
 
     @Test
-    public void testBasics()
+    public void testBasic()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
-        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "qwerower1213234", 30L);
+        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "12345678901234567890", 30L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        logTestInformation(encrypted, decryptedAccessToken);
+    }
+
+    @Test
+    public void testBasic_nullScope()
+            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+        ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "userId", "12345678901234567890", 30L);
+
+        String encrypted = encryptor.encrypt(accessToken);
+        ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
+
+        assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
+        assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        logTestInformation(encrypted, decryptedAccessToken);
+    }
+
+    @Test
+    public void testCaptcha()
+            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+        ExpirableToken accessToken = ExpirableToken.newCaptchaToken("captcha", "WORLD768", 30L);
+
+        String encrypted = encryptor.encrypt(accessToken);
+        ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
+
+        assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
+        assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        logTestInformation(encrypted, decryptedAccessToken);
     }
 
     @Test
@@ -62,10 +94,6 @@ public class ExpirableTokenEncryptorTest {
         attributes.put("flag1", "value1");
         attributes.put("flag2", "very_very_long_value_21234567890");
 
-        // Total length of map.toString() + 6 characters ("":"",) for each entry.
-        int unencryptedTokenJsonLengthEstimation =
-                attributes.toString().length() + (attributes.size() + 4) * 6;
-
         ExpirableToken accessToken = ExpirableToken.newAccessToken("scope365", attributes, 30L);
 
         String encrypted = encryptor.encrypt(accessToken);
@@ -73,8 +101,25 @@ public class ExpirableTokenEncryptorTest {
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
-        logger.info("JSON token size estimation: {}, encrypted token size: {}, password length: {}",
-                unencryptedTokenJsonLengthEstimation, encrypted.length(), PASSWORD.length);
+        logTestInformation(encrypted, decryptedAccessToken);
+    }
+
+    @Test
+    @Ignore
+    public void benchmarkEncryptedTokenSize()
+            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+        String userId = "";
+        for (int i = 1; i < 100; i++) {
+            userId += i;
+            ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "u", userId, 30L);
+
+            String encrypted = encryptor.encrypt(accessToken);
+            ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
+
+            assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
+            assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+            logTestInformation(encrypted, decryptedAccessToken);
+        }
     }
 
     /**
@@ -112,5 +157,34 @@ public class ExpirableTokenEncryptorTest {
         assertEquals(expected2, base64Encoded2);
 
         assertArrayEquals(jsonBytes2, BaseEncoding.base64Url().decode(expected2));
+    }
+
+    /**
+     * Estimates JSON size of the token.
+     *
+     * @param expirableToken Expirable token.
+     * @return Estimated JSON size.
+     */
+    private static int estimateTokenJsonSize(ExpirableToken expirableToken) {
+        Map<String, String> attr = expirableToken.getAttributes();
+        int unencryptedTokenJsonLengthEstimation =
+                attr.toString().getBytes(StandardCharsets.UTF_8).length + (attr.size() + 4) * 6
+                        + expirableToken.getType().toString().length() + 8;
+        if (expirableToken.getScope() != null) {
+            unencryptedTokenJsonLengthEstimation += expirableToken.getScope().length() + 8;
+        }
+        return unencryptedTokenJsonLengthEstimation;
+    }
+
+    /**
+     * Logs test information about token JSON size and encrypted size.
+     *
+     * @param encrypted Encrypted token.
+     * @param expirableToken Expirable token.
+     */
+    private void logTestInformation(String encrypted, ExpirableToken expirableToken) {
+        logger.info("Encrypted: {}, JSON: ~{} (bytes) ({}/{})",
+                encrypted.getBytes(StandardCharsets.UTF_8).length,
+                estimateTokenJsonSize(expirableToken), expirableToken.getScope(), expirableToken.getType());
     }
 }

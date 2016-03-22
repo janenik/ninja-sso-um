@@ -6,9 +6,9 @@ package models.sso.token;
 public enum ExpirableTokenType {
 
     /**
-     * Auth token.
+     * Access token.
      */
-    AUTH,
+    ACCESS,
 
     /**
      * Refresh token.
