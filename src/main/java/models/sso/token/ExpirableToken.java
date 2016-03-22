@@ -20,7 +20,7 @@ public final class ExpirableToken implements Serializable {
     /**
      * Token type.
      */
-    private final ExpirableTokenType type;
+    private final ExpirableTokenType typ;
 
     /**
      * Scope of the token (like project name, domain, etc).
@@ -37,7 +37,7 @@ public final class ExpirableToken implements Serializable {
      */
     public ExpirableToken() {
         exp = 0L;
-        type = ExpirableTokenType.CUSTOM;
+        typ = ExpirableTokenType.CUSTOM;
         scope = null;
         attr = Collections.emptyMap();
     }
@@ -52,7 +52,7 @@ public final class ExpirableToken implements Serializable {
      */
     public ExpirableToken(ExpirableTokenType type, String scope, Map<String, String> attributes, long exp) {
         this.exp = exp;
-        this.type = type;
+        this.typ = type;
         this.scope = scope;
         this.attr = Collections.unmodifiableMap(attributes);
     }
@@ -72,7 +72,7 @@ public final class ExpirableToken implements Serializable {
      * @return Token type.
      */
     public ExpirableTokenType getType() {
-        return type;
+        return typ;
     }
 
     /**
@@ -208,7 +208,7 @@ public final class ExpirableToken implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash = 97 * hash + (int) (this.exp ^ (this.exp >>> 32));
-        hash = 97 * hash + Objects.hashCode(this.type);
+        hash = 97 * hash + Objects.hashCode(this.typ);
         hash = 97 * hash + Objects.hashCode(this.scope);
         hash = 97 * hash + Objects.hashCode(this.attr);
         return hash;
@@ -226,7 +226,7 @@ public final class ExpirableToken implements Serializable {
         if (this.exp != other.exp) {
             return false;
         }
-        if (this.type != other.type) {
+        if (this.typ != other.typ) {
             return false;
         }
         if (!Objects.equals(this.scope, other.scope)) {

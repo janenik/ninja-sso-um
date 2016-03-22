@@ -23,7 +23,10 @@ import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 
 /**
- * AES password based encryptor/decryptor.
+ * AES password based encryptor/decryptor. May use 128-bit encryption without JCE Unlimited Strength Jurisdiction
+ * Policy jars. 192 and 256-bit eare available with these jars installed.
+ * Encrypted message contains: key size/64, generated salt size and salt itself, initialization vector size and vector
+ * itself, encrypted message.
  */
 public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
 
@@ -125,7 +128,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
 
             DataOutputStream dos = new DataOutputStream(outputStream);
 
-            dos.write(keySize >>> 3);
+            dos.write(keySize >>> 6);
             dos.writeShort(keySpecAndSalt.salt.length);
             dos.writeShort(iv.length);
             dos.write(keySpecAndSalt.salt);
@@ -156,7 +159,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     @Override
     public void decrypt(InputStream inputStream, OutputStream outputStream) throws IOException, DecryptionException {
         DataInputStream dis = new DataInputStream(inputStream);
-        short encryptedKeySize = (short) (dis.read() << 3);
+        short encryptedKeySize = (short) (dis.read() << 6);
         short encryptedSaltLength = dis.readShort();
         short ivLength = dis.readShort();
 
@@ -240,7 +243,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
          * @param passwordIterations Number of iterations to use for building safe hash.
          * @param keyLength Key length (128, 192 or 256).
          * @param salt Salt.
-         * @throws EncryptionException Exception in case of key building.
+         * @throws DecryptionException Exception in case of key building.
          */
         public KeySpecAndSalt(char[] password, int passwordIterations, short keyLength, byte[] salt)
                 throws DecryptionException {

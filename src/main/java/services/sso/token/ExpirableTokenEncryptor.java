@@ -14,13 +14,14 @@ import models.sso.token.IllegalTokenException;
 import java.io.IOException;
 
 /**
- * Expirable encrypted token. Thread safe.
+ * Expirable token encryptor. Serializes given token into JSON, applies AES password encryption to it and encodes the
+ * result with web-safe base 64 encoding. Decodes and decrypts tokens from strings. Thread safe.
  */
 @Singleton
 public final class ExpirableTokenEncryptor {
 
     /**
-     * Encryptor.
+     * PBE encryptor.
      */
     private final PasswordBasedEncryptor encryptor;
 
