@@ -2,6 +2,7 @@ package controllers.sso;
 
 import com.google.common.escape.Escaper;
 import com.google.common.net.PercentEscaper;
+import com.google.common.net.UrlEscapers;
 
 import java.net.URLDecoder;
 
@@ -13,11 +14,12 @@ public final class Escapers {
     /**
      * More efficient encoding (acts like encodeURIComponent).
      */
-    private static final Escaper percentEscaper = new PercentEscaper("", false);
+    private static final Escaper percentEscaper = new PercentEscaper("-_.*", false);
 
     /**
      * Encodes given string characters using a UTF-8 based percent
      * encoding scheme. See {@link com.google.common.net.PercentEscaper} documentation.
+     * Acts like {@link UrlEscapers#urlFormParameterEscaper()} but space is escaped with '%20'.
      *
      * @param str String to escape.
      * @return URL encoded string.

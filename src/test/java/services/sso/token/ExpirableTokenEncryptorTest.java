@@ -1,10 +1,10 @@
 package services.sso.token;
 
 import com.google.common.io.BaseEncoding;
+import controllers.sso.Escapers;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +48,7 @@ public class ExpirableTokenEncryptorTest {
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        assertEquals("There is no need in URL escaping", encrypted, Escapers.encodePercent(encrypted));
         logTestInformation(encrypted, decryptedAccessToken);
     }
 
@@ -61,6 +62,7 @@ public class ExpirableTokenEncryptorTest {
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        assertEquals("There is no need in URL escaping", encrypted, Escapers.encodePercent(encrypted));
         logTestInformation(encrypted, decryptedAccessToken);
     }
 
@@ -74,6 +76,7 @@ public class ExpirableTokenEncryptorTest {
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        assertEquals("There is no need in URL escaping", encrypted, Escapers.encodePercent(encrypted));
         logTestInformation(encrypted, decryptedAccessToken);
     }
 
@@ -101,11 +104,11 @@ public class ExpirableTokenEncryptorTest {
 
         assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
         assertFalse("Ends with/contains padding character.", encrypted.contains("="));
+        assertEquals("There is no need in URL escaping", encrypted, Escapers.encodePercent(encrypted));
         logTestInformation(encrypted, decryptedAccessToken);
     }
 
     @Test
-    @Ignore
     public void benchmarkEncryptedTokenSize()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
         String userId = "";
@@ -118,7 +121,7 @@ public class ExpirableTokenEncryptorTest {
 
             assertEquals("Must be the same tokens.", accessToken, decryptedAccessToken);
             assertFalse("Ends with/contains padding character.", encrypted.contains("="));
-            logTestInformation(encrypted, decryptedAccessToken);
+            assertEquals("There is no need in URL escaping", encrypted, Escapers.encodePercent(encrypted));
         }
     }
 
@@ -149,7 +152,7 @@ public class ExpirableTokenEncryptorTest {
 
         assertArrayEquals(json2.getBytes("UTF-8"), jsonBytes2);
 
-        String base64Encoded2 = BaseEncoding.base64Url().encode(jsonBytes2);
+        String base64Encoded2 = BaseEncoding.base64Url().omitPadding().encode(jsonBytes2);
         // Replace padding.
         base64Encoded2 = base64Encoded2.replaceAll("=", "");
         String expected2 = "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly" +
