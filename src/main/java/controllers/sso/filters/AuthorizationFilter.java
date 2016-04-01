@@ -2,7 +2,7 @@ package controllers.sso.filters;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
-import controllers.sso.Controllers;
+import controllers.sso.web.Controllers;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;

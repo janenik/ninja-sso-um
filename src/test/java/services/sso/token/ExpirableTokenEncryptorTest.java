@@ -1,7 +1,7 @@
 package services.sso.token;
 
 import com.google.common.io.BaseEncoding;
-import controllers.sso.Escapers;
+import controllers.sso.web.Escapers;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;

@@ -27,7 +27,7 @@ import ninja.utils.NinjaProperties;
 public class Routes implements ApplicationRoutes {
 
     @Inject
-    NinjaProperties ninjaProperties;
+    NinjaProperties properties;
 
     @Inject
     SsoRoutes ssoRoutes;
@@ -44,7 +44,7 @@ public class Routes implements ApplicationRoutes {
     public void init(Router router) {
 
         // puts test data into db:
-        if (!ninjaProperties.isProd()) {
+        if (!properties.isProd()) {
             router.GET().route("/setup").with(ApplicationController.class, "setup");
         }
 

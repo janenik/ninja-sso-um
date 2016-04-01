@@ -1,4 +1,4 @@
-package controllers.sso;
+package controllers.sso.web;
 
 import controllers.sso.rest.RestResponse;
 import ninja.Context;

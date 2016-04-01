@@ -275,6 +275,69 @@ public final class ExpirableToken implements Serializable {
     }
 
     /**
+     * Static factory for token.
+     *
+     * @param type Token type.
+     * @param data Attributes for the token.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newToken(ExpirableTokenType type, Map<String, String> data, long timeToLive) {
+        return new Builder().
+                setType(type).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntries(data).
+                build();
+    }
+
+    /**
+     * Static factory for user token of given type.
+     *
+     * @param type Token type.
+     * @param userId User id.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId, long timeToLive) {
+        return new Builder().
+                setType(type).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntry("userId", userId).
+                build();
+    }
+
+    /**
+     * Static factory for user token of given type.
+     *
+     * @param type Token type.
+     * @param userId User id.
+     * @param attrName Attribute name.
+     * @param attrValue Attribute value.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId, String attrName,
+                                                 String attrValue, long timeToLive) {
+        return new Builder().
+                setType(type).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntry("userId", userId).
+                addDataEntry(attrName, attrValue).
+                build();
+    }
+
+    /**
+     * Static factory for user access token.
+     *
+     * @param userId User id.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newAccessTokenForUser(long userId, long timeToLive) {
+        return newTokenForUser(ExpirableTokenType.ACCESS, userId, timeToLive);
+    }
+
+    /**
      * Static factory for access token.
      *
      * @param scope Token scope.

@@ -1,6 +1,6 @@
 package controllers.sso.filters;
 
-import controllers.sso.Controllers;
+import controllers.sso.web.Controllers;
 import ninja.Context;
 import ninja.Filter;
 import ninja.FilterChain;

@@ -27,14 +27,20 @@ public class UserService {
     final Provider<EntityManager> entityManagerProvider;
 
     /**
+     * Password service.
+     */
+    final PasswordService passwordService;
+
+    /**
      * Constructs user service.
      *
      * @param entityManagerProvider Entity manager provider.
      * @param logger Logger.
      */
     @Inject
-    public UserService(Provider<EntityManager> entityManagerProvider, Logger logger) {
+    public UserService(Provider<EntityManager> entityManagerProvider, PasswordService passwordService, Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
+        this.passwordService = passwordService;
         this.logger = logger;
     }
 
@@ -120,6 +126,19 @@ public class UserService {
      * @return Saved user.
      */
     public User save(User user) {
+        entityManagerProvider.get().persist(user);
+        return user;
+    }
+
+    /**
+     * Saves user into the database.
+     *
+     * @param user User to save.
+     * @return Saved user.
+     */
+    public User createNew(User user, String password) {
+        user.setPasswordSalt(passwordService.newSalt());
+        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
         return user;
     }

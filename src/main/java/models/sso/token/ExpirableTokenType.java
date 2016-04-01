@@ -22,9 +22,19 @@ public enum ExpirableTokenType {
     XSRF,
 
     /**
-     * Confirm email (sent to user via email).
+     * Short living token for sign up verification page.
      */
-    CONFIRM_EMAIL,
+    SIGNUP_VERIFICATION,
+
+    /**
+     * Verification token type for email.
+     */
+    EMAIL_VERIFICATION,
+
+    /**
+     * Verification token type for phone.
+     */
+    PHONE_VERIFICATION,
 
     /**
      * Forgot password (sent to user via email).

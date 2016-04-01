@@ -1,4 +1,4 @@
-package controllers.sso;
+package controllers.sso.web;
 
 import com.google.common.escape.Escaper;
 import com.google.common.net.PercentEscaper;

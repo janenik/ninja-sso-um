@@ -13,6 +13,9 @@ import javax.inject.Inject;
  */
 public class LanguageFilter implements Filter {
 
+    /**
+     * Language parameter name.
+     */
     public static final String LANG = "lang";
 
     @Inject
