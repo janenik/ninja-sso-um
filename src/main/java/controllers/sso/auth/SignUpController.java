@@ -59,6 +59,11 @@ import java.util.Random;
 public class SignUpController {
 
     /**
+     * Template to render sign up page.
+     */
+    static final String TEMPLATE = "views/sso/auth/SignUpController/signUp.ftl.html";
+
+    /**
      * Empty effectively immutable user DTO.
      */
     static final UserSignUpDto EMPTY_USER = new UserSignUpDto();
@@ -314,7 +319,7 @@ public class SignUpController {
      * @return Sign up response object.
      */
     Result createResult(UserSignUpDto user, Context context, Validation validation) {
-        Result result = Results.html().template("views/auth/SignUpController/signUp.ftl.html");
+        Result result = Results.html().template(TEMPLATE);
         result.render("user", user);
         result.render("config", properties);
         result.render("errors", validation);

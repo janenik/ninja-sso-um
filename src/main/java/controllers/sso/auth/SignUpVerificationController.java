@@ -38,6 +38,11 @@ import services.sso.token.ExpirableTokenEncryptor;
 public class SignUpVerificationController {
 
     /**
+     * Controller template to render sign up verification page.
+     */
+    static final String TEMPLATE = "views/sso/auth/signUpVerification.ftl.html";
+
+    /**
      * Expirable token encryptor.
      */
     final ExpirableTokenEncryptor expirableTokenEncryptor;
@@ -125,7 +130,7 @@ public class SignUpVerificationController {
             errorType = "wrongToken";
         }
 
-        Result result = Results.html().template("views/sso/auth/signUpVerification.ftl.html");
+        Result result = Results.html().template(TEMPLATE);
         result.render(errorType, true);
         result.render("config", properties);
         result.render("redirectUrl", redirectUrl);
