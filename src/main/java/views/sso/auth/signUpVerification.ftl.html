@@ -1,0 +1,63 @@
+<#import "/views/layout/defaultLayout.ftl.html" as layout>
+<#if sessionOrUserNotFound?? || sessionExpired??>
+<#assign topTitle = i18n("signUpWelcomeError")>
+<#else>
+<#assign topTitle = i18n("signUpWelcomeTitle")>
+</#if>
+<@layout.defaultLayout topTitle>
+
+<style type="text/css">
+    .ssoSignupWarning {
+        color: red;
+    }
+    .ssoSignupBig {
+        font-weight: bold;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="row">
+
+    <#if sessionOrUserNotFound?? || sessionExpired??>
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+        <h3 class="ssoHeader">
+            ${i18n("signUpWelcomeError")}
+        </h3>
+        <span class="ssoSignupWarning">
+            <#if sessionOrUserNotFound??>
+            ${i18n("signUpWelcomeErrorUserNotFound")}
+            </#if>
+            <#if sessionExpired??>
+            ${i18n("signUpWelcomeErrorSessionExpired")}
+            </#if>
+        </span>
+    </div>
+    <div class="col-sm-4 col-md-4 col-lg-4">
+        <h3 class="ssoHeader">
+            ${i18n("signInNoAccount")}
+        </h3>
+        <p>
+            ${i18n("signInNoAccountTextPrefix")}
+            <a href="${contextPath}/signup?lang=${lang}&contunue=${continue?url}">${i18n("signUpLinkTitle")}</a>
+            ${i18n("signInNoAccountTextPostfix")}
+        </p>
+        <#include "signInSignUpLinks.ftl.html">
+    </div>
+    <#else>
+    <h3 class="ssoHeader">
+        ${i18n("signUpWelcomeTitlePrefix")} {project.name} ${i18n("signUpWelcomeTitlePostfix")}.
+    </h3>
+    <p>
+        ${i18n("signUpWelcomeDescription1")}<br/>
+        <span class="ssoSignupWarning">${i18n("signUpWelcomeDescription2")}</span>
+    </p>
+    <p class="ssoSignupBig">
+        <a href="${continue}">${i18n("signUpWelcomeProceedToProject")} ${projectEntity.getName()}</a>
+    </p>
+    </#if>
+
+</div>
+<div class="x-boot-body"></div>
+
+</@layout.defaultLayout>

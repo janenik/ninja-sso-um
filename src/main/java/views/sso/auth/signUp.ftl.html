@@ -1,0 +1,178 @@
+<#import "/views/layout/defaultLayout.ftl.html" as layout>
+<@layout.defaultLayout i18n("signUpTitle")>
+
+<style type="text/css">
+    .ssoSignupFormContainer {
+        min-width: 400px;
+    }
+    .ssoSignupCaptchaContainer {
+        text-align: left;
+    }
+</style>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+        <h3 class="ssoHeader">
+            ${i18n("signUpTitle")}
+        </h3>
+
+        <#if errors.hasBeanViolations()>
+        <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+        </#if>
+
+        <form role="form" id="signUpForm" method="POST" action="${contextPath}/signup?lang=${lang}&continue=${continue?url}">
+            <div class="form-group">
+                <label for="username">${i18n("signUpUsername")}</label>
+                <input type="text" id="username" name="username" placeholder="${i18n("signUpUsernamePlaceHolder")}"
+                value="${(user.username)!}"
+                ${_enableHtml5Required}
+                class="form-control
+                <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
+                    ssoFieldError</#if>" />
+                <#if errors.hasBeanViolation('usernameDuplicate')>
+                    <p class="help-block ssoFieldErrorDescription">${i18n("signUpUsernameUsed")} <br />
+                        ${i18n("signUpUsernameUsedDescription")}:
+                        <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">
+                            ${i18n("signUpUsernameUsedLinkTitle")}
+                        </a>
+                    </p>
+                </#if>
+            </div>
+            <div class="form-group">
+                <label for="email">${i18n("signUpEmailAddress")}</label>
+                <input type="email"  id="email" name="email" placeholder="${i18n("signUpEmailPlaceHolder")}"
+                       value="${(user.email)!}"
+                       ${_enableHtml5Required}
+                       class="form-control
+                       <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>ssoFieldError</#if>" />
+                <#if errors.hasBeanViolation('emailDuplicate')>
+                    <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailUsed")} <br />
+                        ${i18n("signUpEmailUsedDescription")}:
+                        <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">${i18n("signUpEmailUsedLinkTitle")}</a>
+                    </p>
+                </#if>                
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="firstName">${i18n("signUpFirstName")}</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="${i18n("signUpFirstNamePlaceHolder")}"
+                               value="${(user.firstName)!}"
+                               ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('firstName')>ssoFieldError</#if>"/>
+                               <!--<p class="help-block">Example block-level help text here.</p>-->
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="lastName">${i18n("signUpLastName")}</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="${i18n("signUpLastNamePlaceHolder")}"
+                               value="${(user.lastName)!}"
+                               ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('lastName')>ssoFieldError</#if>"/>
+                               <!--<p class="help-block">Example block-level help text here.</p>-->
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone">${i18n("signUpPhone")}</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="${i18n("signUpPhonePlaceHolder")}" 
+                       value="${(user.phone)!}" />
+                       <p class="help-block">${i18n("signUpPhoneOptional")}</p>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="password">${i18n("signUpPassword")}</label>
+                        <input type="password" id="password" autocomplete="off"  name="password" 
+                               placeholder="${i18n("signUpPasswordPlaceHolder")}" autocomplete="off"
+                               value="${(user.password)!}" ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('password')>ssoFieldError</#if>" />
+                               <#if errors.hasBeanViolation('passwordRepeat')>
+                               <p class="help-block ssoFieldErrorDescription">
+                            ${i18n("signUpPasswordHelp1")}
+                        </p>
+                        </#if>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="repeatPassword">${i18n("signUpPasswordRepeat")}</label>
+                        <input type="password" id="passwordRepeat" autocomplete="off" name="passwordRepeat" 
+                               placeholder="${i18n("signUpPasswordRepeatPlaceHolder")}" autocomplete="off"
+                               value="${(user.passwordRepeat)!}" ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('passwordRepeat')>ssoFieldError</#if>" />
+                               <#if errors.hasBeanViolation('passwordRepeat')>
+                               <p class="help-block ssoFieldErrorDescription">
+                            ${i18n("signUpPasswordHelp2")}
+                        </p>
+                        </#if>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="captchaCode">${i18n("signUpCaptchaCode")}</label>
+                        <input type="text" autocomplete="off"  class="form-control" id="captchaCode" 
+                               name="captchaCode"  ${_enableHtml5Required}
+                               placeholder="${i18n("signUpCaptchaCodePlaceHolder")}" />
+                        <#if errors.hasBeanViolation('captchaCode')>
+                            <p class="help-block ssoFieldErrorDescription">
+                                ${i18n("signUpCaptchaCodeRequired")}
+                            </p>
+                        </#if>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6 ssoSignupCaptchaContainer">
+                    <img src="${captchaUrl}" class="ssoCaptchaImage" alt="captcha code" onclick="this.src = this.src + '&.c=' + Math.random();"/>
+                    <#if errors.hasBeanViolation('captchaCode')>
+                    <p class="help-block">${i18n("signUpCaptchaCodeHelp")}</p>
+                    </#if>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="agreement" name="agreement" value="agree" ${_enableHtml5Required} /> 
+                    ${i18n("signUpTerm1")} <b>${i18n("signUpButtonTitle")}</b> ${i18n("signUpTerm2")}
+                    <a href="${config.get('application.baseUrl')}/terms_of_service${_underscopeLang}.html" target="_blank">${i18n("signUpTermsOfUse")}</a> 
+                    ${i18n("signUpTerm3")} <a href="${config.get('application.baseUrl')}/privacy_policy${_underscopeLang}.html" target="_blank">${i18n("signUpPrivacyPolicy")}</a>.
+                </label>
+                <#if errors.hasBeanViolation('agreement')>
+                <p class="help-block ssoFieldErrorDescription">${i18n("signUpAgreementRequired")}</p>
+                </#if>
+            </div>
+            <button type="submit" class="btn btn-default" id="signupSubmit">${i18n("signUpButtonTitle")}</button>
+            <input type="hidden" value="${token}" name="token" />
+        </form>
+    </div>
+    <div class="col-sm-4 col-md-4 col-lg-4 ssoSignupRight">
+        <!--
+        <h3 class="ssoHeader">
+            ${i18n("signUpWhy")}
+        </h3>
+        <p>${i18n("signUpWhyText")}</p>
+        <ul>
+            <li>${i18n("signUpWhyTextItem1")}</li>
+            <li>${i18n("signUpWhyTextItem2")}</li>
+            <li>${i18n("signUpWhyTextItem3")}</li>
+            <li>${i18n("signUpWhyTextItem4")}</li>
+        </ul>
+        -->
+        <#include "signInSignUpLinks.ftl.html">
+    </div>
+</div>
+<div class="x-boot-body"></div>
+
+<script>
+    $('#email, #firstName, #lastName, #phone, #captchaCode').keyup(function() {
+        var v = this.value, vv = v.replace(/^[\s]+/, '');
+        if (v != vv) this.value = vv;
+    });
+    $('#signUpForm').submit(function() {
+        $('#signupSubmit').attr('disabled', 'disabled');
+        $('#signupSubmit').html('${i18n("signUpButtonTitleLoading")}');
+    });
+</script>
+
+</@layout.defaultLayout>
