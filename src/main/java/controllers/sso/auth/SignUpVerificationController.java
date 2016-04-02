@@ -96,8 +96,8 @@ public class SignUpVerificationController {
      * @return Rendered sign up page.
      */
     @Transactional
-    public Result signUpVerificationGet(@Param("token") String tokenAsString, Context context) {
-        return signUpVerification(tokenAsString, context);
+    public Result verifySignUpGet(@Param("token") String tokenAsString, Context context) {
+        return verifySignUp(tokenAsString, context);
     }
 
     /**
@@ -107,7 +107,7 @@ public class SignUpVerificationController {
      * @return Rendered sign up page.
      */
     @Transactional
-    public Result signUpVerification(@Param("token") String tokenAsString, Context context) {
+    public Result verifySignUp(@Param("token") String tokenAsString, Context context) {
         String redirectUrl = urlBuilderProvider.get().getContinueUrlParameter();
         String errorType = null;
         try {
@@ -139,14 +139,14 @@ public class SignUpVerificationController {
     }
 
     /**
-     * Confirms user email: this action is invoked when the user clicks link in email.
+     * Verifies user email: this action is invoked when the user clicks link in email.
      *
      * @param tokenAsString Code (encrypted user id).
      * @param context Context.
      * @return Result.
      */
     @Transactional
-    public Result confirmEmail(@Param("token") String tokenAsString, Context context) {
+    public Result verifyEmail(@Param("token") String tokenAsString, Context context) {
         try {
             ExpirableToken emailConfirmationToken = expirableTokenEncryptor.decrypt(tokenAsString);
             Long userId = emailConfirmationToken.getAttributeAsLong("userId");

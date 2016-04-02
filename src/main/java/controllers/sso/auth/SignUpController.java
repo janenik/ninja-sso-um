@@ -61,7 +61,7 @@ public class SignUpController {
     /**
      * Template to render sign up page.
      */
-    static final String TEMPLATE = "views/sso/auth/SignUpController/signUp.ftl.html";
+    static final String TEMPLATE = "views/sso/auth/signUp.ftl.html";
 
     /**
      * Empty effectively immutable user DTO.
@@ -266,7 +266,7 @@ public class SignUpController {
         User createdUser = userService.createNew(dtoMapper.map(user, User.class), user.getPassword());
 
         // Perform post-sign up actions.
-        String redirectURL = postSignUpActions(createdUser, context);
+        String redirectURL = invokePostSignUpActions(createdUser, context);
         // Redirect.
         return Results.redirect(redirectURL);
     }
@@ -281,7 +281,7 @@ public class SignUpController {
      * @param context Web context.
      * @return URL to redirect.
      */
-    String postSignUpActions(User createdUser, Context context) {
+    String invokePostSignUpActions(User createdUser, Context context) {
         try {
             String verificationCode = newVerificationCode();
             // Send confirmation email.

@@ -1,6 +1,5 @@
 package dto.sso;
 
-import com.google.common.base.Strings;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +8,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- * User sign-up DTO.
+ * User sign up DTO.
  */
 public class UserSignUpDto implements Serializable {
 
@@ -55,141 +54,278 @@ public class UserSignUpDto implements Serializable {
     String agreement; // To check after.
     // This one to skip the exception in log.
     String lang;
-    String redirectUrl;
+    String continueUrl;
     String scope;
+    Integer countryId;
 
     /**
-     * Default constructor.
-     */
-    public UserSignUpDto() {
-    }
-
-    /**
-     * Creates DTO object with default value for all fields.
+     * Returns email.
      *
-     * @param defaultValue Default value.
+     * @return Email.
      */
-    public UserSignUpDto(String defaultValue) {
-        email = defaultValue;
-        firstName = defaultValue;
-        lastName = defaultValue;
-        password = defaultValue;
-        passwordRepeat = defaultValue;
-        captchaCode = defaultValue;
-        phone = defaultValue;
-        token = defaultValue;
-    }
-
     public String getEmail() {
-        return Strings.nullToEmpty(email).trim().toLowerCase();
+        return email;
     }
 
+    /**
+     * Sets email.
+     *
+     * @param email Email.
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return Strings.nullToEmpty(firstName).trim();
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return Strings.nullToEmpty(lastName).trim();
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhone() {
-        return Strings.nullToEmpty(phone).trim();
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPasswordRepeat() {
-        return passwordRepeat;
-    }
-
-    public void setPasswordRepeat(String passwordRepeat) {
-        this.passwordRepeat = passwordRepeat;
-    }
-
-    public String getCaptchaCode() {
-        return captchaCode;
-    }
-
-    public void setCaptchaCode(String captchaCode) {
-        this.captchaCode = captchaCode;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getAgreement() {
-        return agreement;
-    }
-
-    public void setAgreement(String agreement) {
-        this.agreement = agreement;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
-    }
-
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
-
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
-    }
-
+    /**
+     * Returns username.
+     *
+     * @return Username.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets username.
+     *
+     * @param username Username.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Returns firstName.
+     *
+     * @return FirstName.
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * Sets firstName.
+     *
+     * @param firstName FirstName.
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * Returns middleName.
+     *
+     * @return MiddleName.
+     */
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    /**
+     * Sets middleName.
+     *
+     * @param middleName MiddleName.
+     */
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    /**
+     * Returns lastName.
+     *
+     * @return LastName.
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * Sets lastName.
+     *
+     * @param lastName LastName.
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * Returns phone.
+     *
+     * @return Phone.
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * Sets phone.
+     *
+     * @param phone Phone.
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * Returns password.
+     *
+     * @return Password.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets password.
+     *
+     * @param password Password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Returns passwordRepeat.
+     *
+     * @return PasswordRepeat.
+     */
+    public String getPasswordRepeat() {
+        return passwordRepeat;
+    }
+
+    /**
+     * Sets passwordRepeat.
+     *
+     * @param passwordRepeat PasswordRepeat.
+     */
+    public void setPasswordRepeat(String passwordRepeat) {
+        this.passwordRepeat = passwordRepeat;
+    }
+
+    /**
+     * Returns captchaCode.
+     *
+     * @return CaptchaCode.
+     */
+    public String getCaptchaCode() {
+        return captchaCode;
+    }
+
+    /**
+     * Sets captchaCode.
+     *
+     * @param captchaCode CaptchaCode.
+     */
+    public void setCaptchaCode(String captchaCode) {
+        this.captchaCode = captchaCode;
+    }
+
+    /**
+     * Returns token.
+     *
+     * @return Token.
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Sets token.
+     *
+     * @param token Token.
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * Returns agreement.
+     *
+     * @return Agreement.
+     */
+    public String getAgreement() {
+        return agreement;
+    }
+
+    /**
+     * Sets agreement.
+     *
+     * @param agreement Agreement.
+     */
+    public void setAgreement(String agreement) {
+        this.agreement = agreement;
+    }
+
+    /**
+     * Returns lang.
+     *
+     * @return Lang.
+     */
+    public String getLang() {
+        return lang;
+    }
+
+    /**
+     * Sets lang.
+     *
+     * @param lang Lang.
+     */
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    /**
+     * Returns continue URL.
+     *
+     * @return Continue URL.
+     */
+    public String getContinueUrl() {
+        return continueUrl;
+    }
+
+    /**
+     * Sets continue URL.
+     *
+     * @param continueUrl Continue URL.
+     */
+    public void setContinueUrl(String continueUrl) {
+        this.continueUrl = continueUrl;
+    }
+
+    /**
+     * Returns scope.
+     *
+     * @return Scope.
+     */
     public String getScope() {
         return scope;
     }
 
+    /**
+     * Sets scope.
+     *
+     * @param scope Scope.
+     */
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    /**
+     * Returns country id.
+     *
+     * @return Country id.
+     */
+    public Integer getCountryId() {
+        return countryId;
+    }
+
+    /**
+     * Sets country id.
+     *
+     * @param countryId Country id.
+     */
+    public void setCountryId(Integer countryId) {
+        this.countryId = countryId;
     }
 
     private static final long serialVersionUID = 1L;

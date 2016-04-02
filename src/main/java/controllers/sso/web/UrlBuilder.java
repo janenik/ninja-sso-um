@@ -56,7 +56,7 @@ public class UrlBuilder {
     public UrlBuilder(
             NinjaProperties properties,
             Router router,
-            Context context,
+            @Named("ssoContext") Context context,
             @Named("allowedContinueUrls") List<String> allowedContinueUrls) {
         this.properties = properties;
         this.router = router;

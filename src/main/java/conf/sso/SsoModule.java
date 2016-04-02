@@ -6,6 +6,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.servlet.RequestScoped;
+import ninja.Context;
+import ninja.servlet.NinjaServletContext;
 import ninja.utils.NinjaProperties;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
@@ -13,6 +16,9 @@ import services.sso.token.AesPasswordBasedEncryptor;
 import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,4 +78,16 @@ public class SsoModule extends AbstractModule {
         }
         return Collections.unmodifiableList(allowedRedirects);
     }
+
+    @RequestScoped
+    @Provides
+    @Named("ssoContext")
+    Context provideContext(NinjaServletContext context,
+                           ServletContext servletContext,
+                           HttpServletRequest req,
+                           HttpServletResponse resp) {
+        context.init(servletContext, req, resp);
+        return context;
+    }
+
 }
