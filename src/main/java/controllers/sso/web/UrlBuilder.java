@@ -72,7 +72,7 @@ public class UrlBuilder {
      * @return URL to captcha image with given token.
      */
     public String getCaptchaUrl(String captchaToken) {
-        StringBuilder sb = new StringBuilder(baseUrl);
+        StringBuilder sb = new StringBuilder();
         String contextPath = context.getContextPath();
         String reversedRoute = router.getReverseRoute(CaptchaController.class, "captcha");
         if (!reversedRoute.startsWith(contextPath)) {

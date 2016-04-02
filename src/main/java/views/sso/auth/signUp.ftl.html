@@ -2,17 +2,38 @@
 <@layout.defaultLayout i18n("signUpTitle")>
 
 <style type="text/css">
-    .ssoSignupFormContainer {
-        min-width: 400px;
+    #signUpForm {
+        margin-bottom: 30px;
     }
     .ssoSignupCaptchaContainer {
         text-align: left;
     }
+    .ssoFieldError {
+        background-color: #f5f59c;
+    }
+    .ssoFieldErrorDescription {
+        color: #cc4a4a;
+    }
+    .ssoCaptchaImage {
+        background-color: #fff;
+        margin-top: 15px;
+    }
+    @media (max-width: 768px) {
+        .ssoCaptchaImage {
+            margin-top: 24px;
+            width: 170px;
+        }
+    }
+    @media (max-width: 600px) {
+        .ssoCaptchaImage {
+            margin-top: 28px;
+            width: 130px;
+        }
+    }
 </style>
-
 <div class="row">
     <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-        <h3 class="ssoHeader">
+        <h3 class="ssoHeader" id="ssoSignUpHeader">
             ${i18n("signUpTitle")}
         </h3>
 
@@ -20,21 +41,28 @@
         <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
         </#if>
 
-        <form role="form" id="signUpForm" method="POST" action="${contextPath}/signup?lang=${lang}&continue=${continue?url}">
+        <form role="form" id="signUpForm" method="POST"
+              action="${contextPath}/auth/signup?lang=${lang}&continue=${continue?url}">
             <div class="form-group">
                 <label for="username">${i18n("signUpUsername")}</label>
-                <input type="text" id="username" name="username" placeholder="${i18n("signUpUsernamePlaceHolder")}"
-                value="${(user.username)!}"
-                ${_enableHtml5Required}
-                class="form-control
-                <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
-                    ssoFieldError</#if>" />
-                <#if errors.hasBeanViolation('usernameDuplicate')>
+                <input type="text" id="username" name="username"
+                       placeholder="${i18n("signUpUsernamePlaceHolder")}"
+                       value="${(user.username)!}"
+                       ${_enableHtml5Required}
+                       class="form-control
+                       <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
+                           ssoFieldError</#if>" />
+                       <#if errors.hasBeanViolation('usernameDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpUsernameUsed")} <br />
                         ${i18n("signUpUsernameUsedDescription")}:
                         <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">
                             ${i18n("signUpUsernameUsedLinkTitle")}
                         </a>
+                    </p>
+                </#if>
+                <#if errors.hasBeanViolation('username')>
+                    <p class="help-block ssoFieldErrorDescription">
+                        ${i18n("signUpUsernameFormatDescription")}
                     </p>
                 </#if>
             </div>
@@ -76,7 +104,8 @@
             </div>
             <div class="form-group">
                 <label for="phone">${i18n("signUpPhone")}</label>
-                <input type="text" class="form-control" id="phone" name="phone" placeholder="${i18n("signUpPhonePlaceHolder")}" 
+                <input type="tel" class="form-control" id="phone" name="phone"
+                       placeholder="${i18n("signUpPhonePlaceHolder")}"
                        value="${(user.phone)!}" />
                        <p class="help-block">${i18n("signUpPhoneOptional")}</p>
             </div>
@@ -163,16 +192,11 @@
     </div>
 </div>
 <div class="x-boot-body"></div>
-
-<script>
-    $('#email, #firstName, #lastName, #phone, #captchaCode').keyup(function() {
-        var v = this.value, vv = v.replace(/^[\s]+/, '');
-        if (v != vv) this.value = vv;
-    });
-    $('#signUpForm').submit(function() {
-        $('#signupSubmit').attr('disabled', 'disabled');
-        $('#signupSubmit').html('${i18n("signUpButtonTitleLoading")}');
-    });
-</script>
-
+    <script>
+        setTimeout(function() {
+           var el = document.getElementById('ssoSignUpHeader');
+           var w = window.innerWidth || document.body.clientWidth;
+           el.innerHTML = el.innerHTML + ' ' + w;
+        }, 1);
+    </script>
 </@layout.defaultLayout>
