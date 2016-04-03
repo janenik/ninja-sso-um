@@ -192,7 +192,7 @@ public final class ExpirableToken implements Serializable {
      * @return Whether the token is expired.
      */
     public boolean isExpired(Clock clock) {
-        return exp >= clock.millis();
+        return exp <= clock.millis();
     }
 
     /**
@@ -201,7 +201,7 @@ public final class ExpirableToken implements Serializable {
      * @return Whether the token is expired.
      */
     public boolean isExpired() {
-        return exp >= Clock.systemUTC().millis();
+        return exp <= Clock.systemUTC().millis();
     }
 
     @Override

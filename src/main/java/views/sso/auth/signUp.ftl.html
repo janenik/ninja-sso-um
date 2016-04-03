@@ -38,21 +38,45 @@
         </h3>
 
         <#if errors.hasBeanViolations()>
-        <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+            <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
         </#if>
 
         <form role="form" id="signUpForm" method="POST"
               action="${contextPath}/auth/signup?lang=${lang}&continue=${continue?url}">
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="firstName">${i18n("signUpFirstName")}</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="${i18n("signUpFirstNamePlaceHolder")}"
+                               value="${(user.firstName)!}"
+                               ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('firstName')>ssoFieldError</#if>"/>
+                               <!--<p class="help-block">Example block-level help text here.</p>-->
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group">
+                        <label for="lastName">${i18n("signUpLastName")}</label>
+                        <input type="text" id="lastName" name="lastName"
+                               placeholder="${i18n('signUpLastNamePlaceHolder')}"
+                               value="${(user.lastName)!}"
+                               ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('lastName')>ssoFieldError</#if>"/>
+                               <!--<p class="help-block">Example block-level help text here.</p>-->
+                    </div>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="username">${i18n("signUpUsername")}</label>
                 <input type="text" id="username" name="username"
-                       placeholder="${i18n("signUpUsernamePlaceHolder")}"
+                       placeholder="${i18n('signUpUsernamePlaceHolder')}"
                        value="${(user.username)!}"
                        ${_enableHtml5Required}
                        class="form-control
                        <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
-                           ssoFieldError</#if>" />
-                       <#if errors.hasBeanViolation('usernameDuplicate')>
+                            ssoFieldError</#if>"
+                />
+                <#if errors.hasBeanViolation('usernameDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpUsernameUsed")} <br />
                         ${i18n("signUpUsernameUsedDescription")}:
                         <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">
@@ -68,59 +92,46 @@
             </div>
             <div class="form-group">
                 <label for="email">${i18n("signUpEmailAddress")}</label>
-                <input type="email"  id="email" name="email" placeholder="${i18n("signUpEmailPlaceHolder")}"
+                <input type="email"  id="email" name="email"
+                       placeholder="${i18n('signUpEmailPlaceHolder')}"
                        value="${(user.email)!}"
                        ${_enableHtml5Required}
                        class="form-control
-                       <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>ssoFieldError</#if>" />
+                       <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
+                       ssoFieldError</#if>"
+                />
                 <#if errors.hasBeanViolation('emailDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailUsed")} <br />
                         ${i18n("signUpEmailUsedDescription")}:
                         <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">${i18n("signUpEmailUsedLinkTitle")}</a>
                     </p>
-                </#if>                
-            </div>
-            <div class="row">
-                <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="firstName">${i18n("signUpFirstName")}</label>
-                        <input type="text" id="firstName" name="firstName" placeholder="${i18n("signUpFirstNamePlaceHolder")}"
-                               value="${(user.firstName)!}"
-                               ${_enableHtml5Required}
-                               class="form-control <#if errors.hasBeanViolation('firstName')>ssoFieldError</#if>"/>
-                               <!--<p class="help-block">Example block-level help text here.</p>-->
-                    </div>
-                </div>
-                <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="lastName">${i18n("signUpLastName")}</label>
-                        <input type="text" id="lastName" name="lastName" placeholder="${i18n("signUpLastNamePlaceHolder")}"
-                               value="${(user.lastName)!}"
-                               ${_enableHtml5Required}
-                               class="form-control <#if errors.hasBeanViolation('lastName')>ssoFieldError</#if>"/>
-                               <!--<p class="help-block">Example block-level help text here.</p>-->
-                    </div>
-                </div>
+                </#if>
             </div>
             <div class="form-group">
                 <label for="phone">${i18n("signUpPhone")}</label>
                 <input type="tel" class="form-control" id="phone" name="phone"
-                       placeholder="${i18n("signUpPhonePlaceHolder")}"
+                       placeholder="${i18n('signUpPhonePlaceHolder')}"
                        value="${(user.phone)!}" />
-                       <p class="help-block">${i18n("signUpPhoneOptional")}</p>
+                <#if errors.hasBeanViolation('phone')>
+                    <p class="help-block ssoFieldErrorDescription">
+                        ${i18n("signUpPhoneRequired")}
+                    </p>
+                </#if>
+                       <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
             </div>
             <div class="row">
                 <div class="col-xs-6 col-md-6">
                     <div class="form-group">
                         <label for="password">${i18n("signUpPassword")}</label>
-                        <input type="password" id="password" autocomplete="off"  name="password" 
-                               placeholder="${i18n("signUpPasswordPlaceHolder")}" autocomplete="off"
-                               value="${(user.password)!}" ${_enableHtml5Required}
-                               class="form-control <#if errors.hasBeanViolation('password')>ssoFieldError</#if>" />
-                               <#if errors.hasBeanViolation('passwordRepeat')>
-                               <p class="help-block ssoFieldErrorDescription">
-                            ${i18n("signUpPasswordHelp1")}
-                        </p>
+                        <input type="password" id="password"  name="password"
+                               placeholder="${i18n('signUpPasswordPlaceHolder')}"
+                               autocomplete="off"
+                               value="${(user.password)!}"
+                               ${_enableHtml5Required}
+                               class="form-control <#if errors.hasBeanViolation('password')>ssoFieldError</#if>"
+                        />
+                        <#if errors.hasBeanViolation('passwordRepeat')>
+                            <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp1")}</p>
                         </#if>
                     </div>
                 </div>
@@ -168,7 +179,7 @@
                     ${i18n("signUpTerm3")} <a href="${config.get('application.baseUrl')}/privacy_policy${_underscopeLang}.html" target="_blank">${i18n("signUpPrivacyPolicy")}</a>.
                 </label>
                 <#if errors.hasBeanViolation('agreement')>
-                <p class="help-block ssoFieldErrorDescription">${i18n("signUpAgreementRequired")}</p>
+                    <p class="help-block ssoFieldErrorDescription">${i18n("signUpAgreementRequired")}</p>
                 </#if>
             </div>
             <button type="submit" class="btn btn-default" id="signupSubmit">${i18n("signUpButtonTitle")}</button>
@@ -192,11 +203,5 @@
     </div>
 </div>
 <div class="x-boot-body"></div>
-    <script>
-        setTimeout(function() {
-           var el = document.getElementById('ssoSignUpHeader');
-           var w = window.innerWidth || document.body.clientWidth;
-           el.innerHTML = el.innerHTML + ' ' + w;
-        }, 1);
-    </script>
+
 </@layout.defaultLayout>

@@ -54,7 +54,6 @@ public class UserSignUpDto implements Serializable {
     String agreement; // To check after.
     // This one to skip the exception in log.
     String lang;
-    String continueUrl;
     String scope;
     Integer countryId;
 
@@ -272,24 +271,6 @@ public class UserSignUpDto implements Serializable {
      */
     public void setLang(String lang) {
         this.lang = lang;
-    }
-
-    /**
-     * Returns continue URL.
-     *
-     * @return Continue URL.
-     */
-    public String getContinueUrl() {
-        return continueUrl;
-    }
-
-    /**
-     * Sets continue URL.
-     *
-     * @param continueUrl Continue URL.
-     */
-    public void setContinueUrl(String continueUrl) {
-        this.continueUrl = continueUrl;
     }
 
     /**

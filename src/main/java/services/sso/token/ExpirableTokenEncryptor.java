@@ -104,7 +104,11 @@ public final class ExpirableTokenEncryptor {
             throw new IllegalTokenException();
         }
         try {
-            return objectMapper.readValue(decrypted, ExpirableToken.class);
+            ExpirableToken result = objectMapper.readValue(decrypted, ExpirableToken.class);
+            if (result.isExpired()) {
+                throw new ExpiredTokenException();
+            }
+            return result;
         } catch (IOException ioe) {
             throw new IllegalTokenException(ioe);
         }
