@@ -65,6 +65,7 @@ public class ApplicationController {
     public Result index(Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         return Results.html()
+                .render("method", context.getMethod())
                 .render("lang", context.getAttribute(LanguageFilter.LANG))
                 .render("remoteIp", ip)
                 .render("captchaToken", captchaTokenService.newCaptchaToken())

@@ -55,7 +55,7 @@ public class UserSignUpDto implements Serializable {
     // This one to skip the exception in log.
     String lang;
     String scope;
-    Integer countryId;
+    String countryId;
 
     /**
      * Returns email.
@@ -296,7 +296,7 @@ public class UserSignUpDto implements Serializable {
      *
      * @return Country id.
      */
-    public Integer getCountryId() {
+    public String getCountryId() {
         return countryId;
     }
 
@@ -305,7 +305,7 @@ public class UserSignUpDto implements Serializable {
      *
      * @param countryId Country id.
      */
-    public void setCountryId(Integer countryId) {
+    public void setCountryId(String countryId) {
         this.countryId = countryId;
     }
 

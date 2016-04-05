@@ -15,6 +15,7 @@ import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignUpDto;
 import freemarker.template.TemplateException;
+import models.sso.Country;
 import models.sso.User;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
@@ -35,6 +36,7 @@ import ninja.validation.Validation;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
+import services.sso.CountryService;
 import services.sso.PasswordService;
 import services.sso.UserService;
 import services.sso.mail.EmailService;
@@ -87,6 +89,11 @@ public class SignUpController {
      * User service.
      */
     final UserService userService;
+
+    /**
+     * Country service.
+     */
+    final CountryService countryService;
 
     /**
      * DTO mapper.
@@ -166,6 +173,7 @@ public class SignUpController {
      * @param captchaTokenService Captcha token service.
      * @param passwordService Password service.
      * @param userService User service.
+     * @param countryService Country service.
      * @param emailService Email service.
      * @param urlBuilderProvider URL builder provider.
      * @param dtoMapper DTO mapper for user.
@@ -181,6 +189,7 @@ public class SignUpController {
                             CaptchaTokenService captchaTokenService,
                             PasswordService passwordService,
                             UserService userService,
+                            CountryService countryService,
                             EmailService emailService,
                             Provider<UrlBuilder> urlBuilderProvider,
                             Mapper dtoMapper,
@@ -194,6 +203,7 @@ public class SignUpController {
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.passwordService = passwordService;
         this.userService = userService;
+        this.countryService = countryService;
         this.urlBuilderProvider = urlBuilderProvider;
         this.dtoMapper = dtoMapper;
         this.emailService = emailService;
@@ -225,48 +235,55 @@ public class SignUpController {
      * Sign up action (POST).
      *
      * @param context Context
-     * @param user User from the form.
+     * @param userDto User from the form.
      * @param validation Validation object.
      * @return Redirect to a welcome page with welcome message, project information, link to redirect.
      */
     @Transactional
-    public Result signUp(Context context, Validation validation, @JSR303Validation UserSignUpDto user) {
-        if (user == null) {
+    public Result signUp(Context context, Validation validation, @JSR303Validation UserSignUpDto userDto) {
+        if (userDto == null) {
             return signUpGet(context);
         }
         // Validate all fields.
         if (validation.hasViolations()) {
-            return createResult(user, context, validation);
+            return createResult(userDto, context, validation);
+        }
+        // Check agreement.
+        if (!"agree".equals(userDto.getAgreement())) {
+            return createResult(userDto, context, validation, "agreement");
         }
         // Compare 2 passwords.
-        if (!user.getPassword().equals(user.getPasswordRepeat())) {
-            return createResult(user, context, validation, "passwordRepeat");
+        if (!userDto.getPassword().equals(userDto.getPasswordRepeat())) {
+            return createResult(userDto, context, validation, "passwordRepeat");
         }
         // Check if user has correct token/captcha.
         try {
-            captchaTokenService.verifyCaptchaToken(user.getToken(), user.getCaptchaCode());
+            captchaTokenService.verifyCaptchaToken(userDto.getToken(), userDto.getCaptchaCode());
         } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException | IllegalTokenException ex) {
-            return createResult(user, context, validation, "captchaCode");
-        }
-        // Check agreement.
-        if (!"agree".equals(user.getAgreement())) {
-            return createResult(user, context, validation, "agreement");
+            return createResult(userDto, context, validation, "captchaCode");
         }
         // Check with existing email.
-        User existingUserWithEmail = userService.getByEmail(user.getEmail());
+        User existingUserWithEmail = userService.getByEmail(userDto.getEmail());
         if (existingUserWithEmail != null) {
-            return createResult(user, context, validation, "emailDuplicate");
+            return createResult(userDto, context, validation, "emailDuplicate");
         }
         // Check with existing username.
-        User existingUserWithUsername = userService.getByUsername(user.getUsername());
+        User existingUserWithUsername = userService.getByUsername(userDto.getUsername());
         if (existingUserWithUsername != null) {
-            return createResult(user, context, validation, "usernameDuplicate");
+            return createResult(userDto, context, validation, "usernameDuplicate");
         }
+        // Fetch country.
+        Country country = countryService.get(userDto.getCountryId());
+        if (country == null) {
+            return createResult(userDto, context, validation, "country");
+        }
+        // User to save.
+        User userToSave = dtoMapper.map(userDto, User.class);
+        userToSave.setCountry(country);
         // Save the user.
-        User createdUser = userService.createNew(dtoMapper.map(user, User.class), user.getPassword());
-
+        userService.createNew(userToSave, userDto.getPassword());
         // Perform post-sign up actions.
-        String redirectURL = invokePostSignUpActions(createdUser, context);
+        String redirectURL = invokePostSignUpActions(userToSave, context);
         // Redirect.
         return Results.redirect(redirectURL);
     }
@@ -286,11 +303,11 @@ public class SignUpController {
             String verificationCode = newVerificationCode();
             // Send confirmation email.
             sendConfirmationEmail(createdUser, verificationCode, context);
-
-            ExpirableToken signUpVerificationPageToke = newSignUpPageVerificationToken(createdUser, verificationCode);
-            String verificationTokenAsString = expirableTokenEncryptor.encrypt(signUpVerificationPageToke);
+            // Create new verification token.
+            ExpirableToken signUpVerificationPageToken = newSignUpPageVerificationToken(createdUser, verificationCode);
             // Redirect to verification page.
-            return urlBuilderProvider.get().getSignUpVerificationPage(verificationTokenAsString);
+            return urlBuilderProvider.get().
+                    getSignUpVerificationPage(expirableTokenEncryptor.encrypt(signUpVerificationPageToken));
         } catch (PasswordBasedEncryptor.EncryptionException | MessagingException ee) {
             throw new RuntimeException("Unexpected problem with encryption.", ee);
         }
@@ -319,11 +336,12 @@ public class SignUpController {
      * @return Sign up response object.
      */
     Result createResult(UserSignUpDto user, Context context, Validation validation) {
-        Result result = Results.html().template(TEMPLATE);
-        result.render("user", user);
-        result.render("config", properties);
-        result.render("errors", validation);
-        result.render("continue", urlBuilderProvider.get().getContinueUrlParameter());
+        Result result = Results.html().template(TEMPLATE)
+                .render("user", user)
+                .render("config", properties)
+                .render("errors", validation)
+                .render("countries", countryService.getAllSortedByNiceName())
+                .render("continue", urlBuilderProvider.get().getContinueUrlParameter());
         if (Strings.isNullOrEmpty(user.getToken()) || validation.hasViolations()) {
             regenerateCaptchaTokenAndUrl(result, context);
         }

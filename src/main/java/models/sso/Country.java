@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -13,7 +15,10 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "countries", indexes = {
-        @Index(name = "iso3_idx", columnList = "iso3", unique = false)
+        @Index(name = "iso3_idx", columnList = "iso3", unique = true)
+})
+@NamedQueries({
+        @NamedQuery(name = "Countries.getAllSortedByNiceName", query = "SELECT c FROM Country c ORDER BY c.niceName"),
 })
 public class Country implements Serializable {
 
@@ -81,6 +86,7 @@ public class Country implements Serializable {
         this.iso3 = iso3.trim().toUpperCase();
         this.name = name.toUpperCase();
         this.niceName = niceName.trim();
+        this.nativeName = this.niceName;
         this.phoneCode = phoneCode;
     }
 

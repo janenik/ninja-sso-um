@@ -54,6 +54,8 @@ public class SsoStartupActions {
         EntityManager em = entityManagerProvider.get();
         em.getTransaction().begin();
 
+        em.persist(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
+        em.persist(new Country("CA", "CAN", "Canada", "Canada", 1));
         Country country = new Country("US", "USA", "United States", "United States", 1);
         em.persist(country);
 

@@ -17,11 +17,6 @@ import javax.persistence.Query;
 public class UserService {
 
     /**
-     * Logger.
-     */
-    final Logger logger;
-
-    /**
      * Entity manager provider.
      */
     final Provider<EntityManager> entityManagerProvider;
@@ -30,6 +25,11 @@ public class UserService {
      * Password service.
      */
     final PasswordService passwordService;
+
+    /**
+     * Logger.
+     */
+    final Logger logger;
 
     /**
      * Constructs user service.
@@ -131,7 +131,7 @@ public class UserService {
     }
 
     /**
-     * Saves user into the database.
+     * Saves user into the database and returns user parameter (attached entity).
      *
      * @param user User to save.
      * @return Saved user.
