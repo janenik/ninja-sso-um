@@ -1,6 +1,8 @@
 <#import "/views/layout/defaultLayout.ftl.html" as layout />
 <@layout.defaultLayout i18n("signUpTitle")>
 
+<link href="${contextPath}/assets/css/flags.css" rel="stylesheet"/>
+
 <style type="text/css">
     #signUpForm {
     margin-bottom: 30px;
@@ -30,6 +32,25 @@
     margin-top: 28px;
     width: 130px;
     }
+    }
+    .flag {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background:url(${contextPath}/assets/i/flags.png) no-repeat
+    }
+    .countryEntry a {
+    height: 32px;
+    width: 220px;
+    position: relative;
+    }
+    .countryEntry .flag {
+    position: absolute;
+    }
+    .countryEntry .countryNameCode {
+    position: absolute;
+    top: 10px;
+    left: 67px;
     }
 </style>
 <div class="row">
@@ -122,24 +143,36 @@
                         <#list countries>
                             <ul class="dropdown-menu">
                                 <#items as country>
-                                    <li class="countryCode_${country.getIso()}">
-                                        <a href="#">${country.getNiceName()}</a>
+                                    <li class="countryEntry">
+                                        <a href="#">
+                                            <span role="img" aria-label="${country.getNativeOrNiceName()}"
+                                                  class="flag flag-${country.getIso()?lower_case}"></span>
+                                            <span class="countryNameCode">
+                                                ${country.getNiceName()}
+                                                (+${country.getPhoneCode()})
+                                            </span>
+                                        </a>
                                     </li>
                                 </#items>
                             </ul>
                         </#list>
                         <input type="hidden" id="countryId" name="countryId" value="US"/>
                     </div>
-                    <input type="tel" class="form-control" id="phone" name="phone"
+                    <input type="tel" id="phone" name="phone"
                            placeholder="${i18n('signUpPhonePlaceHolder')}"
-                           value="${(user.phone)!}"/>
-                    <#if errors.hasBeanViolation('phone')>
+                           value="${(user.phone)!}"
+                           class="form-control
+                            <#if errors.hasBeanViolation('phone')>ssoFieldError</#if>"
+                    />
+                </div>
+                <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
+                <#if errors.hasBeanViolation('phone')>
+                    <div class="input-group">
                         <p class="help-block ssoFieldErrorDescription">
                             ${i18n("signUpPhoneRequired")}
                         </p>
-                    </#if>
-                    <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
-                </div>
+                    </div>
+                </#if>
             </div>
 
             <div class="row">
@@ -245,10 +278,14 @@
     var updateImage = function(e) {
         captchaImage.src = captchaImage.src + '&_=' + Math.random();
         e.preventDefault();
+        e.stopPropagation();
     };
     captchaImage.addEventListener('click', updateImage, false);
     captchaImage.addEventListener('touchend', updateImage, false);
  })();
+
+
+
 </script>
 
 </@layout.defaultLayout>

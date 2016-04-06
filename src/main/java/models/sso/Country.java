@@ -15,10 +15,12 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "countries", indexes = {
-        @Index(name = "iso3_idx", columnList = "iso3", unique = true)
+        @Index(name = "iso3_idx", columnList = "iso3", unique = true),
+        @Index(name = "niceName_idx", columnList = "niceName", unique = false),
 })
 @NamedQueries({
-        @NamedQuery(name = "Countries.getAllSortedByNiceName", query = "SELECT c FROM Country c ORDER BY c.niceName"),
+        @NamedQuery(name = "Countries.getAllSortedByNiceName",
+                query = "SELECT c FROM Country c ORDER BY c.niceName"),
 })
 public class Country implements Serializable {
 
@@ -75,10 +77,10 @@ public class Country implements Serializable {
     /**
      * Constructs country by given parameters.
      *
-     * @param iso       ISO code.
-     * @param iso3      ISO-3 code.
-     * @param name      Name, uppercase.
-     * @param niceName  Nice name.
+     * @param iso ISO code.
+     * @param iso3 ISO-3 code.
+     * @param name Name, uppercase.
+     * @param niceName Nice name.
      * @param phoneCode Phone code.
      */
     public Country(String iso, String iso3, String name, String niceName, int phoneCode) {
@@ -160,6 +162,15 @@ public class Country implements Serializable {
      */
     public void setNiceName(String niceName) {
         this.niceName = niceName.trim();
+    }
+
+    /**
+     * Convenient method that returns native name if it is present or nice name if not.
+     *
+     * @return Native or nice name.
+     */
+    public String getNativeOrNiceName() {
+        return nativeName != null ? nativeName : niceName;
     }
 
     /**
