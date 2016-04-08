@@ -1,58 +1,6 @@
 <#import "/views/layout/defaultLayout.ftl.html" as layout />
 <@layout.defaultLayout i18n("signUpTitle")>
 
-<link href="${contextPath}/assets/css/flags.css" rel="stylesheet"/>
-
-<style type="text/css">
-    #signUpForm {
-    margin-bottom: 30px;
-    }
-    .ssoSignupCaptchaContainer {
-    text-align: left;
-    }
-    .ssoFieldError {
-    background-color: #f5f59c;
-    }
-    .ssoFieldErrorDescription {
-    color: #cc4a4a;
-    }
-    .ssoCaptchaImage {
-    background-color: #fff;
-    cursor: pointer;
-    margin-top: 15px;
-    }
-    @media (max-width: 768px) {
-    .ssoCaptchaImage {
-    margin-top: 24px;
-    width: 170px;
-    }
-    }
-    @media (max-width: 600px) {
-    .ssoCaptchaImage {
-    margin-top: 28px;
-    width: 130px;
-    }
-    }
-    .flag {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    background:url(${contextPath}/assets/i/flags.png) no-repeat
-    }
-    .countryEntry a {
-    height: 32px;
-    width: 220px;
-    position: relative;
-    }
-    .countryEntry .flag {
-    position: absolute;
-    }
-    .countryEntry .countryNameCode {
-    position: absolute;
-    top: 10px;
-    left: 67px;
-    }
-</style>
 <div class="row">
     <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
 
@@ -71,7 +19,9 @@
                                value="${(user.firstName)!}"
                                ${_enableHtml5Required}
                                class="form-control <#if errors.hasBeanViolation('firstName')>ssoFieldError</#if>"/>
-                        <!--<p class="help-block">Example block-level help text here.</p>-->
+                        <#--
+                        <
+                        p class="help-block">Example block-level help text here.</p>-->
                     </div>
                 </div>
                 <div class="col-xs-6 col-md-6">
@@ -82,7 +32,9 @@
                                value="${(user.lastName)!}"
                                ${_enableHtml5Required}
                                class="form-control <#if errors.hasBeanViolation('lastName')>ssoFieldError</#if>"/>
-                        <!--<p class="help-block">Example block-level help text here.</p>-->
+                        <#--
+                        <
+                        p class="help-block">Example block-level help text here.</p>-->
                     </div>
                 </div>
             </div>
@@ -141,7 +93,7 @@
                             <span class="caret"></span>
                         </button>
                         <#list countries>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" id="countriesSelector">
                                 <#items as country>
                                     <li class="countryEntry">
                                         <a href="#">
@@ -256,9 +208,9 @@
     </div>
     <div class="clearfix visible-xs-block"></div>
     <div class="col-sm-4 col-md-4 col-lg-4">
-        <!--
+        <!--<#--
         <h3 class="ssoHeader">
-            ${i18n("signUpWhy")}
+        ${i18n("signUpWhy")}
         </h3>
         <p>${i18n("signUpWhyText")}</p>
         <ul>
@@ -267,25 +219,21 @@
             <li>${i18n("signUpWhyTextItem3")}</li>
             <li>${i18n("signUpWhyTextItem4")}</li>
         </ul>
-        -->
+        -->-->
         <#include "signInSignUpLinks.ftl.html" />
     </div>
 </div>
 
+
+<link href="${contextPath}/assets/css/flags.css" rel="stylesheet"/>
+
+<!--<#-- CSS below is the template, that contains ${contextPath} -->-->
+<style type="text/css">
+    <#include "/assets/css/sso/signup.css" />
+</style>
+
 <script>
- (function() {
-    var captchaImage = document.getElementById('captchaImage');
-    var updateImage = function(e) {
-        captchaImage.src = captchaImage.src + '&_=' + Math.random();
-        e.preventDefault();
-        e.stopPropagation();
-    };
-    captchaImage.addEventListener('click', updateImage, false);
-    captchaImage.addEventListener('touchend', updateImage, false);
- })();
-
-
-
+    <#include "/assets/js/sso/signup.js" />
 </script>
 
 </@layout.defaultLayout>

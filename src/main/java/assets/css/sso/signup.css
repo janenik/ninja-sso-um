@@ -1,0 +1,48 @@
+#signUpForm {
+    margin-bottom: 30px;
+}
+.ssoSignupCaptchaContainer {
+    text-align: left;
+}
+.ssoFieldError {
+    background-color: #f5f59c;
+}
+.ssoFieldErrorDescription {
+    color: #cc4a4a;
+}
+.ssoCaptchaImage {
+    background-color: #fff;
+    cursor: pointer;
+    margin-top: 15px;
+}
+@media (max-width: 768px) {
+    .ssoCaptchaImage {
+        margin-top: 24px;
+        width: 170px;
+    }
+}
+@media (max-width: 600px) {
+    .ssoCaptchaImage {
+        margin-top: 28px;
+        width: 130px;
+    }
+}
+.flag {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background:url(${contextPath}/assets/i/flags.png) no-repeat
+}
+.countryEntry a {
+    height: 32px;
+    width: 220px;
+    position: relative;
+}
+.countryEntry .flag {
+    position: absolute;
+}
+.countryEntry .countryNameCode {
+    position: absolute;
+    top: 10px;
+    left: 67px;
+}
