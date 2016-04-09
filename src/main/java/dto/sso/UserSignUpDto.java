@@ -1,7 +1,9 @@
 package dto.sso;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -12,50 +14,135 @@ import java.io.Serializable;
  */
 public class UserSignUpDto implements Serializable {
 
+    /**
+     * Email.
+     */
     @Pattern(regexp = Constants.EMAIL_PATTERN)
     @NotBlank
     @NotNull
     @Size(min = Constants.EMAIL_MIN_LENGTH, max = Constants.EMAIL_MAX_LENGTH)
     String email;
+
+    /**
+     * Username.
+     */
     @Pattern(regexp = Constants.USERNAME_PATTERN)
     @NotBlank
     @NotNull
     @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
     String username;
+
+    /**
+     * First name.
+     */
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.FIRST_NAME_MAX_LENGTH)
     String firstName;
+
+    /**
+     * Middle name, optional.
+     */
     @Size(max = Constants.MIDDLE_NAME_MAX_LENGTH)
     String middleName;
+
+    /**
+     * Last name.
+     */
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.LAST_NAME_MAX_LENGTH)
     String lastName;
+
+    /**
+     * Phone.
+     */
     @Pattern(regexp = Constants.PHONE_PATTERN)
     @NotBlank
     @NotNull
-    @Size(min = 1, max = Constants.PHONE_MAX_LENGTH)
+    @Size(min = 5, max = Constants.PHONE_MAX_LENGTH)
     String phone;
+
+    /**
+     * Country id (ISO code).
+     */
+    @NotBlank
+    @NotNull
+    @Size(min = 2, max = Constants.COUNTRY_ISO_MAX_LENGTH)
+    String countryId;
+
+    /**
+     * Password in clear form.
+     */
     @NotBlank
     @NotNull
     @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
     String password;
+
+    /**
+     * Repeat password in clear form.
+     */
     @NotBlank
     @NotNull
     @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
     String passwordRepeat;
+
+    /**
+     * Captcha code, entered by user.
+     */
     @NotBlank
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
     String captchaCode;
+
+    /**
+     * Captcha token.
+     */
+    @NotBlank
     @NotNull
     @Size(min = 3, max = Constants.TOKEN_MAX_LENGTH)
     String token;
-    String agreement; // To check after.
-    // This one to skip the exception in log.
-    String lang;
-    String scope;
-    String countryId;
+
+    /**
+     * User gender.
+     */
+    @NotBlank
+    @NotNull
+    @Size(min = 4, max = Constants.ENUM_MAX_LENGTH)
+    String gender;
+
+    /**
+     * Birth month.
+     */
+    @NotNull
+    @Range(min = 1, max = 12)
+    Integer birthMonth;
+
+    /**
+     * Birth day.
+     */
+    @NotNull
+    @Range(min = 1, max = 31)
+    Integer birthDay;
+
+    /**
+     * Birth year.
+     */
+    @NotNull
+    @Min(1800)
+    Integer birthYear;
+
+    /**
+     * User agreement checkbox value.
+     */
+    @NotBlank
+    @NotNull
+    @Size(min = 3, max = Constants.TOKEN_MAX_LENGTH)
+    String agreement;
+
+    /**
+     * Language field.
+     */
+    String lang;;
 
     /**
      * Returns email.
@@ -274,24 +361,6 @@ public class UserSignUpDto implements Serializable {
     }
 
     /**
-     * Returns scope.
-     *
-     * @return Scope.
-     */
-    public String getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets scope.
-     *
-     * @param scope Scope.
-     */
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    /**
      * Returns country id.
      *
      * @return Country id.
@@ -307,6 +376,78 @@ public class UserSignUpDto implements Serializable {
      */
     public void setCountryId(String countryId) {
         this.countryId = countryId;
+    }
+
+    /**
+     * Returns gender.
+     *
+     * @return Gender.
+     */
+    public String getGender() {
+        return gender;
+    }
+
+    /**
+     * Sets gender.
+     *
+     * @param gender Gender.
+     */
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    /**
+     * Returns birth month.
+     *
+     * @return Birth month.
+     */
+    public Integer getBirthMonth() {
+        return birthMonth;
+    }
+
+    /**
+     * Sets birth month.
+     *
+     * @param birthMonth Birth month.
+     */
+    public void setBirthMonth(Integer birthMonth) {
+        this.birthMonth = birthMonth;
+    }
+
+    /**
+     * Returns birth day.
+     *
+     * @return Birth day.
+     */
+    public Integer getBirthDay() {
+        return birthDay;
+    }
+
+    /**
+     * Sets birth day.
+     *
+     * @param birthDay Birth day.
+     */
+    public void setBirthDay(Integer birthDay) {
+        this.birthDay = birthDay;
+    }
+
+    /**
+     * Returns birth year.
+     *
+     * @return Birth year.
+     */
+    public Integer getBirthYear() {
+        return birthYear;
+    }
+
+    /**
+     * Sets birthYear.
+     *
+     * @param birthYear BirthYear.
+     */
+    public void setBirthYear(Integer birthYear) {
+        this.birthYear = birthYear;
     }
 
     private static final long serialVersionUID = 1L;

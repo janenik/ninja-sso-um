@@ -95,6 +95,16 @@ public interface Constants {
     int CAPTCHA_MAX_LENGTH = 20;
 
     /**
+     * Maximum enumeration length (string representation).
+     */
+    int ENUM_MAX_LENGTH = 64;
+
+    /**
+     * Country max ISO code length.
+     */
+    int COUNTRY_ISO_MAX_LENGTH = 2;
+
+    /**
      * Token max length.
      */
     int TOKEN_MAX_LENGTH = 32 * 1024;

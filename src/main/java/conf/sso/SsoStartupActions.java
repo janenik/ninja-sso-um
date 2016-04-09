@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import models.sso.Country;
 import models.sso.User;
+import models.sso.UserSex;
 import ninja.lifecycle.Start;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
@@ -64,6 +65,7 @@ public class SsoStartupActions {
         user.setLastName("Brown");
         user.setDateOfBirth(LocalDate.of(1984, 11, 24));
         user.setCountry(country);
+        user.setSex(UserSex.OTHER);
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash("password", user.getPasswordSalt()));
 

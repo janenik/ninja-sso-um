@@ -89,6 +89,13 @@ public class User implements Serializable {
     String lastName;
 
     /**
+     * Sex.
+     */
+    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    UserSex sex;
+
+    /**
      * Country.
      */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -369,6 +376,24 @@ public class User implements Serializable {
      */
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    /**
+     * Returns sex.
+     *
+     * @return Sex.
+     */
+    public UserSex getSex() {
+        return sex;
+    }
+
+    /**
+     * Sets sex.
+     *
+     * @param sex Sex.
+     */
+    public void setSex(UserSex sex) {
+        this.sex = sex;
     }
 
     /**
