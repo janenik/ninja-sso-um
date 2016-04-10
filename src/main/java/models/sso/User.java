@@ -93,7 +93,7 @@ public class User implements Serializable {
      */
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
-    UserSex sex;
+    UserGender gender;
 
     /**
      * Country.
@@ -379,21 +379,21 @@ public class User implements Serializable {
     }
 
     /**
-     * Returns sex.
+     * Returns gender.
      *
      * @return Sex.
      */
-    public UserSex getSex() {
-        return sex;
+    public UserGender getGender() {
+        return gender;
     }
 
     /**
-     * Sets sex.
+     * Sets gender.
      *
-     * @param sex Sex.
+     * @param gender Sex.
      */
-    public void setSex(UserSex sex) {
-        this.sex = sex;
+    public void setGender(UserGender gender) {
+        this.gender = gender;
     }
 
     /**

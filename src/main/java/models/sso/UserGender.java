@@ -1,9 +1,9 @@
 package models.sso;
 
 /**
- * User sex enumeration.
+ * User gender enumeration.
  */
-public enum UserSex {
+public enum UserGender {
 
     /**
      * Male.

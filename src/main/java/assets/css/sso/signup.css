@@ -1,6 +1,12 @@
 #signUpForm {
     margin-bottom: 30px;
 }
+#birthMonthButton, #countryIdButton {
+    width:100%;
+}
+#genderButton {
+    width: 80%;
+}
 .ssoSignupCaptchaContainer {
     text-align: left;
 }

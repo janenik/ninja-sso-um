@@ -81,28 +81,34 @@
                         <div class="row">
                             <div class="col-xs-3 col-md-3">
                                 <div class="dropdown">
-                                    <button class="btn btn-default dropdown-toggle" type="button" id="month"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                        ${i18n("signUpBirthMonth")}
+                                    <button class="btn btn-default dropdown-toggle" type="button"
+                                            id="birthMonthButton"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                        <span id="birthMonthTitle">${i18n("signUpBirthMonth")}</span>
                                         <span class="caret"></span>
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="month">
-                                        <li><a href="#" rel="1">${i18n("signUpBirthMonthJanuary")}</a></li>
-                                        <li><a href="#" rel="2">${i18n("signUpBirthMonthFebruary")}</a></li>
-                                        <li><a href="#" rel="3">${i18n("signUpBirthMonthMarch")}</a></li>
-                                        <li><a href="#" rel="4">${i18n("signUpBirthMonthApril")}</a></li>
-                                        <li><a href="#" rel="5">${i18n("signUpBirthMonthMay")}</a></li>
-                                        <li><a href="#" rel="6">${i18n("signUpBirthMonthJune")}</a></li>
-                                        <li><a href="#" rel="7">${i18n("signUpBirthMonthJuly")}</a></li>
-                                        <li><a href="#" rel="8">${i18n("signUpBirthMonthAugust")}</a></li>
-                                        <li><a href="#" rel="9">${i18n("signUpBirthMonthSeptember")}</a></li>
-                                        <li><a href="#" rel="10">${i18n("signUpBirthMonthOctober")}</a></li>
-                                        <li><a href="#" rel="11">${i18n("signUpBirthMonthNovember")}</a></li>
-                                        <li><a href="#" rel="12">${i18n("signUpBirthMonthDecember")}</a></li>
+                                    <ul class="dropdown-menu" aria-labelledby="birthMonthButton"
+                                        id="birthMonthDropdown">
+                                        <li rel="1"><a href="#">${i18n("signUpBirthMonthJanuary")}</a></li>
+                                        <li rel="2"><a href="#">${i18n("signUpBirthMonthFebruary")}</a></li>
+                                        <li rel="3"><a href="#">${i18n("signUpBirthMonthMarch")}</a></li>
+                                        <li rel="4"><a href="#">${i18n("signUpBirthMonthApril")}</a></li>
+                                        <li rel="5"><a href="#">${i18n("signUpBirthMonthMay")}</a></li>
+                                        <li rel="6"><a href="#">${i18n("signUpBirthMonthJune")}</a></li>
+                                        <li rel="7"><a href="#">${i18n("signUpBirthMonthJuly")}</a></li>
+                                        <li rel="8"><a href="#">${i18n("signUpBirthMonthAugust")}</a></li>
+                                        <li rel="9"><a href="#">${i18n("signUpBirthMonthSeptember")}</a></li>
+                                        <li rel="10"><a href="#">${i18n("signUpBirthMonthOctober")}</a></li>
+                                        <li rel="11"><a href="#">${i18n("signUpBirthMonthNovember")}</a></li>
+                                        <li rel="12"><a href="#">${i18n("signUpBirthMonthDecember")}</a></li>
                                     </ul>
+                                    <input type="hidden" name="birthMonth" id="birthMonth"
+                                           value="${(user.birthMonth)!}"/>
                                 </div>
                             </div>
-                            <div class="col-xs-3 col-md-3">
+                            <div class="col-xs-2 col-md-2">
                                 <input type="text" id="birthDay" name="birthDay"
                                        placeholder="${i18n('signUpBirthDayPlaceHolder')}"
                                        maxlength="2"
@@ -112,7 +118,7 @@
                                        <#if errors.hasBeanViolation('birthDay')>ssoFieldError</#if>"
                                 />
                             </div>
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-3 col-md-3">
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
@@ -136,18 +142,19 @@
                 </div>
                 <div class="col-xs-4 col-md-4">
                     <div class="form-group">
-                        <label for="gender">${i18n("signUpGender")}</label>
+                        <label for="genderButton">${i18n("signUpGender")}</label>
                         <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="gender"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                ${i18n("signUpGender")}
+                            <button class="btn btn-default dropdown-toggle" type="button" id="genderButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="genderTitle">${i18n("signUpGender")}</span>
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="gender">
-                                <li><a href="#">${i18n("signUpGenderFemale")}</a></li>
-                                <li><a href="#">${i18n("signUpGenderMale")}</a></li>
-                                <li><a href="#">${i18n("signUpGenderOther")}</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="gender" id="genderDropdown">
+                                <li rel="FEMALE"><a href="#">${i18n("signUpGenderFemale")}</a></li>
+                                <li rel="MALE"><a href="#">${i18n("signUpGenderMale")}</a></li>
+                                <li rel="OTHER"><a href="#">${i18n("signUpGenderOther")}</a></li>
                             </ul>
+                            <input type="hidden" name="gender" id="gender" value="${(user.gender)!}"/>
                         </div>
                         <#if errors.hasBeanViolation('gender')>
                             <p class="clearfix help-block ssoFieldErrorDescription">
@@ -180,49 +187,65 @@
                 </#if>
             </div>
 
-            <div class="form-group">
-                <label for="phone">${i18n("signUpPhone")}</label>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">${i18n("signUpPhoneCountryCode")}
-                            <span class="caret"></span>
-                        </button>
-                        <#list countries>
-                            <ul class="dropdown-menu" id="countriesSelector">
-                                <#items as country>
-                                    <li class="countryEntry">
-                                        <a href="#" rel="${country.getIso()}|+${country.getPhoneCode()}">
-                                            <span role="img" aria-label="${country.getNativeOrNiceName()}"
+
+            <div class="row">
+                <div class="col-xs-3 col-md-3">
+                    <div class="form-group">
+                        <label for="countryIdButton">${i18n("signUpCountry")}</label>
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="countryIdButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="countryIdTitle">${i18n("signUpCountry")}</span>
+                                <span class="caret"></span>
+                            </button>
+                            <#list countries>
+                                <ul class="dropdown-menu" aria-labelledby="countryIdButton" id="countryIdDropdown">
+                                    <#items as country>
+                                        <li class="countryEntry" rel="${country.getIso()}"
+                                            rel2="${country.getPhoneCode()}"
+                                            rel3="${country.getNativeOrNiceName()}">
+                                            <a href="#">
+                                            <span role="img"
+                                                  aria-label="${country.getNativeOrNiceName()}"
                                                   class="flag flag-${country.getIso()?lower_case}"></span>
                                             <span class="countryNameCode">
                                                 ${country.getNiceName()}
                                                 (+${country.getPhoneCode()})
                                             </span>
-                                        </a>
-                                    </li>
-                                </#items>
-                            </ul>
-                        </#list>
-                        <input type="hidden" id="countryId" name="countryId" value="US"/>
+                                            </a>
+                                        </li>
+                                    </#items>
+                                </ul>
+                            </#list>
+                            <input type="hidden" id="countryId" name="countryId" value="${(user.countryId)!}"/>
+                        </div>
+                        <#if errors.hasBeanViolation('countryId')>
+                            <p class="help-block ssoFieldErrorDescription">
+                                ${i18n("signUpCountryRequired")}
+                            </p>
+                        </#if>
                     </div>
-                    <input type="tel" id="phone" name="phone"
-                           placeholder="${i18n('signUpPhonePlaceHolder')}"
-                           value="${(user.phone)!}"
-                           class="form-control
-                            <#if errors.hasBeanViolation('phone')>ssoFieldError</#if>"
-                    />
                 </div>
-                <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
-                <#if errors.hasBeanViolation('phone')>
-                    <div class="input-group">
-                        <p class="help-block ssoFieldErrorDescription">
-                            ${i18n("signUpPhoneRequired")}
-                        </p>
+                <div class="col-xs-9 col-md-9">
+                    <div class="form-group">
+                        <label for="phone">${i18n("signUpPhone")}</label>
+                        <input type="tel" id="phone" name="phone"
+                               placeholder="${i18n('signUpPhonePlaceHolder')}"
+                               value="${(user.phone)!}"
+                               ${_enableHtml5Required}
+                               class="form-control
+                            <#if errors.hasBeanViolation('phone')>ssoFieldError</#if>"
+                        />
+                        <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
+                        <#if errors.hasBeanViolation('phone')>
+                            <div class="input-group">
+                                <p class="help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpPhoneRequired")}
+                                </p>
+                            </div>
+                        </#if>
                     </div>
-                </#if>
+                </div>
             </div>
 
             <div class="row">
@@ -288,7 +311,9 @@
 
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" id="agreement" name="agreement" value="agree" ${_enableHtml5Required}/>
+                    <input type="checkbox" id="agreement" name="agreement" value="agree" ${_enableHtml5Required}
+                        <#if 'agree' == (user.agreement)!> checked </#if>
+                        />
                     ${i18n("signUpTerm1")} <b>${i18n("signUpButtonTitle")}</b> ${i18n("signUpTerm2")}
                     <a href="${config.get('application.baseUrl')}/terms_of_service${_underscopeLang}.html"
                        target="_blank">${i18n("signUpTermsOfUse")}</a>
@@ -330,10 +355,6 @@
 
 <script>
     <#include "/assets/js/sso/signup.js" />
-
-
-
-
 </script>
 
 </@layout.defaultLayout>

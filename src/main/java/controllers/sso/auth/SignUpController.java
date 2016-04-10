@@ -308,8 +308,10 @@ public class SignUpController {
             // Redirect to verification page.
             return urlBuilderProvider.get().
                     getSignUpVerificationPage(expirableTokenEncryptor.encrypt(signUpVerificationPageToken));
-        } catch (PasswordBasedEncryptor.EncryptionException | MessagingException ee) {
+        } catch (PasswordBasedEncryptor.EncryptionException ee) {
             throw new RuntimeException("Unexpected problem with encryption.", ee);
+        } catch (MessagingException ee) {
+            throw new RuntimeException("Problem while sending an email.", ee);
         }
     }
 

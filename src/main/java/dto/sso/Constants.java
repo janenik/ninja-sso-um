@@ -82,7 +82,7 @@ public interface Constants {
     /**
      * Password min length.
      */
-    int PASSWORD_MIN_LENGTH = 5;
+    int PASSWORD_MIN_LENGTH = 8;
 
     /**
      * Password min length.
