@@ -75,11 +75,11 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-8 col-md-8">
+                <div class="col-xs-12 col-md-8">
                     <div class="form-group">
                         <label for="birthday">${i18n("signUpBirthday")}</label>
                         <div class="row">
-                            <div class="col-xs-3 col-md-3">
+                            <div class="col-xs-5 col-md-3">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" type="button"
                                             id="birthMonthButton"
@@ -108,7 +108,7 @@
                                            value="${(user.birthMonth)!}"/>
                                 </div>
                             </div>
-                            <div class="col-xs-2 col-md-2">
+                            <div class="col-xs-3 col-md-3">
                                 <input type="text" id="birthDay" name="birthDay"
                                        placeholder="${i18n('signUpBirthDayPlaceHolder')}"
                                        maxlength="2"
@@ -118,7 +118,7 @@
                                        <#if errors.hasBeanViolation('birthDay')>ssoFieldError</#if>"
                                 />
                             </div>
-                            <div class="col-xs-3 col-md-3">
+                            <div class="col-xs-4 col-md-4">
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
@@ -128,19 +128,19 @@
                                        <#if errors.hasBeanViolation('birthYear')>ssoFieldError</#if>"
                                 />
                             </div>
-
-                            <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
-                                    || errors.hasBeanViolation('birthYear')>
-                                <div class="clearfix">
-                                    <p style="padding-left:15px;" class="help-block ssoFieldErrorDescription">
-                                        ${i18n("signUpBirthDayDescription")}
-                                    </p>
-                                </div>
-                            </#if>
                         </div>
+                        <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
+                                || errors.hasBeanViolation('birthYear')>
+                            <div class="input-group row">
+                                <p style="padding-left:15px;" class="help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpBirthDayDescription")}
+                                </p>
+                            </div>
+                        </#if>
                     </div>
                 </div>
-                <div class="col-xs-4 col-md-4">
+                <div class="clearfix visible-xs-block"></div>
+                <div class="col-xs-12 col-md-4">
                     <div class="form-group">
                         <label for="genderButton">${i18n("signUpGender")}</label>
                         <div class="dropdown">
@@ -189,7 +189,7 @@
 
 
             <div class="row">
-                <div class="col-xs-3 col-md-3">
+                <div class="col-xs-5 col-md-3">
                     <div class="form-group">
                         <label for="countryIdButton">${i18n("signUpCountry")}</label>
                         <div class="dropdown">
@@ -226,7 +226,7 @@
                         </#if>
                     </div>
                 </div>
-                <div class="col-xs-9 col-md-9">
+                <div class="col-xs-7 col-md-9">
                     <div class="form-group">
                         <label for="phone">${i18n("signUpPhone")}</label>
                         <input type="tel" id="phone" name="phone"
