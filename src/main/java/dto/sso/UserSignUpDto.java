@@ -142,7 +142,8 @@ public class UserSignUpDto implements Serializable {
     /**
      * Language field.
      */
-    String lang;;
+    String lang;
+    ;
 
     /**
      * Returns email.
@@ -442,7 +443,7 @@ public class UserSignUpDto implements Serializable {
     }
 
     /**
-     * Sets birthYear.
+     * Sets birth year.
      *
      * @param birthYear BirthYear.
      */

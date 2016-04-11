@@ -1,0 +1,18 @@
+<#escape x as x?html>
+<h3>Добро пожаловать в ${config.get('application.titleCommon')}.</h3>
+
+<p>
+  Пожалуйста, подтвердите Ваш E-mail адрес с помощью этой ссылки:<br/><br/>
+  <a href="${confirmUrl}">${confirmUrl}</a><br/><br/>
+  (Если ссылка не кликается, попробуйте скопировать и открыть ee отдельно в новом окне браузера.)
+</p>
+
+<p>
+  Как только Ваш E-mail будет подтвержден, Вы сможете войти в ${config.get('application.titleCommon')}.
+</p>  
+
+<p>
+  Спасибо.<br/>
+  <a href="${config.get('application.baseUrl')}">${config.get('application.titleCommon')}</a>
+</p>
+</#escape>

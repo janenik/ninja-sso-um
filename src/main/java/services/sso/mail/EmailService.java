@@ -65,50 +65,56 @@ public class EmailService {
     }
 
     /**
-     * Sends email to recipient with subject, template name, data and attachments. In dev and test modes logs the mail
-     * message into the log.
+     * Sends email to recipient with subject, template name, data.
      *
      * @param to To.
      * @param subject Subject.
      * @param templateName Template name in file system.
      * @param data Data for template.
-     * @param attachments Attachments.
      * @throws MessagingException In case of error while sending a message.
      * @throws TemplateException In case of error with template syntax or data.
      */
-    public void send(String to, String subject, String templateName, Map<String, Object> data,
-                     Object... attachments) throws MessagingException, TemplateException {
+    public void send(String to, String subject, String templateName, Map<String, Object> data)
+            throws MessagingException, TemplateException {
         String from = properties.getWithDefault("smtp.from.default", "user@localhost");
         try {
-            send(from, to, subject, templateName, data, attachments);
+            send(from, to, subject, templateName, data);
         } catch (IOException e) {
-            throw new MessagingException("Error.", e);
+            throw new MessagingException("Error while sending email.", e);
         }
     }
 
     /**
-     * Sends email from recipient to recipient with subject, template name, data and attachments. In dev and test modes
-     * logs the mail message into the log.
+     * Sends email from recipient to recipient with subject, template name, data and attachments.
      *
      * @param from From.
      * @param to To.
      * @param subject Subject.
      * @param templateName Template name in file system.
      * @param data Data for template.
-     * @param attachments Attachments.
      * @throws MessagingException In case of error.
      * @throws IOException In case of error.
      * @throws TemplateException In case of error.
      */
-    public void send(String from, String to, String subject, String templateName, Map<String, Object> data,
-                     Object... attachments) throws MessagingException, IOException, TemplateException {
+    public void send(String from, String to, String subject, String templateName, Map<String, Object> data)
+            throws MessagingException, IOException, TemplateException {
         Template template = templateConfiguration.getTemplate(templateName);
         data.put("config", properties);
         StringWriter sw = new StringWriter();
         template.process(data, sw);
         String body = sw.toString();
 
-        throw new UnsupportedOperationException("Finish");
-        //postoffice.sendHtml(from, to, subject, body, attachments);
+        Mail mail = mailProvider.get();
+        mail.setFrom(from);
+        mail.addTo(to);
+        mail.setSubject(subject);
+        mail.setBodyHtml(body);
+        mail.setCharset("UTF-8");
+
+        try {
+            postoffice.send(mail);
+        } catch (Exception e) {
+            throw new MessagingException("Error while sending email.", e);
+        }
     }
 }

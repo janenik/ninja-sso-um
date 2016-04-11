@@ -1,0 +1,18 @@
+<#escape x as x?html>
+<h3>Welcome to ${config.get('application.titleCommon')}.</h3>
+
+<p>
+  Please confirm your email address by following this link in your browser:<br/><br/>
+  <a href="${confirmUrl}">${confirmUrl}</a><br/><br/>
+  (If clicking the above link doesn't work, try cutting and pasting it into your browser's location bar.)
+</p>
+
+<p>
+  Once your e-mail address has been confirmed, you will be allowed to login into ${config.get('application.titleCommon')}. 
+</p>  
+
+<p>
+  Thank you.<br/>
+  <a href="${config.get('application.baseUrl')}">${config.get('application.titleCommon')}</a>
+</p>
+</#escape>

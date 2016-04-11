@@ -17,6 +17,8 @@ import dto.sso.UserSignUpDto;
 import freemarker.template.TemplateException;
 import models.sso.Country;
 import models.sso.User;
+import models.sso.UserGender;
+import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -45,6 +47,7 @@ import services.sso.token.PasswordBasedEncryptor;
 
 import javax.mail.MessagingException;
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Random;
 
@@ -248,13 +251,17 @@ public class SignUpController {
         if (validation.hasViolations()) {
             return createResult(userDto, context, validation);
         }
-        // Check agreement.
-        if (!"agree".equals(userDto.getAgreement())) {
-            return createResult(userDto, context, validation, "agreement");
+        // Gender.
+        if (!UserGender.hasConstant(userDto.getGender())) {
+            return createResult(userDto, context, validation, "gender");
         }
         // Compare 2 passwords.
         if (!userDto.getPassword().equals(userDto.getPasswordRepeat())) {
             return createResult(userDto, context, validation, "passwordRepeat");
+        }
+        // Check agreement.
+        if (!"agree".equals(userDto.getAgreement())) {
+            return createResult(userDto, context, validation, "agreement");
         }
         // Check if user has correct token/captcha.
         try {
@@ -280,6 +287,10 @@ public class SignUpController {
         // User to save.
         User userToSave = dtoMapper.map(userDto, User.class);
         userToSave.setCountry(country);
+        userToSave.setGender(UserGender.valueOf(userDto.getGender()));
+        userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(),
+                userDto.getBirthMonth(), userDto.getBirthDay()));
+        userToSave.setRole(UserRole.USER);
         // Save the user.
         userService.createNew(userToSave, userDto.getPassword());
         // Perform post-sign up actions.
@@ -308,10 +319,10 @@ public class SignUpController {
             // Redirect to verification page.
             return urlBuilderProvider.get().
                     getSignUpVerificationPage(expirableTokenEncryptor.encrypt(signUpVerificationPageToken));
-        } catch (PasswordBasedEncryptor.EncryptionException ee) {
-            throw new RuntimeException("Unexpected problem with encryption.", ee);
-        } catch (MessagingException ee) {
-            throw new RuntimeException("Problem while sending an email.", ee);
+        } catch (PasswordBasedEncryptor.EncryptionException e) {
+            throw new RuntimeException("Unexpected problem with encryption.", e);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Problem while sending an email.", e);
         }
     }
 

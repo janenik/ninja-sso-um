@@ -131,7 +131,7 @@ public class UrlBuilder {
      * @return URL to sign up verification page.
      */
     public String getSignUpVerificationPage(String signUpVerificationToken) {
-        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "signUpVerification");
+        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "verifySignUp");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&token=")
