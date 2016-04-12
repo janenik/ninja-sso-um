@@ -114,7 +114,7 @@ public class UrlBuilder {
      * @return Confirmation URL.
      */
     public String getEmailConfirmationUrl(String emailConfirmationToken) {
-        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "confirmEmail");
+        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "verifyEmail");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&token=")
@@ -175,13 +175,8 @@ public class UrlBuilder {
      * @return URL StringBuilder.
      */
     private StringBuilder newAbsoluteUrlBuilder(String baseUrl, Context context, String route) {
-        String cp = Strings.nullToEmpty(context.getContextPath());
-        if ("/".equals(cp)) {
-            cp = "";
-        }
         String lang = (String) context.getAttribute(LanguageFilter.LANG);
         return new StringBuilder(baseUrl)
-                .append(cp)
                 .append(route)
                 .append("?")
                 .append(LanguageFilter.LANG)

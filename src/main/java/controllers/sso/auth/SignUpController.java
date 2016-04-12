@@ -269,15 +269,15 @@ public class SignUpController {
         } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException | IllegalTokenException ex) {
             return createResult(userDto, context, validation, "captchaCode");
         }
-        // Check with existing email.
-        User existingUserWithEmail = userService.getByEmail(userDto.getEmail());
-        if (existingUserWithEmail != null) {
-            return createResult(userDto, context, validation, "emailDuplicate");
-        }
         // Check with existing username.
         User existingUserWithUsername = userService.getByUsername(userDto.getUsername());
         if (existingUserWithUsername != null) {
             return createResult(userDto, context, validation, "usernameDuplicate");
+        }
+        // Check with existing email.
+        User existingUserWithEmail = userService.getByEmail(userDto.getEmail());
+        if (existingUserWithEmail != null) {
+            return createResult(userDto, context, validation, "emailDuplicate");
         }
         // Fetch country.
         Country country = countryService.get(userDto.getCountryId());
@@ -419,7 +419,6 @@ public class SignUpController {
     ExpirableToken newEmailVerificationToken(User user, String verificationCode) {
         Map<String, String> params = Maps.newHashMap();
         params.put("userId", Long.toString(user.getId()));
-        params.put("email", user.getEmail());
         params.put("verificationCode", verificationCode);
         return ExpirableToken.newToken(ExpirableTokenType.EMAIL_VERIFICATION, params, emailTokenTtl);
     }

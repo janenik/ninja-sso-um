@@ -108,7 +108,7 @@ public class SignUpVerificationController {
      */
     @Transactional
     public Result verifySignUp(@Param("token") String tokenAsString, Context context) {
-        String redirectUrl = urlBuilderProvider.get().getContinueUrlParameter();
+        String continueUrl = urlBuilderProvider.get().getContinueUrlParameter();
         String errorType = null;
         try {
             ExpirableToken verificationToken = expirableTokenEncryptor.decrypt(tokenAsString);
@@ -122,7 +122,7 @@ public class SignUpVerificationController {
                 User userForVerification = userService.get(userId);
                 userForVerification.setConfirmationState(UserConfirmationState.CONFIRMED);
                 userService.save(userForVerification);
-                return Results.redirect(redirectUrl);
+                return Results.redirect(continueUrl);
             }
         } catch (ExpiredTokenException ete) {
             errorType = "tokenExpired";
@@ -133,7 +133,8 @@ public class SignUpVerificationController {
         Result result = Results.html().template(TEMPLATE);
         result.render(errorType, true);
         result.render("config", properties);
-        result.render("redirectUrl", redirectUrl);
+        result.render("token", tokenAsString);
+        result.render("continue", continueUrl);
 
         return result;
     }

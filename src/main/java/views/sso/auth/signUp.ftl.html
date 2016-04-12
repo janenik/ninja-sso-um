@@ -325,7 +325,7 @@
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpAgreementRequired")}</p>
                 </#if>
             </div>
-            <button type="submit" class="btn btn-default" id="signupSubmit">${i18n("signUpButtonTitle")}</button>
+            <button type="submit" class="btn btn-default">${i18n("signUpButtonTitle")}</button>
             <input type="hidden" value="${token}" name="token"/>
         </form>
     </div>
@@ -343,7 +343,8 @@
             <li>${i18n("signUpWhyTextItem4")}</li>
         </ul>
         -->-->
-        <#include "signInSignUpLinks.ftl.html" />
+        <#include "signInLink.ftl.html" />
+        <#include "forgotPasswordLink.ftl.html" />
     </div>
 </div>
 
