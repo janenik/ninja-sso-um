@@ -68,7 +68,7 @@ public final class ExpirableTokenEncryptor {
      */
     public String encrypt(ExpirableToken token) throws PasswordBasedEncryptor.EncryptionException {
         if (token == null) {
-            throw new IllegalArgumentException("Expecting token to encrypt.");
+            throw new IllegalArgumentException("Expects token to encrypt.");
         }
         if (!token.hasAttributes()) {
             throw new IllegalArgumentException("Token is expected to contain some data.");

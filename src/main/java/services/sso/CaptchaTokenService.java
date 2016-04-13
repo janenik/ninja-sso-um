@@ -31,7 +31,7 @@ public class CaptchaTokenService {
     /**
      * Random.
      */
-    private static final Random RANDOM = new SecureRandom();
+    private final Random random = new SecureRandom();
 
     /**
      * Token encryptor.
@@ -106,10 +106,10 @@ public class CaptchaTokenService {
     private String nextCaptchaRandomWord() {
         if (realDictionary) {
             // Zero not needed.
-            String i = Integer.toString(111 + RANDOM.nextInt(889)).replace('0', '5');
-            return dictionary.get(RANDOM.nextInt(this.dictionary.size())) + i;
+            String i = Integer.toString(111 + random.nextInt(889)).replace('0', '5');
+            return dictionary.get(random.nextInt(this.dictionary.size())) + i;
         }
-        return Integer.toHexString(1000000 + RANDOM.nextInt(89999999)).toUpperCase();
+        return Integer.toHexString(1000000 + random.nextInt(89999999)).toUpperCase();
     }
 
     /**
@@ -189,7 +189,7 @@ public class CaptchaTokenService {
     }
 
     /**
-     * In case when the captcha token is already used.
+     * Exception for cases when the captcha token is already used.
      */
     public static class AlreadyUsedTokenException extends Exception {
     }

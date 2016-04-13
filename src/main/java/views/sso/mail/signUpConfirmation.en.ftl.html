@@ -18,6 +18,7 @@
 
     <p>
         Thank you.<br/>
-        <a href="${config.get('application.baseUrl')?no_esc}">${config.get('application.titleCommon')}</a>
+        <#noescape>
+        <a href="${config.get('application.baseUrl')}"></#noescape>${config.get('application.titleCommon')}</a>
     </p>
 </#escape>

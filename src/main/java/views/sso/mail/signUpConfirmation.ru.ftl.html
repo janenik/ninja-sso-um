@@ -3,8 +3,7 @@
 
     <p>
         Пожалуйста, подтвердите Ваш E-mail адрес с помощью этой ссылки:<br/><br/>
-        <#noescape><a href="${confirmUrl}"></#noescape>
-        подтвердить email</a>
+        <#noescape><a href="${confirmUrl}">подтвердить email</a></#noescape>
     </p>
 
     <p>
@@ -18,6 +17,7 @@
 
     <p>
         Спасибо.<br/>
-        <a href="${config.get('application.baseUrl')?no_esc}">${config.get('application.titleCommon')}</a>
+        <#noescape><a
+                href="${config.get('application.baseUrl')}"></#noescape>${config.get('application.titleCommon')}</a>
     </p>
 </#escape>

@@ -1,8 +1,8 @@
 <#import "/views/layout/defaultLayout.ftl.html" as layout>
-    <#if sessionOrUserNotFound?? || sessionExpired??>
-        <#assign topTitle = i18n("signUpWelcomeError")>
-            <#else>
-                <#assign topTitle = i18n("signUpWelcomeTitle")>
+    <#if wrongToken?? || tokenExpired??>
+        <#assign topTitle = i18n("signUpWelcomeError") />
+        <#else>
+            <#assign topTitle = i18n("signUpWelcomeTitle") />
     </#if>
     <@layout.defaultLayout topTitle>
 
@@ -24,22 +24,18 @@
 
     <div class="row">
 
-        <#if sessionOrUserNotFound?? || sessionExpired??>
+        <#if wrongToken?? || tokenExpired??>
             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
                 <h3>
                     ${i18n("signUpWelcomeError")}
                 </h3>
-                <p class="ssoSignupWarning">
-                    <#if sessionOrUserNotFound??>
-                        ${i18n("signUpWelcomeErrorUserNotFound")}
-                    </#if>
-                    <#if sessionExpired??>
-                        ${i18n("signUpWelcomeErrorSessionExpired")}
-                    </#if>
+                <p class="ssoSignupConfirmationWarning">
+                    ${i18n("signUpWelcomeErrorTokenExpired")}
                 </p>
 
                 <p class="ssoSignupConfirmationBig">
-                    <#noescape><a href="${continue}"></#noescape>${i18n("signUpWelcomeProceedToProject")}
+                    <#noescape><a href="${continue}"></#noescape>
+                    ${i18n("signUpWelcomeProceedToProject")}
                     ${config.get('application.titleCommon')}</a>
                 </p>
             </div>

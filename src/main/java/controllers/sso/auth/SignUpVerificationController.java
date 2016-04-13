@@ -151,23 +151,12 @@ public class SignUpVerificationController {
         try {
             ExpirableToken emailConfirmationToken = expirableTokenEncryptor.decrypt(tokenAsString);
             Long userId = emailConfirmationToken.getAttributeAsLong("userId");
-            String email = emailConfirmationToken.getAttributeValue("email", "");
-
             User user = userService.get(userId);
-            if (user != null) {
-                if (email.equals(user.getEmail())) {
-                    if (!user.isConfirmed()) {
-                        user.confirm();
-                        userService.update(user);
-                    }
-                    return Results.redirect(urlBuilderProvider.get().getContinueUrlParameter());
-                } else {
-                    logger.warn("Email confirmaiton: user {} has different email {}, {} expected.",
-                            userId, user.getEmail(), email);
-                }
-            } else {
-                logger.warn("Email confirmaiton: user {} was not found.", userId);
+            if (user != null && !user.isConfirmed()) {
+                user.confirm();
+                userService.update(user);
             }
+            return Results.redirect(urlBuilderProvider.get().getContinueUrlParameter());
         } catch (NumberFormatException | ExpiredTokenException | IllegalTokenException ex) {
             logger.warn("Unable to confirm user by email token: " + tokenAsString, ex);
         }
