@@ -1,8 +1,5 @@
 package controllers.sso.auth;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -23,7 +20,13 @@ import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 import services.sso.UserService;
+import services.sso.limits.GenericCounterService;
 import services.sso.token.ExpirableTokenEncryptor;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
 
 /**
  * Sign up verification controller. Show page with fields to verify the user created by previous sign up step.
@@ -58,6 +61,11 @@ public class SignUpVerificationController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Counter service.
+     */
+    final GenericCounterService counterService;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -80,11 +88,13 @@ public class SignUpVerificationController {
     public SignUpVerificationController(ExpirableTokenEncryptor expirableTokenEncryptor,
                                         UserService userService,
                                         Provider<UrlBuilder> urlBuilderProvider,
+                                        GenericCounterService counterService,
                                         NinjaProperties properties,
                                         Logger logger) {
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.userService = userService;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.counterService = counterService;
         this.properties = properties;
         this.logger = logger;
     }
@@ -111,18 +121,27 @@ public class SignUpVerificationController {
         String continueUrl = urlBuilderProvider.get().getContinueUrlParameter();
         String errorType = null;
         try {
+            if (counterService.checkLimit(tokenAsString)) {
+                throw new ExpiredTokenException();
+            }
             ExpirableToken verificationToken = expirableTokenEncryptor.decrypt(tokenAsString);
             if (!ExpirableTokenType.SIGNUP_VERIFICATION.equals(verificationToken.getType())) {
                 throw new IllegalTokenException();
             }
             String verificationCodeFromUser = context.getParameter("verificationCode");
-            if ("post".equalsIgnoreCase(context.getMethod())
-                    && verificationToken.getAttributeValue("verificationCode").equals(verificationCodeFromUser)) {
-                Long userId = verificationToken.getAttributeAsLong("userId");
-                User userForVerification = userService.get(userId);
-                userForVerification.setConfirmationState(UserConfirmationState.CONFIRMED);
-                userService.save(userForVerification);
-                return Results.redirect(continueUrl);
+            if ("post".equalsIgnoreCase(context.getMethod())) {
+                counterService.increment(tokenAsString);
+                if (verificationToken.getAttributeValue("verificationCode").equals(verificationCodeFromUser)){
+                    Long userId = verificationToken.getAttributeAsLong("userId");
+                    User userForVerification = userService.get(userId);
+                    if (userForVerification == null) {
+                        throw new ExpiredTokenException();
+                    }
+                    userForVerification.setConfirmationState(UserConfirmationState.CONFIRMED);
+                    userService.save(userForVerification);
+                    return Results.redirect(continueUrl);
+                }
+                errorType = "wrongVerificationCode";
             }
         } catch (ExpiredTokenException ete) {
             errorType = "tokenExpired";
@@ -150,6 +169,9 @@ public class SignUpVerificationController {
     public Result verifyEmail(@Param("token") String tokenAsString, Context context) {
         try {
             ExpirableToken emailConfirmationToken = expirableTokenEncryptor.decrypt(tokenAsString);
+            if (!ExpirableTokenType.EMAIL_VERIFICATION.equals(emailConfirmationToken.getType())) {
+                throw new IllegalTokenException();
+            }
             Long userId = emailConfirmationToken.getAttributeAsLong("userId");
             User user = userService.get(userId);
             if (user != null && !user.isConfirmed()) {

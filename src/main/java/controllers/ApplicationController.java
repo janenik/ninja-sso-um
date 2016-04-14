@@ -16,8 +16,6 @@
 
 package controllers;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -27,6 +25,9 @@ import ninja.Result;
 import ninja.Results;
 import services.sso.CaptchaTokenService;
 import services.sso.limits.IPCounterService;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 @FilterWith({

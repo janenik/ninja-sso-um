@@ -66,11 +66,21 @@ public class CounterService {
     /**
      * Increments given counter and checks if its value is above the limit.
      *
-     * @param key IP to check.
-     * @return Whether the given IP address is suspected to abuse the service
+     * @param key Key to check.
+     * @return Whether the given key address is suspected to abuse the service
      */
-    public final boolean incrementAndCheck(String key) {
+    public final boolean incrementAndCheckLimit(String key) {
         return increment(key) >= upperLimit;
+    }
+
+    /**
+     * Checks if its value is above the limit.
+     *
+     * @param key Key to check.
+     * @return Whether the given key address is suspected to abuse the service
+     */
+    public final boolean checkLimit(String key) {
+        return getCounter(key) >= upperLimit;
     }
 
     /**

@@ -50,28 +50,35 @@ public class SsoStartupActions {
         if (properties.isProd()) {
             return;
         }
-        logger.info("Adding new user for dev: {}, test: {}...", properties.isDev(), properties.isTest());
 
         EntityManager em = entityManagerProvider.get();
         em.getTransaction().begin();
 
-        em.persist(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
-        em.persist(new Country("CA", "CAN", "Canada", "Canada", 1));
-        Country country = new Country("US", "USA", "United States", "United States", 1);
-        em.persist(country);
+        Country country = em.find(Country.class, "US");
+        if (country == null) {
+            logger.info("Adding new countries... dev: {}, test: {}...", properties.isDev(), properties.isTest());
 
-        User user = new User("root", "root@example.org", "+1 650-999-9999");
-        user.setFirstName("James");
-        user.setLastName("Brown");
-        user.setDateOfBirth(LocalDate.of(1984, 11, 24));
-        user.setCountry(country);
-        user.setGender(UserGender.OTHER);
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash("password", user.getPasswordSalt()));
+            em.persist(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
+            em.persist(new Country("CA", "CAN", "Canada", "Canada", 1));
+            country = new Country("US", "USA", "United States", "United States", 1);
+            em.persist(country);
+        }
 
-        em.persist(user);
+        User user = em.find(User.class, 1L);
+        if (user == null) {
+            logger.info("Adding new root user... {}, test: {}...", properties.isDev(), properties.isTest());
+
+            user = new User("root", "root@example.org", "+1 650-999-9999");
+            user.setFirstName("James");
+            user.setLastName("Brown");
+            user.setDateOfBirth(LocalDate.of(1984, 11, 24));
+            user.setCountry(country);
+            user.setGender(UserGender.OTHER);
+            user.setPasswordSalt(passwordService.newSalt());
+            user.setPasswordHash(passwordService.passwordHash("password", user.getPasswordSalt()));
+
+            em.persist(user);
+        }
         em.getTransaction().commit();
-
-        logger.info("Done adding data for dev: {}, test: {}...", properties.isDev(), properties.isTest());
     }
 }

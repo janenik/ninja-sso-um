@@ -30,7 +30,7 @@ public class HitsPerIpCheckFilter implements Filter {
     @Override
     public Result filter(FilterChain filterChain, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        context.setAttribute(HITS_PER_IP_LIMIT_EXCEEDED, ipCounterService.incrementAndCheck(ip));
+        context.setAttribute(HITS_PER_IP_LIMIT_EXCEEDED, ipCounterService.incrementAndCheckLimit(ip));
         return filterChain.next(context);
     }
 }

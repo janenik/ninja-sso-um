@@ -1,9 +1,10 @@
 package services.sso.limits;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import ninja.cache.NinjaCache;
 import ninja.utils.NinjaProperties;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * IP counter service. Counts number of requests from given IP.
@@ -22,8 +23,8 @@ public final class IPCounterService extends CounterService {
     @Inject
     public IPCounterService(NinjaCache cache, NinjaProperties properties) {
         super("ip",
-                properties.getIntegerWithDefault("ipcounter.entryTimeToLiveSeconds", 30),
-                properties.getIntegerWithDefault("ipcounter.numberOfSafeRequests", 5),
+                properties.getIntegerWithDefault("counters.ip.entryTimeToLiveSeconds", 30),
+                properties.getIntegerWithDefault("counters.ip.numberOfSafeRequests", 5),
                 cache);
     }
 

@@ -50,7 +50,7 @@ public class User implements Serializable {
      * Username.
      */
     @Column(nullable = true)
-    @Size(min = 3, max = 255)
+    @Size(min = 4, max = 255)
     String username;
 
     /**
@@ -71,7 +71,7 @@ public class User implements Serializable {
      * First name.
      */
     @Column(nullable = false)
-    @Size(min = 2, max = 100)
+    @Size(min = 1, max = 100)
     String firstName;
 
     /**
@@ -85,7 +85,7 @@ public class User implements Serializable {
      * Last name.
      */
     @Column(nullable = false)
-    @Size(min = 2, max = 100)
+    @Size(min = 1, max = 100)
     String lastName;
 
     /**
