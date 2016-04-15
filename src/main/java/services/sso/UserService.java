@@ -4,11 +4,16 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import models.sso.User;
+import models.sso.UserEvent;
+import models.sso.UserEventType;
 import org.slf4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 /**
  * User service.
@@ -134,13 +139,49 @@ public class UserService {
      * Saves user into the database and returns user parameter (attached entity).
      *
      * @param user User to save.
+     * @param remoteIp Remote IP.
      * @return Saved user.
      */
-    public User createNew(User user, String password) {
+    public User createNew(User user, String password, String remoteIp) {
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
+        UserEvent userEvent = new UserEvent();
+        userEvent.setUser(user);
+        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
+        userEvent.setType(UserEventType.SIGN_UP);
+        userEvent.setIp(remoteIp);
+        entityManagerProvider.get().persist(userEvent);
         return user;
+    }
+
+    /**
+     * Checks if the given user password is valid.
+     *
+     * @param user User to check.
+     * @param password Password to check.
+     * @return Whether the given password is a valid user password.
+     */
+    public boolean isValidPassword(User user, String password) {
+        byte[] passwordHash = passwordService.passwordHash(password, user.getPasswordSalt());
+        return Arrays.equals(passwordHash, user.getPasswordHash());
+    }
+
+    /**
+     * Updates sign in time for user in case of successful sign in.
+     *
+     * @param user User.
+     * @param remoteIp Remote IP.
+     * @return User event with information about sign in.
+     */
+    public UserEvent updateSignInTime(User user, String remoteIp) {
+        UserEvent userEvent = new UserEvent();
+        userEvent.setUser(user);
+        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
+        userEvent.setType(UserEventType.SIGN_IN);
+        userEvent.setIp(remoteIp);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
     }
 
     /**

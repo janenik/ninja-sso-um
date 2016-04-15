@@ -11,30 +11,30 @@ import java.io.Serializable;
  */
 public class UserSignInDto implements Serializable {
 
+    /**
+     * Email or username field.
+     */
     @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
     @NotNull
     String emailOrUsername;
+
+    /**
+     * Password field.
+     */
     @Size(max = Constants.PASSWORD_MAX_LENGTH)
     String password;
+
+    /**
+     * Captcha token.
+     */
     @Size(max = Constants.TOKEN_MAX_LENGTH)
-    String token;
+    String captchaToken;
+
+    /**
+     * Captcha code, user input.
+     */
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
     String captchaCode;
-    // This one to skip the exception in log.
-    String lang;
-    String redirectUrl;
-    String project;
-
-    public UserSignInDto() {
-    }
-
-    public UserSignInDto(String defaultValue) {
-        emailOrUsername = defaultValue;
-        password = defaultValue;
-        token = defaultValue;
-        captchaCode = defaultValue;
-        lang = defaultValue;
-    }
 
     public String getEmailOrUsername() {
         return Strings.nullToEmpty(emailOrUsername).trim().toLowerCase();
@@ -52,12 +52,12 @@ public class UserSignInDto implements Serializable {
         this.captchaCode = captchaCode;
     }
 
-    public String getToken() {
-        return Strings.nullToEmpty(token).trim();
+    public String getCaptchaToken() {
+        return Strings.nullToEmpty(captchaToken).trim();
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setCaptchaToken(String token) {
+        this.captchaToken = token;
     }
 
     public String getPassword() {
@@ -66,30 +66,6 @@ public class UserSignInDto implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
-    }
-
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
-
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
-    }
-
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
-        this.project = project;
     }
 
     private static final long serialVersionUID = 1L;

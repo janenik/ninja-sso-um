@@ -22,6 +22,15 @@ public final class Controllers {
     public static final Validation NO_VIOLATIONS = new NoViolations();
 
     /**
+     * Returns validation object with no violations.
+     *
+     * @return Validation object with no violations.
+     */
+    public static Validation noViolations() {
+        return NO_VIOLATIONS;
+    }
+
+    /**
      * Bad request result, simplified.
      *
      * @param field Field to report.

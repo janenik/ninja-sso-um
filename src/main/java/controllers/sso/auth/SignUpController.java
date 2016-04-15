@@ -129,11 +129,6 @@ public class SignUpController {
     final NinjaProperties properties;
 
     /**
-     * Router.
-     */
-    final Router router;
-
-    /**
      * Language.
      */
     final Lang lang;
@@ -211,7 +206,6 @@ public class SignUpController {
         this.dtoMapper = dtoMapper;
         this.emailService = emailService;
         this.properties = properties;
-        this.router = router;
         this.logger = logger;
         this.lang = lang;
         this.messages = messages;
@@ -231,7 +225,7 @@ public class SignUpController {
      * @return Sing up response object.
      */
     public Result signUpGet(Context context) {
-        return createResult(EMPTY_USER, context, Controllers.NO_VIOLATIONS);
+        return createResult(EMPTY_USER, context, Controllers.noViolations());
     }
 
     /**
@@ -291,8 +285,10 @@ public class SignUpController {
         userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(),
                 userDto.getBirthMonth(), userDto.getBirthDay()));
         userToSave.setRole(UserRole.USER);
+        // Remote IP.
+        String remoteIP = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         // Save the user.
-        userService.createNew(userToSave, userDto.getPassword());
+        userService.createNew(userToSave, userDto.getPassword(), remoteIP);
         // Perform post-sign up actions.
         String redirectURL = invokePostSignUpActions(userToSave, context);
         // Redirect.

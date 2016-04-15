@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
+import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.captcha.CaptchaController;
 import controllers.sso.filters.LanguageFilter;
@@ -147,7 +148,7 @@ public class UrlBuilder {
      * @return Sign in URL.
      */
     public String getSignInUrl(String... status) {
-        String reverseRoute = "TODO-INSERT-SIGNIN-CONTROLLER-PATH";
+        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&continue=")

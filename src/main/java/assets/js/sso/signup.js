@@ -22,7 +22,7 @@
     setUpDropdown('gender');
     setUpDropdown('countryId', function(li) {
         var phone = $('#phone');
-        if (phone.val() == '') {
+        if (phone.val().length < 5) {
             $('#phone').val('+' + li.attr('rel2') + ' ');
             $('#phone')[0].focus();
         }
