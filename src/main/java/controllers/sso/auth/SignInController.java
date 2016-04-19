@@ -4,7 +4,6 @@ import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
-import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
@@ -140,14 +139,12 @@ public class SignInController {
         if (validation.hasViolations()) {
             return createResult(userSignInDto, context, validation);
         }
-        // Check abuse and if abuse suspect check the entered captcha code.
-        boolean abuse = context.getAttribute(AbuseCheckFilter.ABUSE, Boolean.class);
-        if ((abuse || authenticationTokenService.isAlwaysAsked())) {
+        // Check IP hits exceeded and if exceeded check the entered captcha code.
+        boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
+        if (ipHitsExceeded) {
             try {
-                authenticationTokenService.verifyCaptchaToken(userSignInDto.getToken(), userSignInDto.getCaptchaCode());
-                // Invalidate token.
-                authenticationTokenService.invalidateToken(userSignInDto.getToken());
-            } catch (CaptchaAuthenticationTokenService.AlreadyUsedTokenException | ExpiredTokenException |
+                captchaTokenService.verifyCaptchaToken(userSignInDto.getCaptchaToken(), userSignInDto.getCaptchaCode());
+            } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException |
                     IllegalTokenException ex) {
                 return createResult(userSignInDto, context, validation, "captchaCode");
             }
@@ -161,7 +158,7 @@ public class SignInController {
         }
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         userService.updateSignInTime(user, ip);
-        return Results.redirect(Controllers.getProjectRedirectUrl(redirectUrl, context, project, session));
+        return Results.redirect(urlBuilderProvider.get().getContinueUrlParameter());
     }
 
     /**
@@ -173,19 +170,15 @@ public class SignInController {
      * @return Sign in response object.
      */
     Result createResult(UserSignInDto user, Context context, Validation validation) {
-        String langCode = (String) context.getAttribute(LanguageFilter.LANG);
+        boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
         Result result = Results.html().template(TEMPLATE);
         result.render("user", user);
         result.render("errors", validation);
-        result.render("ipHitsExceeded", context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED));
-        result.render("continue", Controllers.getRedirectUrlParameter(context, properties));
+        result.render("ipHitsExceeded", ipHitsExceeded);
+        result.render("continue", urlBuilderProvider.get().getContinueUrlParameter());
         result.render("config", properties);
-        if (isAbuse) {
-            regenerateCaptchaTokenAndUrl(result, context);
-        }
-        if (status != null) {
-            result.render("status", status.getMessage(messages, langCode));
-            result.render("statusSuccess", status.isSuccessful());
+        if (ipHitsExceeded) {
+            regenerateCaptchaTokenAndUrl(result);
         }
         return result;
     }
@@ -208,11 +201,10 @@ public class SignInController {
      * Adds information about the captcha to given result.
      *
      * @param result Result.
-     * @param context Context.
      */
-    void regenerateCaptchaTokenAndUrl(Result result, Context context) {
+    void regenerateCaptchaTokenAndUrl(Result result) {
         String token = captchaTokenService.newCaptchaToken();
         result.render("captchaToken", token);
-        result.render("captchaUrl", CaptchaController.getRoute(basePath, context, router, token));
+        result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(token));
     }
 }
