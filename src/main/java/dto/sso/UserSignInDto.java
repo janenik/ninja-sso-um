@@ -36,36 +36,76 @@ public class UserSignInDto implements Serializable {
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
     String captchaCode;
 
+    /**
+     * Returns email or username field.
+     *
+     * @return Email or username field value.
+     */
     public String getEmailOrUsername() {
         return Strings.nullToEmpty(emailOrUsername).trim().toLowerCase();
     }
 
-    public void setEmailOrUsername(String email) {
-        this.emailOrUsername = email;
-    }
-
+    /**
+     * Returns captcha code, entered by user.
+     *
+     * @return Captcha code.
+     */
     public String getCaptchaCode() {
         return Strings.nullToEmpty(captchaCode).trim();
     }
 
-    public void setCaptchaCode(String captchaCode) {
-        this.captchaCode = captchaCode;
-    }
-
+    /**
+     * Returns captcha token.
+     *
+     * @return Captcha token.
+     */
     public String getCaptchaToken() {
         return Strings.nullToEmpty(captchaToken).trim();
     }
 
-    public void setCaptchaToken(String token) {
-        this.captchaToken = token;
+    /**
+     * Sets emailOrUsername.
+     *
+     * @param emailOrUsername EmailOrUsername.
+     */
+    public void setEmailOrUsername(String emailOrUsername) {
+        this.emailOrUsername = emailOrUsername;
     }
 
+    /**
+     * Returns password.
+     *
+     * @return Password.
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets password.
+     *
+     * @param password Password.
+     */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * Sets captcha token.
+     *
+     * @param captchaToken Captcha token.
+     */
+    public void setCaptchaToken(String captchaToken) {
+        this.captchaToken = captchaToken;
+    }
+
+    /**
+     * Sets captcha code.
+     *
+     * @param captchaCode Captcha code.
+     */
+    public void setCaptchaCode(String captchaCode) {
+        this.captchaCode = captchaCode;
     }
 
     private static final long serialVersionUID = 1L;
