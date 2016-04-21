@@ -1,9 +1,11 @@
 package controllers.sso.auth;
 
 import com.google.inject.persist.Transactional;
+import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
+import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
@@ -36,6 +38,7 @@ import javax.inject.Singleton;
 @Singleton
 @FilterWith({
         ApplicationErrorHtmlFilter.class,
+        LanguageFilter.class,
         IpAddressFilter.class,
         HitsPerIpCheckFilter.class
 })
@@ -80,7 +83,15 @@ public class SignInController {
      * Application router.
      */
     final Router router;
+
+    /**
+     * Application messages.
+     */
     final Messages messages;
+
+    /**
+     * Logger.
+     */
     final Logger logger;
 
     /**
@@ -171,6 +182,9 @@ public class SignInController {
      */
     Result createResult(UserSignInDto user, Context context, Validation validation) {
         boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
+        String langCode = (String) context.getAttribute(LanguageFilter.LANG);
+        SignInState state = SignInState.fromString(context.getParameter("stat"));
+
         Result result = Results.html().template(TEMPLATE);
         result.render("user", user);
         result.render("errors", validation);
@@ -179,6 +193,10 @@ public class SignInController {
         result.render("config", properties);
         if (ipHitsExceeded) {
             regenerateCaptchaTokenAndUrl(result);
+        }
+        if (state != null) {
+            result.render("state", state.getMessage(messages, langCode));
+            result.render("stateSuccessful", state.isSuccessful());
         }
         return result;
     }

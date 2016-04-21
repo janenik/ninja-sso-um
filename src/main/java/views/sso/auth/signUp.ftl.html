@@ -21,13 +21,13 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="firstName">${i18n("signUpFirstName")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
+                        <label class="control-label" for="firstName">${i18n("signUpFirstName")}</label>
                         <input type="text" id="firstName" name="firstName"
                                placeholder="${i18n('signUpFirstNamePlaceHolder')}"
                                value="${(user.firstName)!}"
                                ${_enableHtml5Required}
-                               class="form-control <#if errors.hasBeanViolation('firstName')>ssoFieldError</#if>"/>
+                               class="form-control"/>
                         <!--<#--<p class="help-block">Example block-level help text here.</p>-->-->
                         <#if errors.hasBeanViolation('firstName') || errors.hasBeanViolation('lastName')>
                             <p class="help-block ssoFieldErrorDescription">
@@ -37,27 +37,26 @@
                     </div>
                 </div>
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="lastName">${i18n("signUpLastName")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('lastName')>has-error</#if>">
+                        <label class="control-label" for="lastName">${i18n("signUpLastName")}</label>
                         <input type="text" id="lastName" name="lastName"
                                placeholder="${i18n('signUpLastNamePlaceHolder')}"
                                value="${(user.lastName)!}"
                                ${_enableHtml5Required}
-                               class="form-control <#if errors.hasBeanViolation('lastName')>ssoFieldError</#if>"/>
+                               class="form-control"/>
                         <!--<#--<p class="help-block">Example block-level help text here.</p>-->-->
                     </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="username">${i18n("signUpUsername")}</label>
+            <div class="form-group <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
+                            has-error</#if>">
+                <label class="control-label" for="username">${i18n("signUpUsername")}</label>
                 <input type="text" id="username" name="username"
                        placeholder="${i18n('signUpUsernamePlaceHolder')}"
                        value="${(user.username)!}"
                        ${_enableHtml5Required}
-                       class="form-control
-                       <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
-                            ssoFieldError</#if>"
+                       class="form-control"
                 />
                 <#if errors.hasBeanViolation('usernameDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpUsernameUsed")} <br/>
@@ -76,8 +75,9 @@
 
             <div class="row">
                 <div class="col-xs-12 col-md-8">
-                    <div class="form-group">
-                        <label for="birthday">${i18n("signUpBirthday")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
+                                || errors.hasBeanViolation('birthYear')>has-error</#if>">
+                        <label class="control-label" for="birthday">${i18n("signUpBirthday")}</label>
                         <div class="row">
                             <div class="col-xs-5 col-md-3">
                                 <div class="dropdown">
@@ -108,25 +108,21 @@
                                            value="${(user.birthMonth)!}"/>
                                 </div>
                             </div>
-                            <div class="col-xs-3 col-md-3">
+                            <div class="col-xs-3 col-md-3 <#if errors.hasBeanViolation('birthDay')>has-error</#if>">
                                 <input type="text" id="birthDay" name="birthDay"
                                        placeholder="${i18n('signUpBirthDayPlaceHolder')}"
                                        maxlength="2"
                                        value="${(user.birthDay)!}"
                                        ${_enableHtml5Required}
-                                       class="form-control
-                                       <#if errors.hasBeanViolation('birthDay')>ssoFieldError</#if>"
-                                />
+                                       class="form-control"/>
                             </div>
-                            <div class="col-xs-4 col-md-4">
+                            <div class="col-xs-4 col-md-4 <#if errors.hasBeanViolation('birthYear')>has-error</#if>">
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
                                        value="${(user.birthYear)!}"
                                        ${_enableHtml5Required}
-                                       class="form-control
-                                       <#if errors.hasBeanViolation('birthYear')>ssoFieldError</#if>"
-                                />
+                                       class="form-control"/>
                             </div>
                         </div>
                         <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
@@ -141,8 +137,8 @@
                 </div>
                 <div class="clearfix visible-xs-block"></div>
                 <div class="col-xs-12 col-md-4">
-                    <div class="form-group">
-                        <label for="genderButton">${i18n("signUpGender")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('gender')>has-error</#if>">
+                        <label class="control-label" for="genderButton">${i18n("signUpGender")}</label>
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" type="button" id="genderButton"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -165,15 +161,14 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="email">${i18n("signUpEmailAddress")}</label>
+            <div class="form-group <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
+                       has-error</#if>">
+                <label class="control-label" for="email">${i18n("signUpEmailAddress")}</label>
                 <input type="email" id="email" name="email"
                        placeholder="${i18n('signUpEmailPlaceHolder')}"
                        value="${(user.email)!}"
                        ${_enableHtml5Required}
-                       class="form-control
-                       <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
-                       ssoFieldError</#if>"
+                       class="form-control"
                 />
                 <#if errors.hasBeanViolation('email')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailRequired")}</p>
@@ -190,8 +185,8 @@
 
             <div class="row">
                 <div class="col-xs-5 col-md-3">
-                    <div class="form-group">
-                        <label for="countryIdButton">${i18n("signUpCountry")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('countryId')>has-error</#if>">
+                        <label class="control-label" for="countryIdButton">${i18n("signUpCountry")}</label>
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" type="button" id="countryIdButton"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -227,15 +222,13 @@
                     </div>
                 </div>
                 <div class="col-xs-7 col-md-9">
-                    <div class="form-group">
-                        <label for="phone">${i18n("signUpPhone")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('phone')>has-error</#if>">
+                        <label class="control-label" for="phone">${i18n("signUpPhone")}</label>
                         <input type="tel" id="phone" name="phone"
                                placeholder="${i18n('signUpPhonePlaceHolder')}"
                                value="${(user.phone)!}"
                                ${_enableHtml5Required}
-                               class="form-control
-                            <#if errors.hasBeanViolation('phone')>ssoFieldError</#if>"
-                        />
+                               class="form-control"/>
                         <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
                         <#if errors.hasBeanViolation('phone')>
                             <div class="input-group">
@@ -250,14 +243,14 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="password">${i18n("signUpPassword")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('password')>has-error</#if>">
+                        <label class="control-label" for="password">${i18n("signUpPassword")}</label>
                         <input type="password" id="password" name="password"
                                placeholder="${i18n('signUpPasswordPlaceHolder')}"
                                value="${(user.password)!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
-                               class="form-control <#if errors.hasBeanViolation('password')>ssoFieldError</#if>"
+                               class="form-control"
                         />
                         <#if errors.hasBeanViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp1")}</p>
@@ -266,14 +259,14 @@
                 </div>
 
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="passwordRepeat">${i18n("signUpPasswordRepeat")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('passwordRepeat')>has-error</#if>">
+                        <label class="control-label" for="passwordRepeat">${i18n("signUpPasswordRepeat")}</label>
                         <input type="password" id="passwordRepeat" name="passwordRepeat"
                                placeholder="${i18n('signUpPasswordRepeatPlaceHolder')}"
                                value="${(user.passwordRepeat)!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
-                               class="form-control <#if errors.hasBeanViolation('passwordRepeat')>ssoFieldError</#if>"
+                               class="form-control"
                         />
                         <#if errors.hasBeanViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp2")}</p>
@@ -284,8 +277,8 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group">
-                        <label for="captchaCode">${i18n("signUpCaptchaCode")}</label>
+                    <div class="form-group <#if errors.hasBeanViolation('captchaCode')>has-error</#if>">
+                        <label class="control-label" for="captchaCode">${i18n("signUpCaptchaCode")}</label>
                         <input type="text" class="form-control" id="captchaCode"
                                name="captchaCode"
                                ${_enableHtml5Required}

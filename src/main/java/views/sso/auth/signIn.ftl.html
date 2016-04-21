@@ -12,12 +12,15 @@
 
     <div class="row">
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-            <h3>
-                ${i18n("signInTitle")}
-            </h3>
 
-            <#if status??>
-                <div class="alert alert-<#if statusSuccess>success<#else>danger</#if>">${status}</div>
+            <h3>${i18n("signInTitle")}</h3>
+
+            <#if state??>
+                <div class="alert alert-dismissible alert-<#if stateSuccessful>success<#else>danger</#if>">
+                    <button type="button" class="close"
+                            data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${state}
+                </div>
             </#if>
 
             <#if errors.hasBeanViolation('emailNotConfirmed')>
@@ -31,37 +34,37 @@
             </#if>
 
             <form role="form" id="signInForm" method="POST"
-                  action="${contextPath}/signin?lang=${lang?url}&project=${project?url}&redirectUrl=${redirectUrl?url}">
-                <div class="form-group">
-                    <label for="email">${i18n("signInEmailAddress")}</label>
-                    <input type="email" id="email" name="email" placeholder="${i18n('signInEmailPlaceHolder')}"
-                    value="${user.emailOrUsername}"
-                    ${_enableHtml5Required}
-                    class="form-control
-                    <#if errors.hasBeanViolation('emailOrPassword') || errors.hasBeanViolation('email')>
-                      ssoFieldError
-                    </#if>
-                    " />
+                  action="${contextPath}/auth/signin?lang=${lang?url}&continue=${continue?url}">
+                <div class="form-group
+                     <#if errors.hasBeanViolation('emailOrUsername') || errors.hasBeanViolation('emailOrPassword')>
+                       has-error
+                     </#if>">
+                    <label class="control-label" for="emailOrUsername">${i18n("signInEmailOrUsername")}</label>
+                    <input type="text" id="emailOrUsername"
+                           name="emailOrUsername" placeholder="${i18n('signInEmailOrUsernamePlaceHolder')}"
+                           value="${(user.emailOrUsername)!}"
+                           ${_enableHtml5Required}
+                           class="form-control "/>
                 </div>
-                <div class="form-group">
-                    <label for="password">${i18n("signInPassword")}</label>
+                <div class="form-group
+                     <#if errors.hasBeanViolation('emailOrPassword') || errors.hasBeanViolation('password')>
+                       has-error
+                     </#if>">
+                    <label class="control-label" for="password">${i18n("signInPassword")}</label>
                     <input type="password" id="password" name="password"
                            placeholder="${i18n('signInPasswordPlaceHolder')}"
-                           value="${user.password}" ${_enableHtml5Required}
-                           class="form-control
-                    <#if errors.hasBeanViolation('emailOrPassword') || errors.hasBeanViolation('password')>
-                        ssoFieldError
-                    </#if>
-                    "/>
+                           value="${(user.password)!}" ${_enableHtml5Required}
+                           class="form-control"/>
                 </div>
                 <#if ipHitsExceeded>
                     <div class="row">
                         <div class="col-xs-6 col-md-6">
-                            <div class="form-group">
-                                <label for="captchaCode">${i18n("signInCaptchaCode")}</label>
-                                <input type="text" autocomplete="off" class="form-control" id="captchaCode"
+                            <div class="form-group <#if errors.hasBeanViolation('captchaCode')>has-error</#if>">
+                                <label class="control-label" for="captchaCode">${i18n("signInCaptchaCode")}</label>
+                                <input type="text" autocomplete="off"
+                                       class="form-control" id="captchaCode"
                                        name="captchaCode" ${_enableHtml5Required}
-                                       placeholder="${i18n(" signInCaptchaCodePlaceHolder")}" />
+                                       placeholder="${i18n('signInCaptchaCodePlaceHolder')}"/>
                                 <#if errors.hasBeanViolation('captchaCode')>
                                     <p class="help-block ssoFieldErrorDescription">
                                         ${i18n("signInCaptchaCodeRequired")}
@@ -69,9 +72,10 @@
                                 </#if>
                             </div>
                         </div>
-                        <div class="col-xs-6 col-md-6 ssoSigninCaptchaContainer">
-                            <img src="${captchaUrl}" class="ssoCaptchaImage" alt="captcha code"
-                                 onclick="this.src = this.src + '&.c=' + Math.random();"/>
+                        <div class="col-xs-6 col-md-6 ssoSignupCaptchaContainer">
+                            <img src="${captchaUrl}" class="ssoCaptchaImage"
+                                 alt="${i18n('signUpCaptchaCodeHelp')}"
+                                 title="${i18n('signUpCaptchaCodeHelp')}"/>
                             <#if errors.hasBeanViolation('captchaCode')>
                                 <p class="help-block">${i18n("signInCaptchaCodeHelp")}</p>
                             </#if>
@@ -82,26 +86,17 @@
                 <button type="submit" class="btn btn-default" id="signInSubmit">${i18n("signInButtonTitle")}</button>
             </form>
         </div>
-        <div class="col-sm-4 col-md-4 col-lg-4 ssoSignupRight">
-            <h3 class="ssoHeader">
-                ${i18n("signUpForgotPassword")}
-            </h3>
-            <p>
-                ${i18n("signUpForgotPasswordTextPrefix")}
-                <a href="${contextPath}/signin/forgot?lang=${lang}&project=${project?url}&redirectUrl=${redirectUrl?url}">${i18n("forgotPasswordRestoreLinkTitle")}</a>
-                ${i18n("signUpForgotPasswordTextPostfix")}
-            </p>
-            <h3 class="ssoHeader">
-                ${i18n("signInNoAccount")}
-            </h3>
-            <p>
-                ${i18n("signInNoAccountTextPrefix")}
-                <a href="${contextPath}/signup?lang=${lang}&project=${project?url}&redirectUrl=${redirectUrl?url}">${i18n("signInNoAccountLink")}</a>
-                ${i18n("signInNoAccountTextPostfix")}
-            </p>
+        <div class="clearfix visible-xs-block"></div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <#include "signUpLink.ftl.html" />
+            <#include "forgotPasswordLink.ftl.html" />
         </div>
     </div>
-    <div class="x-meople-boot-body"></div>
+
+    <!--<#-- CSS below is the template, that contains ${contextPath} -->-->
+    <style type="text/css">
+        <#include "/assets/css/sso/signup.css" />
+    </style>
 
     <script>
     $('#email, #captchaCode').keyup(function() {
@@ -112,8 +107,6 @@
         $('#signInSubmit').attr('disabled', 'disabled');
         $('#signInSubmit').html('${i18n("signInButtonTitleLoading")}');
     });
-
-
     </script>
 
 </@layout.defaultLayout>

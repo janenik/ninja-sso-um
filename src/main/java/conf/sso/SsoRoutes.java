@@ -1,6 +1,7 @@
 package conf.sso;
 
 import com.google.inject.Inject;
+import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpController;
 import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.captcha.CaptchaController;
@@ -35,5 +36,9 @@ public class SsoRoutes implements ApplicationRoutes {
                 .with(SignUpVerificationController.class, "verifySignUp");
         router.GET().route(subRoute +"/signup/verify-email")
                 .with(SignUpVerificationController.class, "verifyEmail");
+
+        // Sign in.
+        router.GET().route(subRoute +"/signin").with(SignInController.class, "signInGet");
+        router.POST().route(subRoute +"/signin").with(SignInController.class, "signIn");
     }
 }
