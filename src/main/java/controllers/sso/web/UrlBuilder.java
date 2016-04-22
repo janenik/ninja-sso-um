@@ -145,11 +145,17 @@ public class UrlBuilder {
     /**
      * Returns redirect URL to Sign Up welcome page after successful user sign up and confirmation email sent.
      *
+     * @param state Optional state.
      * @return Sign in URL.
      */
-    public String getSignInUrl(String... status) {
+    public String getSignInUrl(String... state) {
         String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        if (state != null && state.length > 0 && !state[0].isEmpty()) {
+            urlBuilder
+                    .append("&state=")
+                    .append(Escapers.encodePercent(state[0].toLowerCase()));
+        }
         return urlBuilder
                 .append("&continue=")
                 .append(Escapers.encodePercent(getContinueUrlParameter()))
