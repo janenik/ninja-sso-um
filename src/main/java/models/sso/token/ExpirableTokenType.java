@@ -40,7 +40,7 @@ public enum ExpirableTokenType {
      * Forgot password (sent to user via email).
      * When forgot password email sent.
      */
-    FORGOT_PASSWORD,
+    RESTORE_PASSWORD,
 
     /**
      * Confirm password: token is sent to user via email

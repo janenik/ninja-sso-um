@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
+import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.captcha.CaptchaController;
@@ -148,15 +149,31 @@ public class UrlBuilder {
      * @param state Optional state.
      * @return Sign in URL.
      */
-    public String getSignInUrl(String... state) {
+    public String getSignInUrl(Object... state) {
         String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
-        if (state != null && state.length > 0 && !state[0].isEmpty()) {
+        if (state != null && state.length > 0 && state[0] != null) {
             urlBuilder
                     .append("&state=")
-                    .append(Escapers.encodePercent(state[0].toLowerCase()));
+                    .append(Escapers.encodePercent(state[0].toString().toLowerCase()));
         }
         return urlBuilder
+                .append("&continue=")
+                .append(Escapers.encodePercent(getContinueUrlParameter()))
+                .toString();
+    }
+
+    /**
+     * Constructs restore password URL by given parameters.
+     *
+     * @param token Restore password token.
+     * @return Restore password URL.
+     */
+    public String getRestorePasswordUrl(String token) {
+        String reverseRoute = router.getReverseRoute(RestorePasswordController.class, "setNewPassword");
+        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        return urlBuilder
+                .append("&restoreToken=").append(Escapers.encodePercent(token))
                 .append("&continue=")
                 .append(Escapers.encodePercent(getContinueUrlParameter()))
                 .toString();

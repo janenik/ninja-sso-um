@@ -282,8 +282,7 @@ public class SignUpController {
         User userToSave = dtoMapper.map(userDto, User.class);
         userToSave.setCountry(country);
         userToSave.setGender(UserGender.valueOf(userDto.getGender()));
-        userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(),
-                userDto.getBirthMonth(), userDto.getBirthDay()));
+        userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay()));
         userToSave.setRole(UserRole.USER);
         // Remote IP.
         String remoteIP = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
@@ -308,13 +307,13 @@ public class SignUpController {
     String invokePostSignUpActions(User createdUser, Context context) {
         try {
             String verificationCode = newVerificationCode();
-            // Send confirmation email.
+            // Send verification email with code.
             sendConfirmationEmail(createdUser, verificationCode, context);
             // Create new verification token.
             ExpirableToken signUpVerificationPageToken = newSignUpPageVerificationToken(createdUser, verificationCode);
+            String verificationTokenAsString = expirableTokenEncryptor.encrypt(signUpVerificationPageToken);
             // Redirect to verification page.
-            return urlBuilderProvider.get().
-                    getSignUpVerificationPage(expirableTokenEncryptor.encrypt(signUpVerificationPageToken));
+            return urlBuilderProvider.get().getSignUpVerificationPage(verificationTokenAsString);
         } catch (PasswordBasedEncryptor.EncryptionException e) {
             throw new RuntimeException("Unexpected problem with encryption.", e);
         } catch (MessagingException e) {
@@ -384,24 +383,28 @@ public class SignUpController {
      * @param user Newly registered user.
      * @param verificationCode Verification code.
      * @param context Web application context.
-     * @throws PasswordBasedEncryptor.EncryptionException
-     * @throws MessagingException
+     * @throws MessagingException In case when error happens while creating or sending the email.
      */
-    void sendConfirmationEmail(User user, String verificationCode, Context context)
-            throws PasswordBasedEncryptor.EncryptionException, MessagingException {
-        ExpirableToken emailConfirmationToken = newEmailVerificationToken(user, verificationCode);
-        String langCode = (String) context.getAttribute(LanguageFilter.LANG);
-        Map<String, Object> data = Maps.newHashMap();
-        data.put("lang", langCode);
-        data.put("verificationCode", verificationCode);
-        data.put("confirmUrl", urlBuilderProvider.get().
-                getEmailConfirmationUrl(expirableTokenEncryptor.encrypt(emailConfirmationToken)));
-        String subject = messages.get("confirmationSubject", Optional.<String>of(langCode)).get();
+    void sendConfirmationEmail(User user, String verificationCode, Context context) throws MessagingException {
+        String locale = (String) context.getAttribute(LanguageFilter.LANG);
         try {
-            String localizedTemplate = String.format("signUpConfirmation.%s.ftl.html", langCode);
+            // Create verification token.
+            ExpirableToken emailConfirmationToken = newEmailVerificationToken(user, verificationCode);
+            String emailTokenAsString = expirableTokenEncryptor.encrypt(emailConfirmationToken);
+            // Build email template data.
+            Map<String, Object> data = Maps.newHashMap();
+            data.put("lang", locale);
+            data.put("verificationCode", verificationCode);
+            data.put("confirmUrl", urlBuilderProvider.get().getEmailConfirmationUrl(emailTokenAsString));
+            // Translate subject and build template.
+            String subject = messages.get("confirmationSubject", Optional.<String>of(locale)).get();
+            String localizedTemplate = String.format("signUpConfirmation.%s.ftl.html", locale);
+            // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
-        } catch (MessagingException | TemplateException ex) {
-            throw new MessagingException("Error while sending confirmation email for user: " + user.getEmail(), ex);
+        } catch (MessagingException | TemplateException | PasswordBasedEncryptor.EncryptionException ex) {
+            String message = "Error while sending confirmation email for user: " + user.getEmail();
+            logger.error(message, ex);
+            throw new MessagingException(message, ex);
         }
     }
 

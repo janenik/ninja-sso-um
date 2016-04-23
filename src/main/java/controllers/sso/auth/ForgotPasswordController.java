@@ -1,6 +1,8 @@
 package controllers.sso.auth;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -8,7 +10,10 @@ import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.ForgotPasswordDto;
+import freemarker.template.TemplateException;
 import models.sso.User;
+import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import ninja.Context;
@@ -26,11 +31,16 @@ import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.limits.IPCounterService;
+import services.sso.mail.EmailService;
+import services.sso.token.ExpirableTokenEncryptor;
+import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.util.Map;
 
 /**
  * Forgot password controller.
@@ -60,6 +70,11 @@ public class ForgotPasswordController {
     final UserService userService;
 
     /**
+     * Expirable token encryptor.
+     */
+    final ExpirableTokenEncryptor expirableTokenEncryptor;
+
+    /**
      * Captcha token service.
      */
     final CaptchaTokenService captchaTokenService;
@@ -68,6 +83,11 @@ public class ForgotPasswordController {
      * IP counter service.
      */
     final IPCounterService ipCounterService;
+
+    /**
+     * Email service.
+     */
+    final EmailService emailService;
 
     /**
      * URL builder provider for controller. Instance per request.
@@ -95,6 +115,11 @@ public class ForgotPasswordController {
     final Logger logger;
 
     /**
+     * Restore password token time to live, in milliseconds.
+     */
+    final long restorePasswordTokenTtl;
+
+    /**
      * Constructs the forgot password controller.
      *
      * @param userService User service.
@@ -109,21 +134,27 @@ public class ForgotPasswordController {
     @Inject
     public ForgotPasswordController(
             UserService userService,
+            ExpirableTokenEncryptor expirableTokenEncryptor,
             CaptchaTokenService captchaTokenService,
             IPCounterService ipCounterService,
+            EmailService emailService,
             Provider<UrlBuilder> urlBuilderProvider,
             NinjaProperties properties,
             Router router,
             Messages messages,
             Logger logger) {
         this.userService = userService;
+        this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.captchaTokenService = captchaTokenService;
         this.ipCounterService = ipCounterService;
+        this.emailService = emailService;
         this.urlBuilderProvider = urlBuilderProvider;
         this.properties = properties;
         this.router = router;
         this.messages = messages;
         this.logger = logger;
+        this.restorePasswordTokenTtl =
+                properties.getIntegerWithDefault("application.sso.restorePasswordToken.ttl", 3600) * 1000L;
     }
 
 
@@ -151,22 +182,61 @@ public class ForgotPasswordController {
         if (validation.hasViolations() || user == null) {
             return createResult(user, context, validation);
         }
-
+        // Verify token.
         try {
             captchaTokenService.verifyCaptchaToken(user.getCaptchaToken(), user.getCaptchaCode());
-        } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException |
-                IllegalTokenException ex) {
+        } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException | IllegalTokenException ex) {
             return createResult(user, context, validation, "captchaCode");
         }
-
+        // Check existing user.
         User userEntity = userService.getUserByEmailOrUsername(user.getEmailOrUsername());
         if (userEntity == null) {
-            return createResult(user, context, validation, "emailNotFound");
+            return createResult(user, context, validation, "emailOrUsernameNotFound");
         }
-        //sendForgotPasswordEmail(userEntity, context);
+        // Send the email.
+        sendRestorePasswordEmail(userEntity, context);
+        // Redirect to sign in.
+        return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT));
+    }
 
-        return Results.redirect(urlBuilderProvider.get().
-                getSignInUrl(SignInState.FORGOT_EMAIL_SENT.toString()));
+    /**
+     * Sends restore password email to given user with given language.
+     *
+     * @param user User.
+     * @param context Context.
+     * @throws RuntimeException In case when error happens while creating or sending the email
+     */
+    void sendRestorePasswordEmail(User user, Context context) {
+        String locale = (String) context.getAttribute(LanguageFilter.LANG);
+        try {
+            // Create verification token.
+            ExpirableToken restorePasswordToken = forgotEmailConfirmationToken(user);
+            String restorePasswordTokenAsString = expirableTokenEncryptor.encrypt(restorePasswordToken);
+            // Build email template data.
+            Map<String, Object> data = Maps.newHashMap();
+            data.put("forgotUrl", urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString));
+            String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
+            String localizedTemplate = String.format("forgotPassword.%s.ftl.html", locale);
+            // Send the email.
+            emailService.send(user.getEmail(), subject, localizedTemplate, data);
+        } catch (MessagingException | TemplateException | PasswordBasedEncryptor.EncryptionException ex) {
+            String message = "Error while sending restore password email for user: " + user.getEmail();
+            logger.error(message, ex);
+            throw new RuntimeException(message, ex);
+        }
+    }
+
+    /**
+     * Returns restore password token.
+     *
+     * @param user User to use in token.
+     * @return Restore password token.
+     */
+    ExpirableToken forgotEmailConfirmationToken(User user) {
+        Map<String, String> params = Maps.newHashMap();
+        params.put("userId", Long.toString(user.getId()));
+        params.put("email", user.getEmail());
+        return ExpirableToken.newToken(ExpirableTokenType.RESTORE_PASSWORD, params, restorePasswordTokenTtl);
     }
 
     /**

@@ -22,6 +22,9 @@ import java.util.Map;
 @Singleton
 public class EmailService {
 
+    /**
+     * Default template package.
+     */
     public static final String DEFAULT_EMAIL_TEMPLATE_PACKAGE = "/views/sso/mail/";
 
     /**
