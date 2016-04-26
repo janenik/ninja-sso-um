@@ -110,9 +110,9 @@ public class RestorePasswordController {
             }
             result.render("user", user);
         } catch (ExpiredTokenException ex) {
-            result.render("forgotCodeError", "expired");
+            result.render("restorePasswordError", "expired");
         } catch (IllegalTokenException | IllegalFormatException ex) {
-            result.render("forgotCodeError", "unknown");
+            result.render("restorePasswordError", "unknown");
         }
         return result;
     }
@@ -147,13 +147,13 @@ public class RestorePasswordController {
                 userService.updatePassword(user, password, (String) context.getAttribute(IpAddressFilter.REMOTE_IP));
                 return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED));
             } else {
-                result.render("forgotCodeError", "password");
+                result.render("restorePasswordError", "password");
             }
             result.render("user", user);
         } catch (ExpiredTokenException ex) {
-            result.render("forgotCodeError", "expired");
+            result.render("restorePasswordError", "expired");
         } catch (IllegalTokenException | IllegalFormatException ex) {
-            result.render("forgotCodeError", "unknown");
+            result.render("restorePasswordError", "unknown");
         }
         return result;
     }
