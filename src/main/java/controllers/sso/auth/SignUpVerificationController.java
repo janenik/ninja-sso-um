@@ -1,6 +1,7 @@
 package controllers.sso.auth;
 
 import com.google.inject.persist.Transactional;
+import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
@@ -182,6 +183,6 @@ public class SignUpVerificationController {
         } catch (NumberFormatException | ExpiredTokenException | IllegalTokenException ex) {
             logger.warn("Unable to confirm user by email token: " + tokenAsString, ex);
         }
-        return Results.redirect(urlBuilderProvider.get().getSignInUrl());
+        return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_FAILED));
     }
 }

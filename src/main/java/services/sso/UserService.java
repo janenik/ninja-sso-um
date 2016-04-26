@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -146,6 +149,7 @@ public class UserService {
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
+        // Sign up event.
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
         userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
@@ -165,6 +169,33 @@ public class UserService {
     public boolean isValidPassword(User user, String password) {
         byte[] passwordHash = passwordService.passwordHash(password, user.getPasswordSalt());
         return Arrays.equals(passwordHash, user.getPasswordHash());
+    }
+
+    /**
+     * Updates user password, storing old salt and hash in user event for convenience.
+     * This information may be used as a hint when user tries to sign in with old password.
+     *
+     * @param user User.
+     * @param password New password.
+     * @param remoteIp Remote IP.
+     * @return User (same as in parameter).
+     */
+    public User updatePassword(User user, String password, String remoteIp) {
+        byte[] oldPasswordSalt = user.getPasswordSalt();
+        byte[] oldPasswordHash = user.getPasswordHash();
+        user.setPasswordSalt(passwordService.newSalt());
+        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
+        entityManagerProvider.get().merge(user);
+        // Update password event.
+        UserEvent userEvent = new UserEvent();
+        userEvent.setUser(user);
+        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
+        userEvent.setType(UserEventType.PASSWORD_CHANGE);
+        userEvent.setIp(remoteIp);
+        // Event data to store old salt and hash.
+        userEvent.setData(getEventDataForPasswordChange(oldPasswordSalt, oldPasswordHash));
+        entityManagerProvider.get().persist(userEvent);
+        return user;
     }
 
     /**
@@ -203,5 +234,29 @@ public class UserService {
     public User detach(User user) {
         entityManagerProvider.get().detach(user);
         return user;
+    }
+
+    /**
+     * Constructs event data bytes that contain old password salt and hash. The first 4 bytes are salt length,
+     * followed by salt bytes, then 4 bytes for hash length, followed by hash bytes. Order of bytes for integers is
+     * described in {@link java.io.DataOutput}.
+     *
+     * @param oldSalt Old password salt bytes.
+     * @param oldHash Old password hash bytes.
+     * @return Event data bytes.
+     */
+    private byte[] getEventDataForPasswordChange(byte[] oldSalt, byte[] oldHash) {
+        // Event data to store old salt and hash.
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(8 + oldSalt.length + oldHash.length);
+        DataOutputStream dataOutputStream = new DataOutputStream(bos);
+        try {
+            dataOutputStream.writeInt(oldSalt.length);
+            dataOutputStream.write(oldSalt);
+            dataOutputStream.writeInt(oldHash.length);
+            dataOutputStream.write(oldHash);
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected exception while serializing old password data", e);
+        }
+        return bos.toByteArray();
     }
 }

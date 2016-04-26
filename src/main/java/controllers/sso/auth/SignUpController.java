@@ -285,9 +285,9 @@ public class SignUpController {
         userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay()));
         userToSave.setRole(UserRole.USER);
         // Remote IP.
-        String remoteIP = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+        String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         // Save the user.
-        userService.createNew(userToSave, userDto.getPassword(), remoteIP);
+        userService.createNew(userToSave, userDto.getPassword(), remoteIp);
         // Perform post-sign up actions.
         String redirectURL = invokePostSignUpActions(userToSave, context);
         // Redirect.
