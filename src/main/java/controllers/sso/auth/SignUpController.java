@@ -260,7 +260,8 @@ public class SignUpController {
         // Check if user has correct token/captcha.
         try {
             captchaTokenService.verifyCaptchaToken(userDto.getToken(), userDto.getCaptchaCode());
-        } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException | IllegalTokenException ex) {
+        } catch (CaptchaTokenService.AlreadyUsedTokenException | CaptchaTokenService.InvalidTokenValueException |
+                ExpiredTokenException | IllegalTokenException ex) {
             return createResult(userDto, context, validation, "captchaCode");
         }
         // Check with existing username.

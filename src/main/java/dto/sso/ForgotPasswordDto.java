@@ -14,7 +14,7 @@ public class ForgotPasswordDto implements Serializable {
     /**
      * Email or username.
      */
-    @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
+    @Size(min = Constants.USERNAME_OR_EMAIL_MIN_LENGTH, max = Constants.USERNAME_OR_EMAIL_MAX_LENGTH)
     @NotNull
     String emailOrUsername;
 
@@ -22,12 +22,14 @@ public class ForgotPasswordDto implements Serializable {
      * Captcha token.
      */
     @Size(max = Constants.TOKEN_MAX_LENGTH)
+    @NotNull
     String captchaToken;
 
     /**
      * Captcha code, user input.
      */
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
+    @NotNull
     String captchaCode;
 
     /**

@@ -185,7 +185,8 @@ public class ForgotPasswordController {
         // Verify token.
         try {
             captchaTokenService.verifyCaptchaToken(user.getCaptchaToken(), user.getCaptchaCode());
-        } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException | IllegalTokenException ex) {
+        } catch (CaptchaTokenService.AlreadyUsedTokenException | CaptchaTokenService.InvalidTokenValueException |
+                ExpiredTokenException | IllegalTokenException ex) {
             return createResult(user, context, validation, "captchaCode");
         }
         // Check existing user.
@@ -279,8 +280,8 @@ public class ForgotPasswordController {
      * @param context Context.
      */
     void regenerateCaptchaTokenAndUrl(Result result, Context context) {
-        String token = captchaTokenService.newCaptchaToken();
-        result.render("captchaToken", token);
-        result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(token));
+        String captchaToken = captchaTokenService.newCaptchaToken();
+        result.render("captchaToken", captchaToken);
+        result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(captchaToken));
     }
 }

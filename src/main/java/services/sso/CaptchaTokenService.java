@@ -134,13 +134,16 @@ public class CaptchaTokenService {
      * @param userProvidedValue User input.
      * @throws AlreadyUsedTokenException In case if token is valid but has been already used.
      * @throws ExpiredTokenException In case when captcha token is expired.
-     * @throws IllegalTokenException In case when illegal token is given.
+     * @throws IllegalTokenException In case when invalid token is given.
+     * @throws InvalidTokenValueException In case when invalid value is given.
      */
     public void verifyCaptchaToken(String token, String userProvidedValue)
-            throws AlreadyUsedTokenException, ExpiredTokenException, IllegalTokenException {
+            throws AlreadyUsedTokenException, ExpiredTokenException, IllegalTokenException, InvalidTokenValueException {
         String captchaValue = extractCaptchaText(token);
         if (captchaValue.equalsIgnoreCase(userProvidedValue)) {
             invalidateToken(token);
+        } else {
+            throw new InvalidTokenValueException();
         }
     }
 
@@ -192,5 +195,11 @@ public class CaptchaTokenService {
      * Exception for cases when the captcha token is already used.
      */
     public static class AlreadyUsedTokenException extends Exception {
+    }
+
+    /**
+     * Exception for cases when the value in captcha token doesn't match user input.
+     */
+    public static class InvalidTokenValueException extends Exception {
     }
 }

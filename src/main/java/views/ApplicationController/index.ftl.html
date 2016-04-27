@@ -1,38 +1,38 @@
-<#import "../layout/defaultLayout.ftl.html" as layout>
-    <@layout.defaultLayout "Home page">
+<#import "../layout/defaultLayout.ftl.html" as layout />
+<@layout.defaultLayout "Home page">
 
-    <div class="jumbotron">
-        <h1>Demo application</h1>
+<div class="jumbotron">
+    <h1>Demo application</h1>
 
-        <p><b>Current language:</b> ${lang}</p>
-        <p><b>Remote IP:</b> ${remoteIp}</p>
-        <p><b>IP hits:</b> ${ipHits}</p>
-        <p><b>IP hits exceeded:</b> ${ipHitsExceeded?c}</p>
-        <p><b>Method:</b> ${method}</p>
-        <p>
-            <b>Image :</b>
-            <img src="${contextPath}/auth/captcha?cpt=${captchaToken}" alt="captcha code"/>
-        </p>
+    <p><b>Current language:</b> ${lang}</p>
+    <p><b>Remote IP:</b> ${remoteIp}</p>
+    <p><b>IP hits:</b> ${ipHits}</p>
+    <p><b>IP hits exceeded:</b> ${ipHitsExceeded?c}</p>
+    <p><b>Method:</b> ${method}</p>
+    <p>
+        <b>Image :</b>
+        <img src="${contextPath}/auth/captcha?cpt=${captchaToken?url}" alt="captcha code"/>
+    </p>
 
-        <div class="row">
-            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                <form method="post" action="./">
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="formValue">Text</label>
-                            <input type="text" name="formValue" id="formValue" class="form-control"
-                                   ${_enableHtml5Required}>
-                        </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+            <form method="post" action="./">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="formValue">Text</label>
+                        <input type="text" name="formValue" id="formValue" class="form-control"
+                               ${_enableHtml5Required}>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <button type="submit" name="submit" class="btn btn-default">Submit</button>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <button type="submit" name="submit" class="btn btn-default">Submit</button>
                     </div>
-                    <input type="hidden" name="token" value="${captchaToken}">
-                </form>
-            </div>
+                </div>
+                <input type="hidden" name="token" value="${captchaToken}">
+            </form>
         </div>
     </div>
+</div>
 
 </@layout.defaultLayout>

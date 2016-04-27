@@ -49,6 +49,16 @@ public interface Constants {
     int USERNAME_MAX_LENGTH = 255;
 
     /**
+     * Min length for username/email field (forgot password form).
+     */
+    int USERNAME_OR_EMAIL_MIN_LENGTH = 4;
+
+    /**
+     * Max length for username/email field (forgot password form).
+     */
+    int USERNAME_OR_EMAIL_MAX_LENGTH = 255;
+
+    /**
      * Pattern for phone, as string.
      */
     String PHONE_PATTERN = "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\\\\\/]?)?((?:\\(?\\d{1,}\\)" +

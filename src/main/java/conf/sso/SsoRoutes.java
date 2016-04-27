@@ -1,6 +1,8 @@
 package conf.sso;
 
 import com.google.inject.Inject;
+import controllers.sso.auth.ForgotPasswordController;
+import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpController;
 import controllers.sso.auth.SignUpVerificationController;
@@ -40,5 +42,17 @@ public class SsoRoutes implements ApplicationRoutes {
         // Sign in.
         router.GET().route(subRoute +"/signin").with(SignInController.class, "signInGet");
         router.POST().route(subRoute +"/signin").with(SignInController.class, "signIn");
+
+        // Forgot password.
+        router.GET().route(subRoute +"/forgot")
+                .with(ForgotPasswordController.class, "forgotGet");
+        router.POST().route(subRoute +"/forgot")
+                .with(ForgotPasswordController.class, "forgot");
+
+        // Restore password.
+        router.GET().route(subRoute +"/restore")
+                .with(RestorePasswordController.class, "restorePasswordGet");
+        router.POST().route(subRoute +"/restore")
+                .with(RestorePasswordController.class, "restorePassword");
     }
 }

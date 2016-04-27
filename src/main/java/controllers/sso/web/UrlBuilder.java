@@ -170,7 +170,7 @@ public class UrlBuilder {
      * @return Restore password URL.
      */
     public String getRestorePasswordUrl(String token) {
-        String reverseRoute = router.getReverseRoute(RestorePasswordController.class, "setNewPassword");
+        String reverseRoute = router.getReverseRoute(RestorePasswordController.class, "restorePasswordGet");
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&restoreToken=").append(Escapers.encodePercent(token))

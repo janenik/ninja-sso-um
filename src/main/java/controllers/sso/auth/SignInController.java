@@ -155,8 +155,8 @@ public class SignInController {
         if (ipHitsExceeded) {
             try {
                 captchaTokenService.verifyCaptchaToken(userSignInDto.getCaptchaToken(), userSignInDto.getCaptchaCode());
-            } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException |
-                    IllegalTokenException ex) {
+            } catch (CaptchaTokenService.AlreadyUsedTokenException | CaptchaTokenService.InvalidTokenValueException |
+                    ExpiredTokenException | IllegalTokenException ex) {
                 return createResult(userSignInDto, context, validation, "captchaCode");
             }
         }
