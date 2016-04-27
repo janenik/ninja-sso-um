@@ -144,7 +144,7 @@ public class RestorePasswordController {
                 throw new ExpiredTokenException();
             }
             if (isValidPassword(password, confirmPassword)) {
-                userService.updatePassword(user, password, (String) context.getAttribute(IpAddressFilter.REMOTE_IP));
+                userService.updatePasswordAndConfirm(user, password, (String) context.getAttribute(IpAddressFilter.REMOTE_IP));
                 return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED));
             } else {
                 result.render("restorePasswordError", "password");

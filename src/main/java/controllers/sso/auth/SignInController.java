@@ -183,7 +183,7 @@ public class SignInController {
     Result createResult(UserSignInDto user, Context context, Validation validation) {
         boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
         String langCode = (String) context.getAttribute(LanguageFilter.LANG);
-        SignInState state = SignInState.fromString(context.getParameter("stat"));
+        SignInState state = SignInState.fromString(context.getParameter("state"));
 
         Result result = Results.html().template(TEMPLATE);
         result.render("user", user);

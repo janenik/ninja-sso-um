@@ -174,15 +174,17 @@ public class UserService {
     /**
      * Updates user password, storing old salt and hash in user event for convenience.
      * This information may be used as a hint when user tries to sign in with old password.
+     * Since the link to password restoration is sent via email, user is confirmed.
      *
      * @param user User.
      * @param password New password.
      * @param remoteIp Remote IP.
      * @return User (same as in parameter).
      */
-    public User updatePassword(User user, String password, String remoteIp) {
+    public User updatePasswordAndConfirm(User user, String password, String remoteIp) {
         byte[] oldPasswordSalt = user.getPasswordSalt();
         byte[] oldPasswordHash = user.getPasswordHash();
+        user.confirm();
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().merge(user);
