@@ -41,7 +41,7 @@ public class ExpirableTokenEncryptorTest {
     @Test
     public void testBasic()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
-        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "12345678901234567890", 30L);
+        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "12345678901234567890", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
@@ -55,7 +55,7 @@ public class ExpirableTokenEncryptorTest {
     @Test
     public void testBasic_nullScope()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
-        ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "userId", "12345678901234567890", 30L);
+        ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "userId", "12345678901234567890", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
@@ -69,7 +69,7 @@ public class ExpirableTokenEncryptorTest {
     @Test
     public void testCaptcha()
             throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
-        ExpirableToken accessToken = ExpirableToken.newCaptchaToken("captcha", "WORLD768", 30L);
+        ExpirableToken accessToken = ExpirableToken.newCaptchaToken("captcha", "WORLD768", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
@@ -97,7 +97,7 @@ public class ExpirableTokenEncryptorTest {
         attributes.put("flag1", "value1");
         attributes.put("flag2", "very_very_long_value_21234567890");
 
-        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope365", attributes, 30L);
+        ExpirableToken accessToken = ExpirableToken.newAccessToken("scope365", attributes, 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
         ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);
@@ -114,7 +114,7 @@ public class ExpirableTokenEncryptorTest {
         String userId = "";
         for (int i = 1; i < 100; i++) {
             userId += i;
-            ExpirableToken accessToken = ExpirableToken.newAccessToken("u", userId, 30L);
+            ExpirableToken accessToken = ExpirableToken.newAccessToken("u", userId, 30_000L);
 
             String encrypted = encryptor.encrypt(accessToken);
             ExpirableToken decryptedAccessToken = encryptor.decrypt(encrypted);

@@ -50,14 +50,14 @@
     </persistence-unit>
     
      <!-- h2 is a simple database - in reality you may want to switch to postgres or so... -->
-    <persistence-unit name="h2_test" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <persistence-unit name="h2-test" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <properties>
             <property name="javax.persistence.provider" value="org.hibernate.ejb.HibernatePersistence" />
             <property name="hibernate.connection.driver_class" value="org.h2.Driver" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
             <!-- you may want to enable the ddl if you do not use migrations. -->
-            <!--  <property name="hibernate.hbm2ddl.auto" value="create" /> -->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="false" />
             
