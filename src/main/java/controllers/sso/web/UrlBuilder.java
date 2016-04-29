@@ -138,7 +138,7 @@ public class UrlBuilder {
      */
     public String getSignUpVerificationPage(String signUpVerificationToken) {
         String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "verifySignUp");
-        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&token=")
                 .append(Escapers.encodePercent(signUpVerificationToken))
@@ -215,11 +215,11 @@ public class UrlBuilder {
     /**
      * Returns relative URL builder with optional context path and language parameter.
      *
-     * @param path Path.
      * @param context Context.
+     * @param path Path.
      * @return Relative URL.
      */
-    private StringBuilder newRelativeUrlBuilder(String path, Context context) {
+    private StringBuilder newRelativeUrlBuilder(Context context, String path) {
         return newAbsoluteUrlBuilder("", context, path);
     }
 }
