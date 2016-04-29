@@ -62,7 +62,7 @@ public class SsoModule extends AbstractModule {
     @Provides
     @Named("allowedContinueUrls")
     @Singleton
-    List<String> provideAllowedRedirects(NinjaProperties properties) {
+    List<String> provideAllowedContinueUrls(NinjaProperties properties) {
         String baseUrl = properties.get("application.baseUrl");
         String[] urls = properties.getStringArray("application.sso.allowedContinueUrls");
         if (urls == null) {

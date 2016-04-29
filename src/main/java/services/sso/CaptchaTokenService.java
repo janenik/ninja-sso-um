@@ -115,16 +115,27 @@ public class CaptchaTokenService {
     /**
      * Creates expirable encrypted token with captcha.
      *
+     * @param word Word to encrypt in captcha token.
      * @return Expirable encrypted token with captcha.
      * @throws IllegalStateException In case token encryptor is not set up properly.
      */
-    public String newCaptchaToken() {
-        ExpirableToken token = ExpirableToken.newCaptchaToken("captcha", nextCaptchaRandomWord(), captchaTTLInMillis);
+    public String newCaptchaToken(String word) {
+        ExpirableToken token = ExpirableToken.newCaptchaToken("captcha", word, captchaTTLInMillis);
         try {
             return encryptor.encrypt(token);
         } catch (PasswordBasedEncryptor.EncryptionException ee) {
             throw new IllegalStateException("Unexpected exception while encrypting the captcha.", ee);
         }
+    }
+
+    /**
+     * Creates expirable encrypted token with captcha.
+     *
+     * @return Expirable encrypted token with captcha.
+     * @throws IllegalStateException In case token encryptor is not set up properly.
+     */
+    public String newCaptchaToken() {
+        return newCaptchaToken(nextCaptchaRandomWord());
     }
 
     /**

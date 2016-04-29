@@ -73,9 +73,11 @@
                             </div>
                         </div>
                         <div class="col-xs-6 col-md-6 ssoSignupCaptchaContainer">
-                            <img src="${captchaUrl}" class="ssoCaptchaImage"
+                            <img src="${captchaUrl}"
+                                 class="ssoCaptchaImage" id="captchaImage"
                                  alt="${i18n('signUpCaptchaCodeHelp')}"
-                                 title="${i18n('signUpCaptchaCodeHelp')}"/>
+                                 title="${i18n('signUpCaptchaCodeHelp')}"
+                            />
                             <#if errors.hasBeanViolation('captchaCode')>
                                 <p class="help-block">${i18n("signInCaptchaCodeHelp")}</p>
                             </#if>
@@ -99,14 +101,13 @@
     </style>
 
     <script>
-    $('#email, #captchaCode').keyup(function() {
-        var v = this.value, vv = v.replace(/^[\s]+/, '');
-        if (v != vv) this.value = vv;
-    });
-    $('#signInForm').submit(function() {
-        $('#signInSubmit').attr('disabled', 'disabled');
-        $('#signInSubmit').html('${i18n("signInButtonTitleLoading")}');
-    });
+    (function() {
+        $('#signInForm').submit(function() {
+            $('#signInSubmit').attr('disabled', 'disabled');
+            $('#signInSubmit').html('${i18n("signInButtonTitleLoading")}');
+        });
+    })();
+    <#include "/assets/js/sso/captcha.js" />
     </script>
 
 </@layout.defaultLayout>

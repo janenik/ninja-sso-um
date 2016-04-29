@@ -292,7 +292,8 @@
                     </div>
                 </div>
                 <div class="col-xs-6 col-md-6 ssoSignupCaptchaContainer">
-                    <img src="${captchaUrl}" class="ssoCaptchaImage" id="captchaImage"
+                    <img src="${captchaUrl}"
+                         class="ssoCaptchaImage" id="captchaImage"
                          alt="${i18n('signUpCaptchaCodeHelp')}"
                          title="${i18n('signUpCaptchaCodeHelp')}"
                     />
@@ -349,6 +350,7 @@
 
 <script>
     <#include "/assets/js/sso/signup.js" />
+    <#include "/assets/js/sso/captcha.js" />
 </script>
 
 </@layout.defaultLayout>

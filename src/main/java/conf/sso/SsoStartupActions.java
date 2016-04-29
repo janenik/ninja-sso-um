@@ -8,7 +8,9 @@ import models.sso.UserGender;
 import ninja.lifecycle.Start;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
+import services.sso.CountryService;
 import services.sso.PasswordService;
+import services.sso.UserService;
 
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
@@ -31,6 +33,18 @@ public class SsoStartupActions {
      */
     @Inject
     Provider<EntityManager> entityManagerProvider;
+
+    /**
+     * User service.
+     */
+    @Inject
+    UserService userService;
+
+    /**
+     * Country service.
+     */
+    @Inject
+    CountryService countryService;
 
     /**
      * Properties.
@@ -58,13 +72,12 @@ public class SsoStartupActions {
         if (country == null) {
             logger.info("Adding new countries... dev: {}, test: {}...", properties.isDev(), properties.isTest());
 
-            em.persist(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
-            em.persist(new Country("CA", "CAN", "Canada", "Canada", 1));
-            country = new Country("US", "USA", "United States", "United States", 1);
-            em.persist(country);
+            countryService.createNew(new Country("US", "USA", "United States", "United States", 1));
+            countryService.createNew(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
+            countryService.createNew(new Country("CA", "CAN", "Canada", "Canada", 1));
         }
 
-        User user = em.find(User.class, 1L);
+        User user = userService.getByUsername("root");
         if (user == null) {
             logger.info("Adding new root user... {}, test: {}...", properties.isDev(), properties.isTest());
 
@@ -74,10 +87,9 @@ public class SsoStartupActions {
             user.setDateOfBirth(LocalDate.of(1984, 11, 24));
             user.setCountry(country);
             user.setGender(UserGender.OTHER);
-            user.setPasswordSalt(passwordService.newSalt());
-            user.setPasswordHash(passwordService.passwordHash("password", user.getPasswordSalt()));
+            user.confirm();
 
-            em.persist(user);
+            userService.createNew(user, "password", "[::1]");
         }
         em.getTransaction().commit();
     }

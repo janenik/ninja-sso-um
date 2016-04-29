@@ -100,6 +100,10 @@ public class UrlBuilder {
         if (url.isEmpty()) {
             return baseUrl;
         }
+        // Allow redirect to anywhere in test mode.
+        if (properties.isTest()) {
+            return url;
+        }
         for (String urlPrefix : allowedContinueUrls) {
             if (url.startsWith(urlPrefix)) {
                 return url;

@@ -49,4 +49,15 @@ public class CountryService {
         return (List<Country>) entityManagerProvider.get().
                 createNamedQuery("Countries.getAllSortedByNiceName").getResultList();
     }
+
+    /**
+     * Persists given gountry.
+     *
+     * @param country Country.
+     * @return Persisted coutry.
+     */
+    public Country createNew(Country country) {
+        entityManagerProvider.get().persist(country);
+        return country;
+    }
 }
