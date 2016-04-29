@@ -80,7 +80,7 @@ public class SignInTest extends NinjaFluentLeniumTest {
             goTo(getSignInUrl());
         }
         goTo(getSignInUrl(getServerAddress() + "?successful_sign_in=true", null));
-        logger.warn(webDriver.getPageSource());
+
         assertTrue("No error notification", webDriver.findElements(By.className("alert-danger")).isEmpty());
         assertTrue("No success notifications", webDriver.findElements(By.className("alert-success")).isEmpty());
 
