@@ -9,6 +9,7 @@ import ninja.utils.NinjaProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 import services.sso.token.ExpirableTokenEncryptor;
@@ -23,10 +24,29 @@ import static org.junit.Assert.assertTrue;
  */
 public class SignInTest extends NinjaFluentLeniumTest {
 
+    /**
+     * Application router.
+     */
     Router router;
+
+    /**
+     * Encryptor.
+     */
     ExpirableTokenEncryptor encryptor;
+
+    /**
+     * Captcha token service.
+     */
     CaptchaTokenService captchaTokenService;
+
+    /**
+     * Application properties.
+     */
     NinjaProperties properties;
+
+    /**
+     * Logger.
+     */
     Logger logger;
 
     @Before
@@ -50,8 +70,8 @@ public class SignInTest extends NinjaFluentLeniumTest {
         assertTrue("No success notifications", webDriver.findElements(By.className("alert-success")).isEmpty());
         assertTrue("No captcha with the first hit", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
-        webDriver.findElement(By.name("emailOrUsername")).sendKeys("email@nowhere.org");
-        webDriver.findElement(By.name("password")).sendKeys("email@nowhere.org");
+        getFormElement("emailOrUsername").sendKeys("email@nowhere.org");
+        getFormElement("password").sendKeys("wrongPassword");
 
         click("#signInSubmit");
 
@@ -63,12 +83,12 @@ public class SignInTest extends NinjaFluentLeniumTest {
         assertTrue("No captcha", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
         // Apply existing user.
-        webDriver.findElement(By.name("emailOrUsername")).sendKeys("root");
-        webDriver.findElement(By.name("password")).sendKeys("password");
+        getFormElement("emailOrUsername").sendKeys("root");
+        getFormElement("password").sendKeys("password");
 
         click("#signInSubmit");
 
-        assertTrue("Redirected to continue URL", webDriver.getCurrentUrl().contains("successful_sign_in"));
+        assertTrue("Redirected to continue URL", webDriver.getCurrentUrl().contains("successful_sign_in=true"));
     }
 
     @Test
@@ -85,15 +105,17 @@ public class SignInTest extends NinjaFluentLeniumTest {
         assertTrue("No success notifications", webDriver.findElements(By.className("alert-success")).isEmpty());
 
         // Apply existing user.
-        webDriver.findElement(By.name("emailOrUsername")).sendKeys("root");
-        webDriver.findElement(By.name("password")).sendKeys("password");
+        getFormElement("emailOrUsername").sendKeys("root");
+        getFormElement("password").sendKeys("password");
 
         // Set captcha word and token that are known to test.
         String captchaWord = "captchaSecret393";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
 
-        webDriver.findElement(By.name("captchaCode")).sendKeys(captchaWord);
-        webDriver.findElement(By.name("captchaToken")).sendKeys(captchaToken);
+        getFormElement("captchaCode").clear();
+        getFormElement("captchaCode").sendKeys(captchaWord);
+        getFormElement("captchaToken").clear();
+        getFormElement("captchaToken").sendKeys(captchaToken);
 
         click("#signInSubmit");
 
@@ -101,7 +123,7 @@ public class SignInTest extends NinjaFluentLeniumTest {
     }
 
     @Test
-    public void testHasSuccessAndDangerNotification() {
+    public void testHasSuccessAndDangerNotifications() {
         goTo(getSignInUrl(null, "forgot_email_sent"));
         assertNotNull("Success notification exists", webDriver.findElement(By.className("alert-success")));
 
@@ -110,6 +132,16 @@ public class SignInTest extends NinjaFluentLeniumTest {
 
         goTo(getSignInUrl(null, "EMAIL_VERIFICATION_FAILED"));
         assertNotNull("Danger notification exists", webDriver.findElement(By.className("alert-danger")));
+    }
+
+    /**
+     * Returns form element by name.
+     *
+     * @param name Name of the element.
+     * @return Web element on the page.
+     */
+    private WebElement getFormElement(String name) {
+        return webDriver.findElement(By.name(name));
     }
 
     /**

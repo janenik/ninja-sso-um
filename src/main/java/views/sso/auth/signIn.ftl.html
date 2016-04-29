@@ -101,13 +101,8 @@
     </style>
 
     <script>
-    (function() {
-        $('#signInForm').submit(function() {
-            $('#signInSubmit').attr('disabled', 'disabled');
-            $('#signInSubmit').html('${i18n("signInButtonTitleLoading")}');
-        });
-    })();
-    <#include "/assets/js/sso/captcha.js" />
+        <#include "/assets/js/sso/signin.js" />
+        <#include "/assets/js/sso/captcha.js" />
     </script>
 
 </@layout.defaultLayout>

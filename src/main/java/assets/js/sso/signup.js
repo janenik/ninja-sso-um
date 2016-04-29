@@ -25,7 +25,13 @@
         if (phone.val().length < 5) {
             $('#phone').val('+' + li.attr('rel2') + ' ');
             $('#phone')[0].focus();
+            $('#phone')[0].selectionStart = $('#phone')[0].selectionEnd = $('#phone').val().length;
         }
         return li.attr('rel3');
+    });
+
+    $('#signUpForm').submit(function() {
+        $('#signUpSubmit').attr('disabled', 'disabled');
+        $('#signUpSubmit').html('${i18n("signInButtonTitleLoading")}');
     });
  })();
