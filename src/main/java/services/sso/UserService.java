@@ -174,7 +174,7 @@ public class UserService {
     /**
      * Updates user password, storing old salt and hash in user event for convenience.
      * This information may be used as a hint when user tries to sign in with old password.
-     * Since the link to password restoration is sent via email, user is confirmed.
+     * Since the link to password restoration is sent via email, account becomes verified (confirmed).
      *
      * @param user User.
      * @param password New password.
@@ -187,7 +187,7 @@ public class UserService {
         user.confirm();
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
-        entityManagerProvider.get().merge(user);
+        entityManagerProvider.get().persist(user);
         // Update password event.
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);

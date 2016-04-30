@@ -148,14 +148,14 @@ public class UrlBuilder {
     }
 
     /**
-     * Returns redirect URL to Sign Up welcome page after successful user sign up and confirmation email sent.
+     * Returns relative URL to Sign In page, showing a state message if the state is given, then
      *
      * @param state Optional state.
      * @return Sign in URL.
      */
     public String getSignInUrl(Object... state) {
         String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
-        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
         if (state != null && state.length > 0 && state[0] != null) {
             urlBuilder
                     .append("&state=")
@@ -168,7 +168,7 @@ public class UrlBuilder {
     }
 
     /**
-     * Constructs restore password URL by given parameters.
+     * Constructs absolute restore password URL by given parameters. URL may be sent in email.
      *
      * @param token Restore password token.
      * @return Restore password URL.

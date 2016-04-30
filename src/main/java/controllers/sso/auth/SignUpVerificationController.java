@@ -8,7 +8,6 @@ import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
-import models.sso.UserConfirmationState;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -112,7 +111,7 @@ public class SignUpVerificationController {
     }
 
     /**
-     * Submits Sign Up verification page. POST.
+     * Verifies Sign Up with user provided code. Redirects to Sign In page. POST.
      *
      * @param context Context.
      * @return Rendered sign up page.
@@ -138,9 +137,10 @@ public class SignUpVerificationController {
                     if (userForVerification == null) {
                         throw new ExpiredTokenException();
                     }
-                    userForVerification.setConfirmationState(UserConfirmationState.CONFIRMED);
+                    userForVerification.confirm();
                     userService.save(userForVerification);
-                    return Results.redirect(continueUrl);
+                    return Results.redirect(urlBuilderProvider.get()
+                            .getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED));
                 }
                 errorType = "wrongVerificationCode";
             }

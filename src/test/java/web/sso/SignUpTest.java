@@ -2,13 +2,17 @@ package web.sso;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
+import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpController;
 import controllers.sso.auth.SignUpVerificationController;
+import controllers.sso.auth.state.SignInState;
 import controllers.sso.web.Escapers;
 import models.sso.User;
 import models.sso.UserConfirmationState;
 import models.sso.UserGender;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import ninja.NinjaFluentLeniumTest;
@@ -23,6 +27,7 @@ import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
 
+import javax.persistence.EntityManager;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -63,6 +68,11 @@ public class SignUpTest extends NinjaFluentLeniumTest {
     UserService userService;
 
     /**
+     * Entity manager.
+     */
+    Provider<EntityManager> entityManagerProvider;
+
+    /**
      * Encryptor.
      */
     ExpirableTokenEncryptor encryptor;
@@ -88,6 +98,7 @@ public class SignUpTest extends NinjaFluentLeniumTest {
 
         this.router = injector.getBinding(Router.class).getProvider().get();
         this.userService = injector.getBinding(UserService.class).getProvider().get();
+        this.entityManagerProvider = injector.getProvider(EntityManager.class);
         this.encryptor = injector.getBinding(ExpirableTokenEncryptor.class).getProvider().get();
         this.captchaTokenService = injector.getBinding(CaptchaTokenService.class).getProvider().get();
         this.properties = injector.getBinding(NinjaProperties.class).getProvider().get();
@@ -152,19 +163,43 @@ public class SignUpTest extends NinjaFluentLeniumTest {
         String url = webDriver.getCurrentUrl();
         Map<String, String> urlParameters = extractParameters(new URI(url));
 
+        // Verify that the browser has opened verification form.
         assertTrue("Verify URL expected: " + url,
                 url.contains(router.getReverseRoute(SignUpVerificationController.class, "verifySignUp")));
-        assertTrue("Verify URL contains continue URL: " + urlParameters.get("continue"),
+        assertTrue("Verify URL contains valid continue URL: " + urlParameters.get("continue"),
                 urlParameters.get("continue").contains("successful_sign_up=true"));
 
         // Verify that user is created.
         User user = userService.getByUsername(USERNAME);
         verifyUser(user, UserConfirmationState.UNCONFIRMED);
 
+        // Decrypt the verification token.
         ExpirableToken token = encryptor.decrypt(urlParameters.get("token"));
-        String verificationCode = token.getAttributeValue("verificationCode");
+        assertEquals(ExpirableTokenType.SIGNUP_VERIFICATION, token.getType());
 
+        // Use verification code to confirm the account.
+        String verificationCode = token.getAttributeValue("verificationCode");
         assertNotNull("Verification code is expected in token.", verificationCode);
+
+        getFormElement("verificationCode").sendKeys(verificationCode);
+        click("#verifySignUpSubmit");
+
+        // Verify that the browser has opened sign in form and the URL has valid continue parameter..
+        url = webDriver.getCurrentUrl();
+        urlParameters = extractParameters(new URI(url));
+        assertTrue("Sign in URL expected: " + url,
+                url.contains(router.getReverseRoute(SignInController.class, "signInGet")));
+        assertTrue("Sign in URL with message: " + url,
+                url.contains(SignInState.EMAIL_VERIFICATION_CONFIRMED.toString().toLowerCase()));
+        assertTrue("Verify URL contains valid continue URL: " + urlParameters.get("continue"),
+                urlParameters.get("continue").contains("successful_sign_up=true"));
+
+        // Need to detach the user object to re-read from database.
+        entityManagerProvider.get().detach(user);
+
+        // Verify that the user has confirmed the account.
+        user = userService.getByEmail(EMAIL);
+        verifyUser(user, UserConfirmationState.CONFIRMED);
     }
 
 
