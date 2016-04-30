@@ -1,7 +1,7 @@
 <configuration>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>app.log</file>
+        <file>target/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>app.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
             <MaxHistory>30</MaxHistory>

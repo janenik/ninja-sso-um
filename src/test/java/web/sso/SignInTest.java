@@ -145,16 +145,16 @@ public class SignInTest extends NinjaFluentLeniumTest {
     }
 
     /**
-     * Constructs sign in URL.
+     * Constructs Sign In URL.
      *
-     * @return Sign in URL.
+     * @return Sign In URL.
      */
     private String getSignInUrl() {
         return getSignInUrl(null, null);
     }
 
     /**
-     * Constructs sign in URL with optional continue URL and optional state.
+     * Constructs Sign In URL with optional continue URL and optional state.
      *
      * @param continueUrl Continue URL. Optional.
      * @param state State of the sign in. Optional.

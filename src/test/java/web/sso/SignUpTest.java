@@ -13,8 +13,6 @@ import models.sso.UserConfirmationState;
 import models.sso.UserGender;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
-import models.sso.token.ExpiredTokenException;
-import models.sso.token.IllegalTokenException;
 import ninja.NinjaFluentLeniumTest;
 import ninja.Router;
 import ninja.utils.NinjaProperties;
@@ -29,7 +27,6 @@ import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
@@ -45,16 +42,59 @@ import static org.junit.Assert.assertTrue;
  */
 public class SignUpTest extends NinjaFluentLeniumTest {
 
+    /**
+     * First name for test account.
+     */
     static final String FIRST_NAME = "FirstName";
+
+    /**
+     * Last name for test account.
+     */
     static final String LAST_NAME = "LastName";
+
+    /**
+     * Username for test account.
+     */
     static final String USERNAME = "webDriverUsername1234567890";
+
+    /**
+     * Username in lowercase.
+     */
     static final String USERNAME_LOWERCASED = USERNAME.toLowerCase();
+
+    /**
+     * Email for test account.
+     */
     static final String EMAIL = "email@somewhere.org";
+
+    /**
+     * Phone for test account.
+     */
     static final String PHONE = "+1 650 9999 999";
+
+    /**
+     * Password for test account.
+     */
     static final String PASSWORD = "wrongPassword";
+
+    /**
+     * Country for test account.
+     */
     static final String COUNTRY_ID = "US";
+
+    /**
+     * Birth year for test account.
+     */
     static final int YEAR = 1988;
+
+    /**
+     * Birth month for test account.
+     */
     static final int MONTH = 12;
+
+    /**
+     * Birth day for test account.
+     */
     static final int DAY_OF_MONTH = 24;
 
     /**
@@ -108,33 +148,16 @@ public class SignUpTest extends NinjaFluentLeniumTest {
     }
 
     @Test
-    public void testSignUp() throws ExpiredTokenException, IllegalTokenException, CaptchaTokenService
-            .AlreadyUsedTokenException, URISyntaxException {
+    public void testSignUp() throws Exception {
         goTo(getSignUpUrl(getServerAddress() + "?successful_sign_up=true"));
 
         assertTrue("Must have continue URL", webDriver.getCurrentUrl().contains("successful_sign_up"));
 
-        // Single alert-danger is expected (noscript warning).
-        assertEquals("noscript warning is expected", 1, webDriver.findElements(By.className("alert-danger")).size());
+        fillSignUpForm();
 
-        getFormElement("firstName").sendKeys(FIRST_NAME);
-        getFormElement("lastName").sendKeys(LAST_NAME);
-
-        getFormElement("birthMonth").sendKeys(Integer.toString(MONTH));
-        getFormElement("birthDay").sendKeys(Integer.toString(DAY_OF_MONTH));
-        getFormElement("birthYear").sendKeys(Integer.toString(YEAR));
-
-        getFormElement("username").sendKeys(USERNAME);
-
-        getFormElement("gender").sendKeys(UserGender.FEMALE.toString());
-
-        getFormElement("email").sendKeys(EMAIL);
-        getFormElement("password").sendKeys(PASSWORD);
-        getFormElement("passwordRepeat").sendKeys(PASSWORD);
-
-        getFormElement("countryId").sendKeys(COUNTRY_ID);
-        getFormElement("phone").sendKeys(PHONE);
-
+        if (!getFormElement("agreement").isSelected()) {
+            click("#agreement");
+        }
 
         // Try to sign up.
         click("#signUpSubmit");
@@ -155,7 +178,9 @@ public class SignUpTest extends NinjaFluentLeniumTest {
         getFormElement("token").clear();
         getFormElement("token").sendKeys(captchaToken);
 
-        click("#agreement");
+        if (!getFormElement("agreement").isSelected()) {
+            click("#agreement");
+        }
 
         click("#signUpSubmit");
 
@@ -200,6 +225,32 @@ public class SignUpTest extends NinjaFluentLeniumTest {
         // Verify that the user has confirmed the account.
         user = userService.getByEmail(EMAIL);
         verifyUser(user, UserConfirmationState.CONFIRMED);
+    }
+
+    /**
+     * Fills in form data.
+     */
+    private void fillSignUpForm() {
+        getFormElement("firstName").sendKeys(FIRST_NAME);
+        getFormElement("lastName").sendKeys(LAST_NAME);
+
+        getFormElement("birthMonth").sendKeys(Integer.toString(MONTH));
+        getFormElement("birthDay").sendKeys(Integer.toString(DAY_OF_MONTH));
+        getFormElement("birthYear").sendKeys(Integer.toString(YEAR));
+
+        getFormElement("username").sendKeys(USERNAME);
+
+        getFormElement("gender").sendKeys(UserGender.FEMALE.toString());
+
+        getFormElement("email").sendKeys(EMAIL);
+        getFormElement("password").sendKeys(PASSWORD);
+        getFormElement("passwordRepeat").sendKeys(PASSWORD);
+
+        getFormElement("countryId").sendKeys(COUNTRY_ID);
+        getFormElement("phone").sendKeys(PHONE);
+
+        getFormElement("captchaCode").clear();
+        getFormElement("captchaCode").sendKeys("@@@@@");
     }
 
 
@@ -271,7 +322,7 @@ public class SignUpTest extends NinjaFluentLeniumTest {
     }
 
     /**
-     * Constructs sign up URL with optional continue URL.
+     * Constructs Sign Up URL with optional continue URL.
      *
      * @param continueUrl Continue URL. Optional.
      * @return Continue URL.
@@ -293,13 +344,13 @@ public class SignUpTest extends NinjaFluentLeniumTest {
      * @param uri URI to parse.
      * @return Map of parameters.
      */
-    private Map<String, String> extractParameters(URI uri) {
+    private static Map<String, String> extractParameters(URI uri) {
         String query = uri.getRawQuery();
         if (query == null || query.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<String, String> params = Maps.newHashMap();
         String[] pairs = query.split("&");
+        Map<String, String> params = Maps.newHashMapWithExpectedSize(pairs.length);
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
             if (keyValue.length > 1) {
