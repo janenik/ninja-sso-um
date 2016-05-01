@@ -14,8 +14,6 @@ import javax.persistence.Query;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 /**
@@ -139,24 +137,23 @@ public class UserService {
     }
 
     /**
-     * Saves user into the database and returns user parameter (attached entity).
+     * Saves user into the database and returns user event associated with creation (attached entity).
      *
      * @param user User to save.
      * @param remoteIp Remote IP.
-     * @return Saved user.
+     * @return User event associated with user creation.
      */
-    public User createNew(User user, String password, String remoteIp) {
+    public UserEvent createNew(User user, String password, String remoteIp) {
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
         // Sign up event.
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
-        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
         userEvent.setType(UserEventType.SIGN_UP);
         userEvent.setIp(remoteIp);
         entityManagerProvider.get().persist(userEvent);
-        return user;
+        return userEvent;
     }
 
     /**
@@ -179,9 +176,9 @@ public class UserService {
      * @param user User.
      * @param password New password.
      * @param remoteIp Remote IP.
-     * @return User (same as in parameter).
+     * @return User event that contains information about password update.
      */
-    public User updatePasswordAndConfirm(User user, String password, String remoteIp) {
+    public UserEvent updatePasswordAndConfirm(User user, String password, String remoteIp) {
         byte[] oldPasswordSalt = user.getPasswordSalt();
         byte[] oldPasswordHash = user.getPasswordHash();
         user.confirm();
@@ -191,13 +188,12 @@ public class UserService {
         // Update password event.
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
-        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
         userEvent.setType(UserEventType.PASSWORD_CHANGE);
         userEvent.setIp(remoteIp);
         // Event data to store old salt and hash.
         userEvent.setData(getEventDataForPasswordChange(oldPasswordSalt, oldPasswordHash));
         entityManagerProvider.get().persist(userEvent);
-        return user;
+        return userEvent;
     }
 
     /**
@@ -210,7 +206,6 @@ public class UserService {
     public UserEvent updateSignInTime(User user, String remoteIp) {
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
-        userEvent.setTime(ZonedDateTime.now(ZoneId.of("UTC")));
         userEvent.setType(UserEventType.SIGN_IN);
         userEvent.setIp(remoteIp);
         entityManagerProvider.get().persist(userEvent);
@@ -226,16 +221,16 @@ public class UserService {
         entityManagerProvider.get().persist(user);
     }
 
-
     /**
-     * Detaches given user from current session.
+     * Removes user events.
      *
-     * @param user User to detach.
-     * @return Detached user (same as argument).
+     * @param user User who's events to remove.
+     * @return Number of events removed.
      */
-    public User detach(User user) {
-        entityManagerProvider.get().detach(user);
-        return user;
+    public int removeUserEvents(User user) {
+        Query q = entityManagerProvider.get().createNamedQuery("UserEvents.removeByUser");
+        q.setParameter("userId", user.getId());
+        return q.executeUpdate();
     }
 
     /**

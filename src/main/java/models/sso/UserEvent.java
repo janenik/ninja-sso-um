@@ -15,7 +15,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
@@ -30,11 +31,11 @@ import java.time.ZonedDateTime;
                 query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId ORDER BY ue.time DESC"),
         @NamedQuery(name = "UserEvents.getByUserAndEventType",
                 query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId AND ue.type = :eventType "
-                        + "ORDER BY ue.time DESC")
+                        + "ORDER BY ue.time DESC"),
+        @NamedQuery(name = "UserEvents.removeByUser",
+                query = "DELETE FROM UserEvent ue WHERE ue.user.id = :userId")
 })
 public class UserEvent implements Serializable {
-
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     /**
      * User id.
@@ -81,7 +82,7 @@ public class UserEvent implements Serializable {
     @PrePersist
     public void prePersist() {
         if (time == null) {
-            time = User.nowUtc();
+            time = nowUtc();
         }
     }
 
@@ -99,8 +100,8 @@ public class UserEvent implements Serializable {
      *
      * @return Event data as UTF-8 string.
      */
-    public String getDataAsUtfString() {
-        return new String(getData(), UTF8);
+    public String getDataAsUtf8String() {
+        return new String(getData(), StandardCharsets.UTF_8);
     }
 
     /**
@@ -118,7 +119,7 @@ public class UserEvent implements Serializable {
      * @param data Data as UTF-8 string.
      */
     public void setDataAsUtf8String(String data) {
-        setData(data.getBytes(UTF8));
+        setData(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -158,7 +159,7 @@ public class UserEvent implements Serializable {
     }
 
     /**
-     * Returns event time.
+     * Returns event time, UTC.
      *
      * @return Event time.
      */
@@ -167,7 +168,7 @@ public class UserEvent implements Serializable {
     }
 
     /**
-     * Sets event time.
+     * Sets event time. UTC is expected.
      *
      * @param time Event time.
      */
@@ -191,6 +192,15 @@ public class UserEvent implements Serializable {
      */
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    /**
+     * Returns current UTC date and time.
+     *
+     * @return Current UTC date and time.
+     */
+    private static ZonedDateTime nowUtc() {
+        return ZonedDateTime.now(ZoneId.of("UTC"));
     }
 
     private static final long serialVersionUID = 1L;

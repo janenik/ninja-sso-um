@@ -3,7 +3,7 @@
 
     <p>
         Please confirm your email address by following this link in your browser:<br/><br/>
-        <#noescape><a href="${confirmUrl}"></#noescape>confirm your email</a>.
+        <a href="${confirmUrl}">confirm your email</a>.
     </p>
 
     <p>
@@ -18,7 +18,6 @@
 
     <p>
         Thank you.<br/>
-        <#noescape>
-        <a href="${config.get('application.baseUrl')}"></#noescape>${config.get('application.titleCommon')}</a>
+        <a href="${config.get('application.baseUrl')}">${config.get('application.titleCommon')}</a>
     </p>
 </#escape>

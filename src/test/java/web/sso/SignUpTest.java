@@ -1,36 +1,25 @@
 package web.sso;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 import controllers.sso.auth.SignInController;
-import controllers.sso.auth.SignUpController;
 import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.auth.state.SignInState;
-import controllers.sso.web.Escapers;
 import models.sso.User;
 import models.sso.UserConfirmationState;
 import models.sso.UserGender;
+import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
-import ninja.NinjaFluentLeniumTest;
-import ninja.Router;
-import ninja.utils.NinjaProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
 
-import javax.persistence.EntityManager;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Selenium tests for sign up.
  */
-public class SignUpTest extends NinjaFluentLeniumTest {
+public class SignUpTest extends WebDriverTest {
 
     /**
      * First name for test account.
@@ -98,19 +87,9 @@ public class SignUpTest extends NinjaFluentLeniumTest {
     static final int DAY_OF_MONTH = 24;
 
     /**
-     * Application router.
-     */
-    Router router;
-
-    /**
      * User service.
      */
     UserService userService;
-
-    /**
-     * Entity manager.
-     */
-    Provider<EntityManager> entityManagerProvider;
 
     /**
      * Encryptor.
@@ -122,38 +101,23 @@ public class SignUpTest extends NinjaFluentLeniumTest {
      */
     CaptchaTokenService captchaTokenService;
 
-    /**
-     * Application properties.
-     */
-    NinjaProperties properties;
-
-    /**
-     * Logger.
-     */
-    Logger logger;
-
     @Before
     public void setUp() {
         Injector injector = this.getInjector();
 
-        this.router = injector.getBinding(Router.class).getProvider().get();
         this.userService = injector.getBinding(UserService.class).getProvider().get();
-        this.entityManagerProvider = injector.getProvider(EntityManager.class);
         this.encryptor = injector.getBinding(ExpirableTokenEncryptor.class).getProvider().get();
         this.captchaTokenService = injector.getBinding(CaptchaTokenService.class).getProvider().get();
-        this.properties = injector.getBinding(NinjaProperties.class).getProvider().get();
-        this.logger = injector.getBinding(Logger.class).getProvider().get();
-
-        webDriver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
     }
 
     @Test
     public void testSignUp() throws Exception {
-        goTo(getSignUpUrl(getServerAddress() + "?successful_sign_up=true"));
+        String signUpUrl = getSignUpUrl(getServerAddress() + "?successful_sign_up=true");
+        goTo(signUpUrl);
 
         assertTrue("Must have continue URL", webDriver.getCurrentUrl().contains("successful_sign_up"));
 
-        fillSignUpForm();
+        fillSignUpFormWithoutCaptchaCodeAndAgreement();
 
         if (!getFormElement("agreement").isSelected()) {
             click("#agreement");
@@ -228,9 +192,9 @@ public class SignUpTest extends NinjaFluentLeniumTest {
     }
 
     /**
-     * Fills in form data.
+     * Fills in form data, omitting captcha code and agreement.
      */
-    private void fillSignUpForm() {
+    private void fillSignUpFormWithoutCaptchaCodeAndAgreement() {
         getFormElement("firstName").sendKeys(FIRST_NAME);
         getFormElement("lastName").sendKeys(LAST_NAME);
 
@@ -294,69 +258,11 @@ public class SignUpTest extends NinjaFluentLeniumTest {
         assertNull("Middle name is not used.", user.getMiddleName());
         assertEquals(PHONE, user.getPhone());
         assertEquals(COUNTRY_ID, user.getCountry().getIso());
+        assertEquals(UserRole.USER, user.getRole());
 
         assertEquals("Expected confirmation state: " + confirmationState,
                 confirmationState, user.getConfirmationState());
 
         assertTrue("Valid password is expected.", userService.isValidPassword(user, PASSWORD));
-    }
-
-    /**
-     * Returns form element value by name.
-     *
-     * @param name Name of the element.
-     * @return Form element value.
-     */
-    private String getFormElementValue(String name) {
-        return getFormElement(name).getAttribute("value");
-    }
-
-    /**
-     * Returns form element by name.
-     *
-     * @param name Name of the element.
-     * @return Web element on the page.
-     */
-    private WebElement getFormElement(String name) {
-        return webDriver.findElement(By.name(name));
-    }
-
-    /**
-     * Constructs Sign Up URL with optional continue URL.
-     *
-     * @param continueUrl Continue URL. Optional.
-     * @return Continue URL.
-     */
-    private String getSignUpUrl(String... continueUrl) {
-        StringBuilder sb = new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(SignUpController.class, "signUpGet"))
-                .append("?");
-        if (continueUrl.length > 0 && continueUrl[0] != null) {
-            sb.append("&continue=");
-            sb.append(Escapers.encodePercent(continueUrl[0]));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Returns parameters from given URI.
-     *
-     * @param uri URI to parse.
-     * @return Map of parameters.
-     */
-    private static Map<String, String> extractParameters(URI uri) {
-        String query = uri.getRawQuery();
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        String[] pairs = query.split("&");
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(pairs.length);
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            if (keyValue.length > 1) {
-                params.put(Escapers.decodePercent(keyValue[0]), Escapers.decodePercent(keyValue[1]));
-            }
-        }
-        return params;
     }
 }

@@ -34,7 +34,7 @@
             </#if>
 
             <form role="form" id="signInForm" method="POST"
-                  action="${contextPath}/auth/signin?lang=${lang?url}&continue=${continue?url}">
+                  action="${contextPath}/auth/signin?lang=${lang?url}&amp;continue=${continue?url}">
                 <div class="form-group
                      <#if errors.hasBeanViolation('emailOrUsername') || errors.hasBeanViolation('emailOrPassword')>
                        has-error

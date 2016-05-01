@@ -175,6 +175,7 @@ public class User implements Serializable {
         this.username = username;
         this.email = email;
         this.phone = phone;
+        this.role = UserRole.USER;
     }
 
     /**
@@ -560,11 +561,11 @@ public class User implements Serializable {
     }
 
     /**
-     * Returns current UTC date/time.
+     * Returns current UTC date and time.
      *
-     * @return Current UTC date/time.
+     * @return Current UTC date and time.
      */
-    public static ZonedDateTime nowUtc() {
+    private static ZonedDateTime nowUtc() {
         return ZonedDateTime.now(ZoneId.of("UTC"));
     }
 
