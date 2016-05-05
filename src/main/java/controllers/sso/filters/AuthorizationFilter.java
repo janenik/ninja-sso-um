@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import services.sso.token.ExpirableTokenEncryptor;
 
 /**
- * Authorization filter that extracts user id and expirable token from request, according to AuthPolicy
+ * Authorization filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
  * and places it into the attributes as {@link AuthorizationFilter#USER_ID} and
  * {@link AuthorizationFilter#TOKEN}.
  */

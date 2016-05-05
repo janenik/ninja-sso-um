@@ -2,18 +2,18 @@ package controllers.sso.auth.policy;
 
 /**
  * Enumeration of authentication policies supported by application. Policy defines the way application
- * sends authentication tokens to a client.
+ * sends authentication tokens to a client. Works with {@link controllers.sso.filters.DeviceTypeFilter}.
  */
-public enum AuthPolicy {
+public enum DeviceAuthPolicy {
 
     /**
-     * Mobile policy when an access token is appended to special URL redirect with application defined
-     * schema for mobile devices.
+     * Policy when an access token is appended to special URL redirect with application defined schema for mobile
+     * devices.
      */
     MOBILE,
 
     /**
-     * Policy for desktop browsers: plain browser redirect for web applications only.
+     * Policy for desktop and mobile browsers: plain HTTP redirect.
      */
     BROWSER,
 
