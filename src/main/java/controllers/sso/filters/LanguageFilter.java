@@ -9,7 +9,7 @@ import ninja.i18n.Lang;
 import javax.inject.Inject;
 
 /**
- * Language filter. Extracts language from request and places it into attributes.
+ * Language filter. Extracts language from request and places it into attributes of request context.
  */
 public class LanguageFilter implements Filter {
 
@@ -18,14 +18,22 @@ public class LanguageFilter implements Filter {
      */
     public static final String LANG = "lang";
 
+    /**
+     * Default language.
+     */
+    public static final String DEFAULT_LANGUAGE = "en";
+
+    /**
+     * Language.
+     */
     @Inject
     Lang lang;
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {
-        String langStr = context.getParameter(LANG, "en");
+        String langStr = context.getParameter(LANG, DEFAULT_LANGUAGE);
         if (!lang.isLanguageDirectlySupportedByThisApplication(langStr)) {
-            langStr = "en";
+            langStr = DEFAULT_LANGUAGE;
         }
         context.setAttribute(LANG, langStr);
         Result result = filterChain.next(context);

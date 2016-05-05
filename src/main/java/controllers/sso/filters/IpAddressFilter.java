@@ -20,7 +20,7 @@ public class IpAddressFilter implements Filter {
     /**
      * Context parameter name for remote IP.
      */
-    public static final String REMOTE_IP = "REMOTE_IP";
+    public static final String REMOTE_IP = "remoteIp";
 
     /**
      * Default header name to extract IP address from. Used when remote address from request context is undefined or
@@ -70,8 +70,8 @@ public class IpAddressFilter implements Filter {
         this.properties = properties;
         this.logger = logger;
 
-        this.proxyIpHeaderName = properties.getWithDefault("application.sso.proxy.ipHeaderName",
-                DEFAULT_PROXY_PASS_IP_HEADER_NAME);
+        this.proxyIpHeaderName =
+                properties.getWithDefault("application.sso.proxy.ipHeaderName", DEFAULT_PROXY_PASS_IP_HEADER_NAME);
         this.proxyIpHeaderNameLowerCased = proxyIpHeaderName.toLowerCase();
     }
 
@@ -89,7 +89,7 @@ public class IpAddressFilter implements Filter {
         }
         context.setAttribute(REMOTE_IP, ip);
         if (logger.isInfoEnabled()) {
-            logger.info("{} - {}:{}", ip, context.getMethod(), context.getRequestPath());
+            logger.info("{} - {} : {}", ip, context.getMethod(), context.getRequestPath());
         }
         return filterChain.next(context);
     }

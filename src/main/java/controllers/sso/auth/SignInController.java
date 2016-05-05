@@ -3,6 +3,7 @@ package controllers.sso.auth;
 import com.google.inject.persist.Transactional;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -40,7 +41,8 @@ import javax.inject.Singleton;
         ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        DeviceTypeFilter.class
 })
 public class SignInController {
 

@@ -208,7 +208,7 @@ public class ForgotPasswordTest extends WebDriverTest {
         // Re-read the user from database.
         entityManagerProvider.get().detach(user);
         user = userService.getByEmail(EMAIL);
-        assertTrue("New password is expected.", userService.isValidPassword(user, RESTORED_PASSWORD));
+        assertTrue("New password is expected.",  userService.isValidPassword(user, RESTORED_PASSWORD));
     }
 
     /**

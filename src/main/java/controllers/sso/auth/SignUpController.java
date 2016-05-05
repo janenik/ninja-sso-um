@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -24,7 +25,6 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
-import ninja.Router;
 import ninja.i18n.Lang;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
@@ -59,7 +59,8 @@ import java.util.Random;
         ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        DeviceTypeFilter.class
 })
 public class SignUpController {
 
@@ -175,7 +176,6 @@ public class SignUpController {
      * @param emailService Email service.
      * @param urlBuilderProvider URL builder provider.
      * @param dtoMapper DTO mapper for user.
-     * @param router Router.
      * @param properties Application properties.
      * @param logger Logger.
      * @param lang Language.
@@ -191,7 +191,6 @@ public class SignUpController {
                             EmailService emailService,
                             Provider<UrlBuilder> urlBuilderProvider,
                             Mapper dtoMapper,
-                            Router router,
                             NinjaProperties properties,
                             Logger logger,
                             Lang lang,

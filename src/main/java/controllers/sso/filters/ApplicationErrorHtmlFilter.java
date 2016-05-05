@@ -18,6 +18,11 @@ import java.io.StringWriter;
 public class ApplicationErrorHtmlFilter implements Filter {
 
     /**
+     * Error template.
+     */
+    private static final String TEMPLATE = "/views/sso/error.ftl.html";
+
+    /**
      * Properties.
      */
     @Inject
@@ -30,7 +35,7 @@ public class ApplicationErrorHtmlFilter implements Filter {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            return Results.internalServerError().html().template("/views/sso/error.ftl.html").
+            return Results.internalServerError().html().template(TEMPLATE).
                     render("config", properties).
                     render("error", e).
                     render("errorTitle", 
