@@ -9,11 +9,18 @@
     <p><b>IP hits:</b> ${ipHits}</p>
     <p><b>IP hits exceeded:</b> ${ipHitsExceeded?c}</p>
     <p><b>Method:</b> ${method}</p>
+    <p><b>Authorized:</b> ${authorized?c}</p>
+    <#if user??>
+        <p>
+            <b>User:</b>
+            ${user.getFirstName()}
+            ${user.getLastName()}
+        </p>
+    </#if>
     <p>
         <b>Image :</b>
         <img src="${contextPath}/auth/captcha?cpt=${captchaToken?url}" alt="captcha code"/>
     </p>
-
     <div class="row">
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
             <form method="post" action="./">

@@ -47,6 +47,11 @@ public class UrlBuilder {
     final String baseUrl;
 
     /**
+     * Base application URL with context.
+     */
+    final String baseUrlWithContext;
+
+    /**
      * Constructs URL builder.
      *
      * @param properties Application properties.
@@ -65,6 +70,7 @@ public class UrlBuilder {
         this.context = context;
         this.allowedContinueUrls = allowedContinueUrls;
         this.baseUrl = properties.getOrDie("application.baseUrl");
+        this.baseUrlWithContext = this.baseUrl + context.getContextPath();
     }
 
     /**
@@ -98,7 +104,7 @@ public class UrlBuilder {
     public String getContinueUrlParameter() {
         String url = Strings.nullToEmpty(context.getParameter("continue")).trim();
         if (url.isEmpty()) {
-            return baseUrl;
+            return baseUrlWithContext;
         }
         // Allow redirect to anywhere in test mode.
         if (properties.isTest()) {
@@ -109,8 +115,9 @@ public class UrlBuilder {
                 return url;
             }
         }
+        String cp = context.getContextPath();
         // Nothing matched. Returning default which is a base URL.
-        return baseUrl;
+        return baseUrlWithContext;
     }
 
     /**

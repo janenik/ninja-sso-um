@@ -16,14 +16,17 @@
 
 package controllers;
 
+import controllers.sso.filters.AuthorizationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import services.sso.CaptchaTokenService;
+import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
@@ -33,7 +36,8 @@ import javax.inject.Singleton;
 @FilterWith({
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        AuthorizationFilter.class
 })
 public class ApplicationController {
 
@@ -48,6 +52,12 @@ public class ApplicationController {
      */
     @Inject
     CaptchaTokenService captchaTokenService;
+
+    /**
+     * User service.
+     */
+    @Inject
+    UserService userService;
 
     /**
      * Method to put initial data in the db.
@@ -65,8 +75,15 @@ public class ApplicationController {
      */
     public Result index(Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+        Long userId = (Long) context.getAttribute(AuthorizationFilter.USER_ID);
+        User user = null;
+        if (userId != null) {
+            user = userService.get(userId);
+        }
         return Results.html()
                 .render("method", context.getMethod())
+                .render("authorized", userId != null)
+                .render("user", user)
                 .render("lang", context.getAttribute(LanguageFilter.LANG))
                 .render("remoteIp", ip)
                 .render("captchaToken", captchaTokenService.newCaptchaToken())

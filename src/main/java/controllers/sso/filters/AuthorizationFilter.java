@@ -1,6 +1,5 @@
 package controllers.sso.filters;
 
-import com.google.common.base.Strings;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -39,14 +38,19 @@ public class AuthorizationFilter implements Filter {
     ExpirableTokenEncryptor encryptor;
 
     /**
+     * Parameter name to hold access token.
+     */
+    String parameterName;
+
+    /**
+     * Cookie name to hold access token.
+     */
+    String cookieName;
+
+    /**
      * Logger.
      */
     Logger logger;
-
-    /**
-     * Parameter or cookie name to hold the token.
-     */
-    String parameterName;
 
     /**
      * Constructs authorization filter.
@@ -58,18 +62,15 @@ public class AuthorizationFilter implements Filter {
     public AuthorizationFilter(ExpirableTokenEncryptor encryptor, NinjaProperties properties, Logger logger) {
         this.encryptor = encryptor;
         this.logger = logger;
-        this.parameterName = properties.getOrDie("application.sso.tokens.access.cookie.name");
+        this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
+        this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
     }
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {
         try {
-            Cookie tokenCookie = context.getCookie(parameterName);
-            String token = tokenCookie != null ? tokenCookie.getValue() : null;
-            if (token == null || token.isEmpty()) {
-                token = Strings.emptyToNull(context.getParameter(parameterName));
-            }
-
+            Cookie tokenCookie = context.getCookie(cookieName);
+            String token = tokenCookie != null ? tokenCookie.getValue() : context.getParameter(parameterName);
             ExpirableToken expirableToken = token != null ? encryptor.decrypt(token) : null;
             if (expirableToken != null && ExpirableTokenType.ACCESS.equals(expirableToken.getType())) {
                 context.setAttribute(USER_ID, expirableToken.getAttributeAsLong(USER_ID));

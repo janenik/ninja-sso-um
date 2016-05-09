@@ -177,7 +177,9 @@
                     <p class="help-block ssoFieldErrorDescription">
                         ${i18n("signUpEmailUsed")} <br/>
                         ${i18n("signUpEmailUsedDescription")}:
-                        <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">${i18n("signUpEmailUsedLinkTitle")}</a>
+                        <a href="${contextPath}/signin/forgot?lang=${lang}&amp;continue=${continue?url}">
+                            ${i18n("signUpEmailUsedLinkTitle")}
+                        </a>
                     </p>
                 </#if>
             </div>
