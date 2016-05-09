@@ -1,2 +1,6 @@
 # ninja-sso-um
-Single SIgn-On and User management for Ninja Framework
+Mobile friendly Single Sign-On and User management application template for Ninja Framework.
+
+See screenshots below:
+
+![Sign In](docs/images/sign-in-web.png)
