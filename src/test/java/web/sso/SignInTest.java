@@ -83,8 +83,8 @@ public class SignInTest extends WebDriverTest {
         getFormElement("captchaToken").sendKeys(captchaToken);
 
         click("#signInSubmit");
-
-        assertTrue("Redirected to continue URL.", webDriver.getCurrentUrl().contains("successful_sign_in"));
+        
+        assertTrue("Redirected to continue URL.", webDriver.getCurrentUrl().contains("successful_sign_in=true"));
     }
 
     @Test

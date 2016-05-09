@@ -1,7 +1,5 @@
 package conf.sso;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import models.sso.Country;
 import models.sso.User;
 import models.sso.UserGender;
@@ -12,6 +10,8 @@ import services.sso.CountryService;
 import services.sso.PasswordService;
 import services.sso.UserService;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;

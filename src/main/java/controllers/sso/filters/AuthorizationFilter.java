@@ -1,7 +1,6 @@
 package controllers.sso.filters;
 
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -14,6 +13,8 @@ import ninja.Result;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 import services.sso.token.ExpirableTokenEncryptor;
+
+import javax.inject.Inject;
 
 /**
  * Authorization filter that extracts user id and expirable token from request, according to DeviceAuthPolicy

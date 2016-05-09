@@ -90,7 +90,7 @@ public final class ExpirableToken implements Serializable {
      * @return Attributes for the expirable token.
      */
     public Map<String, String> getAttributes() {
-        return attr;
+        return Collections.unmodifiableMap(attr);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class ExpirableToken implements Serializable {
      * @return attribute value for given name or null if there is no such attribute.
      */
     public String getAttributeValue(String name) {
-        return attr.get(name);
+        return attr.get(name).toString();
     }
 
     /**
@@ -111,11 +111,11 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value or default value if there is no attribute in token.`
      */
     public String getAttributeValue(String name, String defaultValue) {
-        String v = attr.get(name);
+        Serializable v = attr.get(name);
         if (v == null) {
             return defaultValue;
         }
-        return v;
+        return v.toString();
     }
 
     /**
@@ -126,10 +126,7 @@ public final class ExpirableToken implements Serializable {
      */
     public Long getAttributeAsLong(String name) {
         String v = attr.get(name);
-        if (v == null || v.isEmpty()) {
-            return null;
-        }
-        return Long.valueOf(v);
+        return v == null ? null : Long.valueOf(v);
     }
 
     /**
@@ -140,10 +137,7 @@ public final class ExpirableToken implements Serializable {
      */
     public Double getAttributeAsDouble(String name) {
         String v = attr.get(name);
-        if (v == null || v.isEmpty()) {
-            return null;
-        }
-        return Double.valueOf(v);
+        return v == null ? null : Double.valueOf(v);
     }
 
     /**
@@ -154,11 +148,8 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as long or default if there is no attribute value.
      */
     public long getAttributeAsLong(String name, long defaultValue) {
-        String v = attr.get(name);
-        if (v == null || v.isEmpty()) {
-            return defaultValue;
-        }
-        return Long.valueOf(v);
+        Long v = getAttributeAsLong(name);
+        return v == null ? defaultValue : v;
     }
 
     /**
@@ -169,11 +160,8 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value as double or default if there is no attribute value.
      */
     public double getAttributeAsDouble(String name, double defaultValue) {
-        String v = attr.get(name);
-        if (v == null || v.isEmpty()) {
-            return defaultValue;
-        }
-        return Double.valueOf(v);
+        Double v = getAttributeAsDouble(name);
+        return v == null ?defaultValue : v;
     }
 
     /**
@@ -245,8 +233,8 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newToken(ExpirableTokenType type, String scope, String attrName, String attrValue,
-                                          long timeToLive) {
+    public static ExpirableToken newToken(ExpirableTokenType type, String scope, String attrName,
+                                          String attrValue, long timeToLive) {
         return new Builder().
                 setScope(scope).
                 setType(type).
@@ -321,8 +309,27 @@ public final class ExpirableToken implements Serializable {
         return new Builder().
                 setType(type).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
-                addDataEntry("userId", userId).
                 addDataEntry(attrName, attrValue).
+                addDataEntry("userId", userId).
+                build();
+    }
+
+    /**
+     * Static factory for user token of given type.
+     *
+     * @param type Token type.
+     * @param userId User id.
+     * @param data Attributes data.
+     * @param timeToLive Time to live, in milliseconds.
+     * @return Expirable token.
+     */
+    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId,
+                                                 Map<String, String> data, long timeToLive) {
+        return new Builder().
+                setType(type).
+                setExpires(Clock.systemUTC().millis() + timeToLive).
+                addDataEntries(data).
+                addDataEntry("userId", userId).
                 build();
     }
 
@@ -440,17 +447,30 @@ public final class ExpirableToken implements Serializable {
                 build();
     }
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Expirable token builder.
      */
     public static final class Builder {
 
+        /**
+         * Expiration time in millis, UTC.
+         */
         private long expires;
+
+        /**
+         * Token type.
+         */
         private ExpirableTokenType type;
+
+        /**
+         * Token scope.
+         */
         private String scope;
-        private Map<String, String> values;
+
+        /**
+         * Attributes.
+         */
+        private Map<String, String> attributes;
 
         /**
          * Sets expires time in milliseconds since Unix epoch for the token.
@@ -531,10 +551,10 @@ public final class ExpirableToken implements Serializable {
             if (value == null || name == null) {
                 throw new IllegalArgumentException("Both name and value must not be null.");
             }
-            if (values == null) {
-                values = new LinkedHashMap<>();
+            if (attributes == null) {
+                attributes = new LinkedHashMap<>();
             }
-            values.put(name, value);
+            attributes.put(name, value);
             return this;
         }
 
@@ -544,7 +564,9 @@ public final class ExpirableToken implements Serializable {
          * @return Expirable token.
          */
         public ExpirableToken build() {
-            return new ExpirableToken(type, scope, values, expires);
+            return new ExpirableToken(type, scope, attributes, expires);
         }
+
+        private static final long serialVersionUID = 1L;
     }
 }

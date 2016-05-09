@@ -163,6 +163,18 @@ public class ExpirableTokenEncryptorTest {
     }
 
     /**
+     * Logs test information about token JSON size and encrypted size.
+     *
+     * @param encrypted Encrypted token.
+     * @param expirableToken Expirable token.
+     */
+    private void logTestInformation(String encrypted, ExpirableToken expirableToken) {
+        logger.info("Encrypted: {}, JSON: ~{} (bytes) ({}/{})",
+                encrypted.getBytes(StandardCharsets.UTF_8).length,
+                estimateTokenJsonSize(expirableToken), expirableToken.getScope(), expirableToken.getType());
+    }
+
+    /**
      * Estimates JSON size of the token.
      *
      * @param expirableToken Expirable token.
@@ -179,15 +191,4 @@ public class ExpirableTokenEncryptorTest {
         return unencryptedTokenJsonLengthEstimation;
     }
 
-    /**
-     * Logs test information about token JSON size and encrypted size.
-     *
-     * @param encrypted Encrypted token.
-     * @param expirableToken Expirable token.
-     */
-    private void logTestInformation(String encrypted, ExpirableToken expirableToken) {
-        logger.info("Encrypted: {}, JSON: ~{} (bytes) ({}/{})",
-                encrypted.getBytes(StandardCharsets.UTF_8).length,
-                estimateTokenJsonSize(expirableToken), expirableToken.getScope(), expirableToken.getType());
-    }
 }

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 
 /**
@@ -59,7 +59,7 @@ public final class ExpirableTokenEncryptor {
     /**
      * Returns encrypted data with added expiration time. When result is decrypted expiration time is checked and if
      * token is expired ExpiredTokenException is thrown (see #decrypt(String)). It is safe to directly use it in URLs
-     * as result of encryption is Base64-encodede (web-safe), without padding characters.
+     * as result of encryption is Base64-encoded (web-safe), without padding characters.
      *
      * @param token Token to encrypt.
      * @return Encrypted expirable token as string.

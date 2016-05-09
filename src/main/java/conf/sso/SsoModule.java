@@ -22,7 +22,6 @@ import services.sso.token.PasswordBasedEncryptor;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,17 +123,17 @@ public class SsoModule extends AbstractModule {
     }
 
     /**
-     * Provides desktop append token policy.
+     * Provides browser append token policy.
      *
      * @param properties Properties.
      * @param logger Logger.
      * @return Desktop append token policy.
      */
     @Provides
-    @Named("desktop")
+    @Named("browser")
     @Singleton
     AppendAuthTokenPolicy provideDesktopAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
-        String property = "application.sso.device.auth.policy.append.desktop";
+        String property = "application.sso.device.auth.policy.append.browser";
         String policy = properties.getWithDefault(property, AppendAuthTokenPolicy.COOKIE.toString());
         try {
             return AppendAuthTokenPolicy.valueOf(policy);
@@ -146,17 +145,17 @@ public class SsoModule extends AbstractModule {
 
 
     /**
-     * Provides mobile append token policy.
+     * Provides standalone application append token policy.
      *
      * @param properties Properties.
      * @param logger Logger.
-     * @return Mobile append token policy.
+     * @return Application append token policy.
      */
     @Provides
-    @Named("mobile")
+    @Named("application")
     @Singleton
     AppendAuthTokenPolicy provideMobileAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
-        String property = "application.sso.device.auth.policy.append.mobile";
+        String property = "application.sso.device.auth.policy.append.application";
         String policy = properties.getWithDefault(property, AppendAuthTokenPolicy.URL_PARAM.toString());
         try {
             return AppendAuthTokenPolicy.valueOf(policy);

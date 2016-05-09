@@ -1,6 +1,5 @@
 package controllers.sso.filters;
 
-import com.google.inject.Inject;
 import controllers.sso.auth.type.DeviceInputType;
 import eu.bitwalker.useragentutils.DeviceType;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -11,6 +10,7 @@ import ninja.FilterChain;
 import ninja.Result;
 import org.slf4j.Logger;
 
+import javax.inject.Inject;
 import java.util.EnumSet;
 
 /**
@@ -50,6 +50,9 @@ public class DeviceTypeFilter implements Filter {
     private static final EnumSet<DeviceType> TOUCHSCREEN_TYPES =
             EnumSet.of(DeviceType.MOBILE, DeviceType.TABLET, DeviceType.WEARABLE);
 
+    /**
+     * Logger.
+     */
     @Inject
     Logger logger;
 
@@ -68,7 +71,9 @@ public class DeviceTypeFilter implements Filter {
         } else {
             context.setAttribute(DEVICE_INPUT_TYPE, DeviceInputType.UNKNOWN);
         }
-        logger.warn("DEVICE TYPE: {} -> {}", deviceType, context.getAttribute(DEVICE_INPUT_TYPE));
+        if (logger.isInfoEnabled()) {
+            logger.info("DEVICE TYPE: {} -> {}", deviceType, context.getAttribute(DEVICE_INPUT_TYPE));
+        }
         return filterChain.next(context);
     }
 }

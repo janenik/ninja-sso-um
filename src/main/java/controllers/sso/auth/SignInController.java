@@ -8,6 +8,7 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
+import controllers.sso.web.SignInResponseSupplier;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
 import models.sso.User;
@@ -77,6 +78,11 @@ public class SignInController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Sign In response supplier provider to supply responses in case of successful Sign In authentication.
+     */
+    final Provider<SignInResponseSupplier> signInResponseSupplierProvider;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -112,6 +118,7 @@ public class SignInController {
                             CaptchaTokenService captchaTokenService,
                             IPCounterService ipCounterService,
                             Provider<UrlBuilder> urlBuilderProvider,
+                            Provider<SignInResponseSupplier> signInResponseSupplierProvider,
                             NinjaProperties properties,
                             Router router,
                             Messages messages,
@@ -120,6 +127,7 @@ public class SignInController {
         this.captchaTokenService = captchaTokenService;
         this.ipCounterService = ipCounterService;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.signInResponseSupplierProvider = signInResponseSupplierProvider;
         this.properties = properties;
         this.logger = logger;
         this.router = router;
@@ -171,7 +179,7 @@ public class SignInController {
         }
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         userService.updateSignInTime(user, ip);
-        return Results.redirect(urlBuilderProvider.get().getContinueUrlParameter());
+        return signInResponseSupplierProvider.get().getSignInResponse(user);
     }
 
     /**

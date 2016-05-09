@@ -1,8 +1,6 @@
 package services.sso;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -12,6 +10,8 @@ import ninja.utils.NinjaProperties;
 import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

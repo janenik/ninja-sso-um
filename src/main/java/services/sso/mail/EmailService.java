@@ -1,8 +1,5 @@
 package services.sso.mail;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -11,6 +8,9 @@ import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.utils.NinjaProperties;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.StringWriter;

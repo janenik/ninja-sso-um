@@ -17,10 +17,11 @@
 package conf;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import conf.sso.SsoModule;
 import ninja.utils.NinjaProperties;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class Module extends AbstractModule {

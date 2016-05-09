@@ -1,8 +1,6 @@
 package controllers.sso.web;
 
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -13,6 +11,8 @@ import ninja.Context;
 import ninja.Router;
 import ninja.utils.NinjaProperties;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 
 /**

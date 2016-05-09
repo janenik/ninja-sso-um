@@ -1,7 +1,5 @@
 package controllers.sso.captcha;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import ninja.Context;
@@ -14,6 +12,8 @@ import nl.captcha.noise.CurvedLineNoiseProducer;
 import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.awt.Color;
 
 /**

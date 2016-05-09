@@ -416,10 +416,8 @@ public class SignUpController {
      * @return Verification token.
      */
     ExpirableToken newEmailVerificationToken(User user, String verificationCode) {
-        Map<String, String> params = Maps.newHashMap();
-        params.put("userId", Long.toString(user.getId()));
-        params.put("verificationCode", verificationCode);
-        return ExpirableToken.newToken(ExpirableTokenType.EMAIL_VERIFICATION, params, emailTokenTtl);
+        return ExpirableToken.newTokenForUser(ExpirableTokenType.EMAIL_VERIFICATION, user.getId(),
+                "verificationCode", verificationCode, emailTokenTtl);
     }
 
     /**
@@ -430,9 +428,7 @@ public class SignUpController {
      * @return Sign up page verification token.
      */
     ExpirableToken newSignUpPageVerificationToken(User user, String verificationCode) {
-        Map<String, String> params = Maps.newHashMap();
-        params.put("userId", Long.toString(user.getId()));
-        params.put("verificationCode", verificationCode);
-        return ExpirableToken.newToken(ExpirableTokenType.SIGNUP_VERIFICATION, params, signUpVerificationTokenTtl);
+        return ExpirableToken.newTokenForUser(ExpirableTokenType.SIGNUP_VERIFICATION, user.getId(),
+                "verificationCode", verificationCode, signUpVerificationTokenTtl);
     }
 }

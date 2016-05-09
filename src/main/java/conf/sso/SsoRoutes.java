@@ -1,6 +1,5 @@
 package conf.sso;
 
-import com.google.inject.Inject;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -10,6 +9,8 @@ import controllers.sso.captcha.CaptchaController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
 import ninja.utils.NinjaProperties;
+
+import javax.inject.Inject;
 
 /**
  * SSO routes.

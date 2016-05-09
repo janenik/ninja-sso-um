@@ -234,9 +234,8 @@ public class ForgotPasswordController {
      * @return Restore password token.
      */
     ExpirableToken forgotEmailConfirmationToken(User user) {
-        Map<String, String> params = Maps.newHashMap();
-        params.put("userId", Long.toString(user.getId()));
-        return ExpirableToken.newToken(ExpirableTokenType.RESTORE_PASSWORD, params, restorePasswordTokenTtl);
+        return ExpirableToken.newTokenForUser(ExpirableTokenType.RESTORE_PASSWORD, user.getId(),
+                restorePasswordTokenTtl);
     }
 
     /**

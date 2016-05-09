@@ -16,13 +16,14 @@
 
 package conf;
 
-import com.google.inject.Inject;
 import conf.sso.SsoRoutes;
 import controllers.ApplicationController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
 import ninja.utils.NinjaProperties;
+
+import javax.inject.Inject;
 
 public class Routes implements ApplicationRoutes {
 
