@@ -8,7 +8,7 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
-import controllers.sso.web.SignInResponseSupplier;
+import controllers.sso.web.SignInResponseBuilder;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
 import models.sso.User;
@@ -80,7 +80,7 @@ public class SignInController {
     /**
      * Sign In response supplier provider to supply responses in case of successful Sign In authentication.
      */
-    final Provider<SignInResponseSupplier> signInResponseSupplierProvider;
+    final Provider<SignInResponseBuilder> signInResponseSupplierProvider;
 
     /**
      * Application properties.
@@ -118,7 +118,7 @@ public class SignInController {
                             CaptchaTokenService captchaTokenService,
                             IPCounterService ipCounterService,
                             Provider<UrlBuilder> urlBuilderProvider,
-                            Provider<SignInResponseSupplier> signInResponseSupplierProvider,
+                            Provider<SignInResponseBuilder> signInResponseSupplierProvider,
                             NinjaProperties properties,
                             Router router,
                             Messages messages,

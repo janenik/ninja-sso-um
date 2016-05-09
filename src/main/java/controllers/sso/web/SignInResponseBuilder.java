@@ -23,7 +23,7 @@ import javax.inject.Named;
  * Provides Sign In response with appropriate URL redirect and needed headers.
  */
 @RequestScoped
-public class SignInResponseSupplier {
+public class SignInResponseBuilder {
 
     /**
      * Device authentication policy.
@@ -68,7 +68,7 @@ public class SignInResponseSupplier {
      * @param applicationAppendAuthTokenPolicy Application append token policy.
      */
     @Inject
-    public SignInResponseSupplier(
+    public SignInResponseBuilder(
             DeviceAuthPolicy deviceAuthPolicy,
             @Named("browser") AppendAuthTokenPolicy browserAppendTokenPolicy,
             @Named("application") AppendAuthTokenPolicy applicationAppendAuthTokenPolicy,
