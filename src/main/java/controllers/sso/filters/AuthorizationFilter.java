@@ -1,5 +1,6 @@
 package controllers.sso.filters;
 
+import com.google.common.base.Strings;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
@@ -70,7 +71,10 @@ public class AuthorizationFilter implements Filter {
     public Result filter(FilterChain filterChain, Context context) {
         try {
             Cookie tokenCookie = context.getCookie(cookieName);
-            String token = tokenCookie != null ? tokenCookie.getValue() : context.getParameter(parameterName);
+            String token = tokenCookie != null ? Strings.emptyToNull(tokenCookie.getValue()) : null;
+            if (token == null) {
+                token = context.getParameter(parameterName);
+            }
             ExpirableToken expirableToken = token != null ? encryptor.decrypt(token) : null;
             if (expirableToken != null && ExpirableTokenType.ACCESS.equals(expirableToken.getType())) {
                 context.setAttribute(USER_ID, expirableToken.getAttributeAsLong(USER_ID));

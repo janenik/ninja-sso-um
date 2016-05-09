@@ -3,6 +3,7 @@ package conf.sso;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
+import controllers.sso.auth.SignOutController;
 import controllers.sso.auth.SignUpController;
 import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.captcha.CaptchaController;
@@ -43,6 +44,9 @@ public class SsoRoutes implements ApplicationRoutes {
         // Sign in.
         router.GET().route(subRoute +"/signin").with(SignInController.class, "signInGet");
         router.POST().route(subRoute +"/signin").with(SignInController.class, "signIn");
+
+        // Sign out.
+        router.GET().route(subRoute + "/signout").with(SignOutController.class, "signOut");
 
         // Forgot password.
         router.GET().route(subRoute +"/forgot")

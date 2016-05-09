@@ -8,7 +8,6 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
-import controllers.sso.web.SignInResponseBuilder;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
 import models.sso.User;
