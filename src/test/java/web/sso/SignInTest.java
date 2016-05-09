@@ -52,7 +52,7 @@ public class SignInTest extends WebDriverTest {
 
         click("#signInSubmit");
 
-        assertTrue("Redirected to continue URL.", webDriver.getCurrentUrl().contains("successful_sign_in=true"));
+        assertThatContinueUrlHas("successful_sign_in=true");
     }
 
     @Test
@@ -83,8 +83,8 @@ public class SignInTest extends WebDriverTest {
         getFormElement("captchaToken").sendKeys(captchaToken);
 
         click("#signInSubmit");
-        
-        assertTrue("Redirected to continue URL.", webDriver.getCurrentUrl().contains("successful_sign_in=true"));
+
+        assertThatContinueUrlHas("successful_sign_in=true");
     }
 
     @Test
@@ -97,5 +97,17 @@ public class SignInTest extends WebDriverTest {
 
         goTo(getSignInUrl(null, "EMAIL_VERIFICATION_FAILED"));
         assertNotNull("Danger notification exists.", webDriver.findElement(By.className("alert-danger")));
+    }
+
+    /**
+     * Verifies that current URL contains given substring.
+     *
+     * @param urlPart URL part (substring).
+     */
+    private void assertThatContinueUrlHas(String urlPart) {
+        String messageFormat = "Expected redirect to: %s (must contain '%s')\nPage source: \n%s\n: .";
+        String url = webDriver.getCurrentUrl();
+        String message = String.format(messageFormat, url, urlPart, webDriver.getPageSource());
+        assertTrue(message, url.contains(urlPart));
     }
 }
