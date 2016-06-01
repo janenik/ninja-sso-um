@@ -1,5 +1,7 @@
 package services.sso;
 
+import com.google.common.base.Strings;
+import models.sso.PaginationResult;
 import models.sso.User;
 import models.sso.UserEvent;
 import models.sso.UserEventType;
@@ -231,6 +233,22 @@ public class UserService {
         Query q = entityManagerProvider.get().createNamedQuery("UserEvents.removeByUser");
         q.setParameter("userId", user.getId());
         return q.executeUpdate();
+    }
+
+    /**
+     * Searches for users by given query in email, username, first name or last name.
+     *
+     * @param query Query to search for.
+     * @param currentPage Current page.
+     * @param objectsPerPage Objects per page.
+     * @return Pagination result with users for query and current page.
+     */
+    public PaginationResult<User> search(String query, long currentPage, long objectsPerPage) {
+        if (currentPage < 1 || objectsPerPage < 1) {
+            throw new IllegalArgumentException("Current page and objects per page must be positive.");
+        }
+        query = Strings.emptyToNull(query);
+        throw new UnsupportedOperationException("TODO: implement");
     }
 
     /**
