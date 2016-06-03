@@ -25,12 +25,14 @@
 
             <#if errors.hasBeanViolation('emailNotConfirmed')>
                 <div class="alert alert-danger">${i18n("signInEmailNotConfirmedMessage")}</div>
-                <#elseif errors.hasBeanViolation('emailOrPassword')>
-                    <div class="alert alert-danger">${i18n("signInEmailOrPasswordNotFound")}</div>
-                    <#elseif errors.hasBeanViolation('captchaCode')>
-                        <div class="alert alert-danger">${i18n("signInCaptchaCodeRequired")}</div>
-                        <#elseif errors.hasBeanViolations()>
-                            <div class="alert alert-danger">${i18n("signInFixTheErrorsAlert")}</div>
+            <#elseif errors.hasBeanViolation('emailOrPassword')>
+                <div class="alert alert-danger">${i18n("signInEmailOrPasswordNotFound")}</div>
+            <#elseif errors.hasBeanViolation('captchaCode')>
+                <div class="alert alert-danger">${i18n("signInCaptchaCodeRequired")}</div>
+            <#elseif errors.hasBeanViolation('signInDisabled')>
+                <div class="alert alert-danger">${i18n("signInDisabled")}</div>
+            <#elseif errors.hasBeanViolations()>
+                <div class="alert alert-danger">${i18n("signInFixTheErrorsAlert")}</div>
             </#if>
 
             <form role="form" id="signInForm" method="POST"

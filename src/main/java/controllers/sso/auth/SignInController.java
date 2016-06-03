@@ -176,6 +176,9 @@ public class SignInController {
         if (!user.isConfirmed()) {
             return createResult(userSignInDto, context, validation, "emailNotConfirmed");
         }
+        if (!user.isSignInEnabled()) {
+            return createResult(userSignInDto, context, validation, "signInDisabled");
+        }
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         userService.updateSignInTime(user, ip);
         return signInResponseSupplierProvider.get().getSignInResponse(user);

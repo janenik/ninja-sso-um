@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User service.
@@ -243,12 +244,39 @@ public class UserService {
      * @param objectsPerPage Objects per page.
      * @return Pagination result with users for query and current page.
      */
-    public PaginationResult<User> search(String query, long currentPage, long objectsPerPage) {
+    @SuppressWarnings("unchecked")
+    public PaginationResult<User> search(String query, int currentPage, int objectsPerPage) {
         if (currentPage < 1 || objectsPerPage < 1) {
             throw new IllegalArgumentException("Current page and objects per page must be positive.");
         }
-        query = Strings.emptyToNull(query);
-        throw new UnsupportedOperationException("TODO: implement");
+        if (objectsPerPage <= 0) {
+            throw new IllegalArgumentException("Objects per page must be positive.");
+        }
+        query = Strings.nullToEmpty(query).replace('%', ' ').trim();
+        boolean all = query.isEmpty();
+        query += '%';
+        Query q;
+        int totalObjects;
+        if (all) {
+            totalObjects = entityManagerProvider.get().createNamedQuery("User.countAll").getMaxResults();
+        } else {
+            q = entityManagerProvider.get().createNamedQuery("User.countSearch");
+            q.setParameter("q", query);
+            totalObjects = q.getMaxResults();
+        }
+        if (totalObjects == 0) {
+            return new PaginationResult<>(objectsPerPage);
+        }
+        if (all) {
+            q = entityManagerProvider.get().createNamedQuery("User.all");
+        } else {
+            q = entityManagerProvider.get().createNamedQuery("User.search");
+            q.setParameter("q", query);
+        }
+        q.setFirstResult((currentPage - 1) * objectsPerPage);
+        q.setMaxResults(objectsPerPage);
+        List<User> users = (List<User>) q.getResultList();
+        return new PaginationResult<>(users, totalObjects, currentPage, objectsPerPage);
     }
 
     /**

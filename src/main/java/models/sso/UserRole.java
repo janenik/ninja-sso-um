@@ -5,6 +5,7 @@ package models.sso;
  * have their own roles.
  */
 public enum UserRole {
+
     /**
      * Administrator is able to sign in into the admin part of the application.
      */

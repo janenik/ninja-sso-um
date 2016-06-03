@@ -30,12 +30,27 @@ import java.util.Objects;
 @Table(name = "users", indexes = {
         @Index(name = "username_idx", columnList = "username", unique = true),
         @Index(name = "email_idx", columnList = "email", unique = true),
-        @Index(name = "phone_idx", columnList = "phone", unique = false)
+        @Index(name = "phone_idx", columnList = "phone", unique = false),
+        @Index(name = "firstName_idx", columnList = "firstName", unique = false),
+        @Index(name = "lastName_idx", columnList = "lastName", unique = false)
 })
 @NamedQueries({
         @NamedQuery(name = "User.getByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-        @NamedQuery(name = "User.getByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
+        @NamedQuery(name = "User.getByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
+        @NamedQuery(name = "User.search", query = "SELECT u FROM User u WHERE " +
+                "u.username LIKE :q OR " +
+                "u.email LIKE :q OR " +
+                "u.firstName LIKE :q OR " +
+                "u.lastName LIKE :q " +
+                "ORDER BY u.lastName, u.firstName"),
+        @NamedQuery(name = "User.countSearch", query = "SELECT COUNT(*) FROM User u WHERE " +
+                "u.username LIKE :q OR " +
+                "u.email LIKE :q OR " +
+                "u.firstName LIKE :q OR " +
+                "u.lastName LIKE :q"),
+        @NamedQuery(name = "User.all", query = "SELECT u FROM User u ORDER BY u.lastName, u.firstName"),
+        @NamedQuery(name = "User.countAll", query = "SELECT COUNT(*) FROM User u")
 })
 public class User implements Serializable {
 
@@ -115,6 +130,13 @@ public class User implements Serializable {
     UserConfirmationState confirmationState;
 
     /**
+     * Sign in state.
+     */
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    UserSignInState signInState;
+
+    /**
      * Role of the user.
      */
     @Column(nullable = false, length = 50)
@@ -176,6 +198,8 @@ public class User implements Serializable {
         this.email = email;
         this.phone = phone;
         this.role = UserRole.USER;
+        this.signInState = UserSignInState.ENABLED;
+        this.confirmationState = UserConfirmationState.UNCONFIRMED;
     }
 
     /**
@@ -206,6 +230,9 @@ public class User implements Serializable {
         }
         if (confirmationState == null) {
             confirmationState = UserConfirmationState.UNCONFIRMED;
+        }
+        if (signInState == null) {
+            signInState = UserSignInState.ENABLED;
         }
     }
 
@@ -527,6 +554,33 @@ public class User implements Serializable {
      */
     public boolean isConfirmed() {
         return UserConfirmationState.CONFIRMED.equals(confirmationState);
+    }
+
+    /**
+     * Returns sign in state.
+     *
+     * @return Sign in state.
+     */
+    public UserSignInState getSignInState() {
+        return signInState;
+    }
+
+    /**
+     * Sets sign in state.
+     *
+     * @param signInState Sign in state.
+     */
+    public void setSignInState(UserSignInState signInState) {
+        this.signInState = signInState;
+    }
+
+    /**
+     * Checks if the user sign is enabled.
+     *
+     * @return Whether the user sign in is enabled.
+     */
+    public boolean isSignInEnabled() {
+        return UserSignInState.ENABLED.equals(this.signInState);
     }
 
     /**

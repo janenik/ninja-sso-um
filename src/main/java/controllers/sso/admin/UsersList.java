@@ -57,8 +57,8 @@ public class UsersList {
     @Transactional
     public Result list(Context context) {
         String query = context.getParameter("query");
-        long page = Math.abs(context.getParameterAsInteger("page", 1));
-        long objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
+        int page = Math.abs(context.getParameterAsInteger("page", 1));
+        int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
         return Results.html().template(TEMPLATE)
                 .render("config", properties)

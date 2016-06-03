@@ -194,6 +194,9 @@ public class ForgotPasswordController {
         if (userEntity == null) {
             return createResult(user, context, validation, "emailOrUsernameNotFound");
         }
+        if (!userEntity.isSignInEnabled()) {
+            return createResult(user, context, validation, "signInDisabled");
+        }
         // Send the email.
         sendRestorePasswordEmail(userEntity, context);
         // Redirect to sign in.

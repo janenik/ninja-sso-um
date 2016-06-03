@@ -1,6 +1,5 @@
 package models.sso;
 
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,105 +14,105 @@ public class PaginationResultTest {
 
     @Test
     public void testManyPages() {
-        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(10L, 100L);
-        assertEquals(createPaginationItems(1L, 2L, null, 8L, 9L, 10L, 11L, 12L, null, 99L, 100L), paginationItems);
+        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(10, 100);
+        assertEquals(createPaginationItems(1, 2, null, 8, 9, 10, 11, 12, null, 99, 100), paginationItems);
     }
 
     @Test
     public void testManyPages_start() {
-        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(1L, 100L);
-        assertEquals("Starts with 1, 2, 3", createPaginationItems(1L, 2L, 3L, null, 99L, 100L), paginationItems);
+        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(1, 100);
+        assertEquals("Starts with 1, 2, 3", createPaginationItems(1, 2, 3, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(2L, 100L);
-        assertEquals("Starts with 1, 2, 3, 4", createPaginationItems(1L, 2L, 3L, 4L, null, 99L, 100L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(2, 100);
+        assertEquals("Starts with 1, 2, 3, 4", createPaginationItems(1, 2, 3, 4, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(3L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(3, 100);
         assertEquals("Starts with 1, 2, 3, 4, 5",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(4L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(4, 100);
         assertEquals("Starts with 1, 2, 3, 4, 5, 6",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(5, 100);
         assertEquals("Starts with 1, 2, 3, 4, 5, 6, 7, ...",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, 7L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, 7, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(6L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(6, 100);
         assertEquals("Starts with 1, 2, ..., 4, 5, 6, 7, 8, ...",
-                createPaginationItems(1L, 2L, null, 4L, 5L, 6L, 7L, 8L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 4, 5, 6, 7, 8, null, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(7L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(7, 100);
         assertEquals("Starts with 1, 2, ..., 5, 6, 7, 8, 9, ...",
-                createPaginationItems(1L, 2L, null, 5L, 6L, 7L, 8L, 9L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 5, 6, 7, 8, 9, null, 99, 100), paginationItems);
     }
 
     @Test
     public void testManyPages_end() {
-        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(100L, 100L);
-        assertEquals("Ends with 98, 99, 100", createPaginationItems(1L, 2L, null, 98L, 99L, 100L), paginationItems);
+        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(100, 100);
+        assertEquals("Ends with 98, 99, 100", createPaginationItems(1, 2, null, 98, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(99L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(99, 100);
         assertEquals("Ends with 97, 98, 99, 100",
-                createPaginationItems(1L, 2L, null, 97L, 98L, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 97, 98, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(98L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(98, 100);
         assertEquals("Ends with 96, 97, 98, 99, 100",
-                createPaginationItems(1L, 2L, null, 96L, 97L, 98L, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 96, 97, 98, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(97L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(97, 100);
         assertEquals("Ends with 95, 96, 97, 98, 99, 100",
-                createPaginationItems(1L, 2L, null, 95L, 96L, 97L, 98L, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 95, 96, 97, 98, 99, 100), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(96L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(96, 100);
         assertEquals("Ends with 97, 98, 99, 100",
-                createPaginationItems(1L, 2L, null, 94L, 95L, 96L, 97L, 98L, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 94, 95, 96, 97, 98, 99, 100), paginationItems);
 
 
-        paginationItems = PaginationResult.getPaginationItems(95L, 100L);
+        paginationItems = PaginationResult.getPaginationItems(95, 100);
         assertEquals("Ends with ..., 99, 100",
-                createPaginationItems(1L, 2L, null, 93L, 94L, 95L, 96L, 97L, null, 99L, 100L), paginationItems);
+                createPaginationItems(1, 2, null, 93, 94, 95, 96, 97, null, 99, 100), paginationItems);
     }
 
     @Test
     public void testFewPages() {
-        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(1L, 1L);
-        assertEquals("Contains: 1", createPaginationItems(1L), paginationItems);
+        List<PaginationResult.Item> paginationItems = PaginationResult.getPaginationItems(1, 1);
+        assertEquals("Contains: 1", createPaginationItems(1), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(1L, 2L);
-        assertEquals("Contains: 1, 2", createPaginationItems(1L, 2L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(1, 2);
+        assertEquals("Contains: 1, 2", createPaginationItems(1, 2), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(2L, 3L);
-        assertEquals("Contains: 1, 2, 3", createPaginationItems(1L, 2L, 3L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(2, 3);
+        assertEquals("Contains: 1, 2, 3", createPaginationItems(1, 2, 3), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(3L, 4L);
-        assertEquals("Contains: 1, 2, 3, 4", createPaginationItems(1L, 2L, 3L, 4L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(3, 4);
+        assertEquals("Contains: 1, 2, 3, 4", createPaginationItems(1, 2, 3, 4), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 5L);
-        assertEquals("Contains: 1, 2, 3, 4, 5", createPaginationItems(1L, 2L, 3L, 4L, 5L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(5, 5);
+        assertEquals("Contains: 1, 2, 3, 4, 5", createPaginationItems(1, 2, 3, 4, 5), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 6L);
-        assertEquals("Contains: 1, 2, 3, 4, 5, 6", createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L), paginationItems);
+        paginationItems = PaginationResult.getPaginationItems(5, 6);
+        assertEquals("Contains: 1, 2, 3, 4, 5, 6", createPaginationItems(1, 2, 3, 4, 5, 6), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 7L);
+        paginationItems = PaginationResult.getPaginationItems(5, 7);
         assertEquals("Contains: 1, 2, 3, 4, 5, 6, 7",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, 7L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, 7), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 8L);
+        paginationItems = PaginationResult.getPaginationItems(5, 8);
         assertEquals("Contains: 1, 2, 3, 4, 5, 6, 7, 8",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, 7, 8), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(5L, 9L);
+        paginationItems = PaginationResult.getPaginationItems(5, 9);
         assertEquals("Contains: 1, 2, 3, 4, (5), 6, 7, 8, 9",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, 7, 8, 9), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(4L, 9L);
+        paginationItems = PaginationResult.getPaginationItems(4, 9);
         assertEquals("Contains: 1, 2, 3, (4), 5, 6, ..., 9",
-                createPaginationItems(1L, 2L, 3L, 4L, 5L, 6L, null, 8L,  9L), paginationItems);
+                createPaginationItems(1, 2, 3, 4, 5, 6, null, 8, 9), paginationItems);
 
-        paginationItems = PaginationResult.getPaginationItems(6L, 9L);
+        paginationItems = PaginationResult.getPaginationItems(6, 9);
         assertEquals("Contains: 1, 2, 3, 4, 5, (6), 7, 8, 9",
-                createPaginationItems(1L, 2L, null, 4L, 5L, 6L, 7L, 8L, 9L), paginationItems);
+                createPaginationItems(1, 2, null, 4, 5, 6, 7, 8, 9), paginationItems);
     }
 
     /**
@@ -122,9 +121,9 @@ public class PaginationResultTest {
      * @param pages Pages including null for separator.
      * @return List of pagination items.
      */
-    private static List<PaginationResult.Item> createPaginationItems(Long... pages) {
+    private static List<PaginationResult.Item> createPaginationItems(Integer... pages) {
         List<PaginationResult.Item> expectedItems = new ArrayList<>(pages.length);
-        for (Long page : pages) {
+        for (Integer page : pages) {
             if (page == null) {
                 expectedItems.add(PaginationResult.Item.SEPARATOR);
             } else {
