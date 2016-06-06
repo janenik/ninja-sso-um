@@ -7,7 +7,7 @@ package models.sso;
 public enum UserRole {
 
     /**
-     * Administrator is able to sign in into the admin part of the application.
+     * Administrator is able to sign in into the admin part of the application. Highest possible privilege.
      */
     ADMIN,
 
@@ -17,7 +17,22 @@ public enum UserRole {
     MODERATOR,
 
     /**
-     * Regular user.
+     * Regular user. Least possible privilege.
      */
     USER;
+
+    /**
+     * Converts given string to {@link UserRole} enum. If the given string doesn't represent enum's
+     * string value, then the least possible privilege returned {@link #USER}.
+     *
+     * @param userRoleAsString User role as string.
+     * @return User role from given string.
+     */
+    public static UserRole fromString(String userRoleAsString) {
+        try {
+            return UserRole.valueOf(userRoleAsString);
+        } catch (Exception e) {
+            return UserRole.USER;
+        }
+    }
 }

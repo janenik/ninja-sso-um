@@ -304,8 +304,8 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId, String attrName,
-                                                 String attrValue, long timeToLive) {
+    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId,
+                                                 String attrName, String attrValue, long timeToLive) {
         return new Builder().
                 setType(type).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
@@ -331,17 +331,6 @@ public final class ExpirableToken implements Serializable {
                 addDataEntries(data).
                 addDataEntry("userId", userId).
                 build();
-    }
-
-    /**
-     * Static factory for user access token.
-     *
-     * @param userId User id.
-     * @param timeToLive Time to live, in milliseconds.
-     * @return Expirable token.
-     */
-    public static ExpirableToken newAccessTokenForUser(long userId, long timeToLive) {
-        return newTokenForUser(ExpirableTokenType.ACCESS, userId, timeToLive);
     }
 
     /**

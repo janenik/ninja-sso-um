@@ -5,11 +5,14 @@ import com.google.inject.servlet.RequestScoped;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import controllers.sso.auth.type.DeviceInputType;
+import controllers.sso.filters.AuthorizationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
+import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenType;
 import ninja.Context;
 import ninja.Cookie;
 import ninja.Result;
@@ -187,8 +190,14 @@ public class SignInResponseBuilder {
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
      */
     private String buildNewUserToken(User user) throws PasswordBasedEncryptor.EncryptionException {
-        Integer ttlInSeconds = properties.getIntegerOrDie("application.sso.accessToken.ttl");
-        ExpirableToken token = ExpirableToken.newAccessTokenForUser(user.getId(), 1000L * ttlInSeconds);
+        long ttl = 1000L * properties.getIntegerOrDie("application.sso.accessToken.ttl");
+        ExpirableToken token;
+        if (!UserRole.USER.equals(user.getRole()) && user.getRole() != null) {
+            token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS,
+                    user.getId(), AuthorizationFilter.USER_ROLE, user.getRole().toString(), ttl);
+        } else {
+            token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS, user.getId(), ttl);
+        }
         return encryptor.encrypt(token);
     }
 }
