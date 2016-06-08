@@ -1,6 +1,8 @@
 package web.sso;
 
 import com.google.inject.Injector;
+import controllers.sso.auth.policy.DeviceAuthPolicy;
+import ninja.utils.NinjaProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -19,11 +21,17 @@ public class SignInTest extends WebDriverTest {
      */
     CaptchaTokenService captchaTokenService;
 
+    /**
+     * Ninja properties.
+     */
+    NinjaProperties properties;
+
     @Before
     public void setUp() {
         Injector injector = this.getInjector();
 
         this.captchaTokenService = injector.getBinding(CaptchaTokenService.class).getProvider().get();
+        this.properties = injector.getBinding(NinjaProperties.class).getProvider().get();
     }
 
     @Test
@@ -52,7 +60,10 @@ public class SignInTest extends WebDriverTest {
 
         click("#signInSubmit");
 
-        assertThatContinueUrlHas("successful_sign_in=true");
+        // Ignore the assertion in case of APPLICATION mode.
+        if (!DeviceAuthPolicy.APPLICATION.toString().equals(properties.get("application.sso.device.auth.policy"))) {
+            assertThatContinueUrlHas("successful_sign_in=true");
+        }
     }
 
     @Test
@@ -84,7 +95,10 @@ public class SignInTest extends WebDriverTest {
 
         click("#signInSubmit");
 
-        assertThatContinueUrlHas("successful_sign_in=true");
+        // Ignore the assertion in case of APPLICATION mode.
+        if (!DeviceAuthPolicy.APPLICATION.toString().equals(properties.get("application.sso.device.auth.policy"))) {
+            assertThatContinueUrlHas("successful_sign_in=true");
+        }
     }
 
     @Test
@@ -105,7 +119,7 @@ public class SignInTest extends WebDriverTest {
      * @param urlPart URL part (substring).
      */
     private void assertThatContinueUrlHas(String urlPart) {
-        String messageFormat = "Expected redirect to: %s (must contain '%s')\nPage source: \n%s\n: .";
+        String messageFormat = "Expected redirect to: %s (must contain '%s')\nPage source: \n%s.";
         String url = webDriver.getCurrentUrl();
         String message = String.format(messageFormat, url, urlPart, webDriver.getPageSource());
         assertTrue(message, url.contains(urlPart));

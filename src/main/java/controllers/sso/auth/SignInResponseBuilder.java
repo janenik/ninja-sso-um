@@ -1,6 +1,5 @@
 package controllers.sso.auth;
 
-import com.google.common.base.Throwables;
 import com.google.inject.servlet.RequestScoped;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
@@ -113,7 +112,7 @@ public class SignInResponseBuilder {
                 }
             }
         } catch (PasswordBasedEncryptor.EncryptionException ee) {
-            throw Throwables.propagate(ee);
+            throw new RuntimeException(ee);
         }
     }
 
