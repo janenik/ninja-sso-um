@@ -55,7 +55,7 @@ public class UsersList {
     }
 
     @Transactional
-    public Result list(Context context) {
+    public Result users(Context context) {
         String query = context.getParameter("query");
         int page = Math.abs(context.getParameterAsInteger("page", 1));
         int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);

@@ -19,22 +19,22 @@ public class PaginationResult<T> {
     /**
      * Total number of the results.
      */
-    private final int totalObjects;
+    private final long totalObjects;
 
     /**
      * Current page number. 1 based.
      */
-    private final int currentPage;
+    private final long currentPage;
 
     /**
      * Objects per page requested.
      */
-    private final int objectsPerPage;
+    private final long objectsPerPage;
 
     /**
      * Total number of pages.
      */
-    private final int totalPages;
+    private final long totalPages;
 
     /**
      * Contains pagination items to display.
@@ -49,7 +49,7 @@ public class PaginationResult<T> {
      * @param currentPage Current page number. 1 based.
      * @param objectsPerPage Objects per page requested.
      */
-    public PaginationResult(List<T> objects, int totalObjects, int currentPage, int objectsPerPage) {
+    public PaginationResult(List<T> objects, long totalObjects, int currentPage, int objectsPerPage) {
         this.objects = Collections.unmodifiableList(objects);
         this.totalObjects = totalObjects;
         this.totalPages = totalObjects % objectsPerPage > 0 ?
@@ -83,7 +83,7 @@ public class PaginationResult<T> {
      *
      * @return Total number of items in result set.
      */
-    public int getTotalObjects() {
+    public long getTotalObjects() {
         return totalObjects;
     }
 
@@ -92,7 +92,7 @@ public class PaginationResult<T> {
      *
      * @return CurrentPage.
      */
-    public int getCurrentPage() {
+    public long getCurrentPage() {
         return currentPage;
     }
 
@@ -101,7 +101,7 @@ public class PaginationResult<T> {
      *
      * @return Objects per page.
      */
-    public int getObjectsPerPage() {
+    public long getObjectsPerPage() {
         return objectsPerPage;
     }
 
@@ -110,8 +110,8 @@ public class PaginationResult<T> {
      *
      * @return Number of items before this page.
      */
-    public int getOffset() {
-        return (currentPage - 1) * objectsPerPage;
+    public long getOffset() {
+        return (currentPage - 1L) * objectsPerPage;
     }
 
     /**
@@ -119,7 +119,7 @@ public class PaginationResult<T> {
      *
      * @return Total pages.
      */
-    public int getTotalPages() {
+    public long getTotalPages() {
         return totalPages;
     }
 
@@ -139,25 +139,25 @@ public class PaginationResult<T> {
      * @param pages Number of all pages.
      * @return List of pages with separator inside.
      */
-    static List<Item> getPaginationItems(int currentPage, int pages) {
+    static List<Item> getPaginationItems(long currentPage, long pages) {
         if (pages < 0) {
             throw new IllegalArgumentException("Total number of pages is expected to be 0 or positive.");
         }
-        if (currentPage <= 0) {
-            currentPage = 1;
+        if (currentPage <= 0L) {
+            currentPage = 1L;
         }
         if (currentPage > pages) {
             currentPage = pages;
         }
         List<Item> items = new ArrayList<>(11);
         if (currentPage > 5) {
-            items.add(new Item(1));
-            items.add(new Item(2));
+            items.add(new Item(1L));
+            items.add(new Item(2L));
             items.add(Item.SEPARATOR);
-            items.add(new Item(currentPage - 2));
-            items.add(new Item(currentPage - 1));
+            items.add(new Item(currentPage - 2L));
+            items.add(new Item(currentPage - 1L));
         } else {
-            for (int page = 1; page < currentPage; page++) {
+            for (long page = 1; page < currentPage; page++) {
                 items.add(new Item(page));
             }
         }
@@ -169,7 +169,7 @@ public class PaginationResult<T> {
             items.add(new Item(pages - 1));
             items.add(new Item(pages));
         } else {
-            for (int page = currentPage + 1; page <= pages; page++) {
+            for (long page = currentPage + 1L; page <= pages; page++) {
                 items.add(new Item(page));
             }
         }
@@ -189,7 +189,7 @@ public class PaginationResult<T> {
         /**
          * Current page. Null means separator.
          */
-        private final Integer page;
+        private final Long page;
 
         /**
          * Constructs separator pagination item.
@@ -203,7 +203,7 @@ public class PaginationResult<T> {
          *
          * @param page Page.
          */
-        public Item(int page) {
+        public Item(Long page) {
             this.page = page;
         }
 
@@ -230,7 +230,7 @@ public class PaginationResult<T> {
          *
          * @return Current page.
          */
-        public int getPage() {
+        public long getPage() {
             if (page == null) {
                 throw new IllegalStateException("Pagination item is a separator.  " +
                         "Check it with #isPage() or #isSeparator().");

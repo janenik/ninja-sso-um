@@ -79,7 +79,7 @@ public class SsoStartupActions {
 
         User user = userService.getByUsername("root");
         if (user == null) {
-            logger.info("Adding new root user... {}, test: {}...", properties.isDev(), properties.isTest());
+            logger.info("Adding new root user...");
 
             user = new User("root", "root@example.org", "+1 650-999-9999");
             user.setFirstName("James");
@@ -91,6 +91,28 @@ public class SsoStartupActions {
 
             userService.createNew(user, "password", "[::1]");
         }
+
+        if (properties.isTest()) {
+            logger.info("Adding {} new test users...", 100);
+
+            String login;
+            for (int i = 1; i <= 100; i++) {
+                login = "user" + i;
+                user = userService.getByUsername(login);
+                if (user == null) {
+                    user = new User(login, "user" + i + "@example.org", "+1 650-999-99" + i);
+                    user.setFirstName("Alexis" + i);
+                    user.setLastName("Brown" + i);
+                    user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));
+                    user.setCountry(country);
+                    user.setGender(UserGender.OTHER);
+                    user.confirm();
+
+                    userService.createNew(user, "password", "[::1]");
+                }
+            }
+        }
+
         em.getTransaction().commit();
     }
 }

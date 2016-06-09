@@ -1,5 +1,6 @@
 package conf.sso;
 
+import controllers.sso.admin.UsersList;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -59,5 +60,8 @@ public class SsoRoutes implements ApplicationRoutes {
                 .with(RestorePasswordController.class, "restorePasswordGet");
         router.POST().route(subRoute +"/restore")
                 .with(RestorePasswordController.class, "restorePassword");
+
+        // Admin routes.
+        router.GET().route(subRoute + "/admin/users").with(UsersList.class, "users");
     }
 }

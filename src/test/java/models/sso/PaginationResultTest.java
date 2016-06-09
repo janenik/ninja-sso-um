@@ -127,7 +127,7 @@ public class PaginationResultTest {
             if (page == null) {
                 expectedItems.add(PaginationResult.Item.SEPARATOR);
             } else {
-                expectedItems.add(new PaginationResult.Item(page));
+                expectedItems.add(new PaginationResult.Item(page.longValue()));
             }
         }
         return expectedItems;

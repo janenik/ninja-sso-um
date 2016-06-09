@@ -256,9 +256,9 @@ public class UserService {
         boolean all = query.isEmpty();
         query += '%';
         Query q;
-        int totalObjects;
+        long totalObjects;
         if (all) {
-            totalObjects = entityManagerProvider.get().createNamedQuery("User.countAll").getMaxResults();
+            totalObjects = ((Long) entityManagerProvider.get().createNamedQuery("User.countAll").getSingleResult());
         } else {
             q = entityManagerProvider.get().createNamedQuery("User.countSearch");
             q.setParameter("q", query);
