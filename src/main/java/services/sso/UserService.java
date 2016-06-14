@@ -262,7 +262,7 @@ public class UserService {
         } else {
             q = entityManagerProvider.get().createNamedQuery("User.countSearch");
             q.setParameter("q", query);
-            totalObjects = q.getMaxResults();
+            totalObjects = (Long) (q.getSingleResult());
         }
         if (totalObjects == 0) {
             return new PaginationResult<>(objectsPerPage);

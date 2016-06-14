@@ -1,0 +1,85 @@
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
+    <@layout.adminLayout i18n("adminUsers")>
+
+    <style type="text/css">
+    </style>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <h3>${i18n("adminUsers")}</h3>
+
+            <form class="form-inline" method="get" action="${contextPath}/auth/admin/users">
+                <div class="form-group">
+                    <label for="query">${i18n("adminUsersQuery")}</label>
+                    <input type="text" name="query" class="form-control" id="query"
+                           value="${query}"
+                           placeholder="${i18n('adminUsersPlaceholder')}">
+                </div>
+                <button type="submit" class="btn btn-default">${i18n("adminUsersSearch")}</button>
+                <button type="submit" class="btn btn-default" onclick="$('#query').val('');">
+                    ${i18n('adminUsersReset')}
+                </button>
+            </form>
+
+            <br>
+
+            <#if results.hasObjects()>
+                <table class="table table-bordered table-striped table-hover">
+                    <tr>
+                        <th>${i18n("adminUsersId")}</th>
+                        <th>${i18n("adminUsersUsername")}</th>
+                        <th>${i18n("adminUsersEmail")}</th>
+                        <th>${i18n("adminUsersFirstName")}</th>
+                        <th>${i18n("adminUsersLastName")}</th>
+                        <th>${i18n("adminUsersRole")}</th>
+                        <th>${i18n("adminUsersSignUpTime")}</th>
+                        <th>${i18n("adminUsersOperations")}</th>
+                    </tr>
+                    <#list results.getObjects() as user>
+                        <tr>
+                            <td>${user.getId()}</td>
+                            <td>${user.getUsername()}</td>
+                            <td>${user.getEmail()}</td>
+                            <td>${user.getFirstName()}</td>
+                            <td>${user.getLastName()}</td>
+                            <td>${user.getRole()}</td>
+                            <td>${user.getCreated()}</td>
+                            <td>---</td>
+                        </tr>
+                    </#list>
+                </table>
+
+                <nav>
+                    <ul class="pagination">
+                        <#list results.getItems() as item>
+                            <li <#if item.isPage() && item.getPage() == page>class="active"</#if>
+                            <#if !item.isPage()>class="disabled"</#if>
+                            >
+                                <#if item.isPage()>
+                                    <a
+                                            href="${contextPath}/auth/admin/users?page=${item.getPage()?url}<#if query?has_content>&query=${query?url}</#if>"
+                                       aria-label="${item.toString()}">
+                                        ${item.toString()}
+                                    </a>
+                                    <#else>
+                                        <a href="#" class="disabled" aria-hidden="true" onclick="return false;">...</a>
+                                </#if>
+                            </li>
+                        </#list>
+                    </ul>
+                </nav>
+
+                <p>
+                   <b>${i18n("adminUsersTotal")}:</b> ${results.getTotalObjects()}
+                </p>
+
+                <#else>
+                    <div class="alert alert-warning">
+                        ${i18n("adminUsersNoResults")}
+                    </div>
+            </#if>
+        </div>
+    </div>
+
+</@layout.adminLayout>

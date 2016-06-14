@@ -1,5 +1,6 @@
 package controllers.sso.admin;
 
+import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.IpAddressFilter;
@@ -26,7 +27,7 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class
 })
-public class UsersList {
+public class UsersController {
 
     /**
      * Template to render users' list page.
@@ -49,19 +50,21 @@ public class UsersList {
      * @param userService User service.
      */
     @Inject
-    public UsersList(UserService userService, NinjaProperties properties) {
+    public UsersController(UserService userService, NinjaProperties properties) {
         this.userService = userService;
         this.properties = properties;
     }
 
     @Transactional
     public Result users(Context context) {
-        String query = context.getParameter("query");
-        int page = Math.abs(context.getParameterAsInteger("page", 1));
+        String query = Strings.nullToEmpty(context.getParameter("query")).trim();
+        int page = Math.max(1, context.getParameterAsInteger("page", 1));
         int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
         return Results.html().template(TEMPLATE)
                 .render("config", properties)
+                .render("query", query)
+                .render("page", page)
                 .render("results", results);
     }
 }

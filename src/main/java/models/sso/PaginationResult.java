@@ -39,7 +39,7 @@ public class PaginationResult<T> {
     /**
      * Contains pagination items to display.
      */
-    private final List<Item> paginationItems;
+    private final List<Item> items;
 
     /**
      * Constructs pagination result.
@@ -57,7 +57,7 @@ public class PaginationResult<T> {
                 totalObjects / objectsPerPage;
         this.currentPage = currentPage;
         this.objectsPerPage = objectsPerPage;
-        this.paginationItems = getPaginationItems(currentPage, this.totalPages);
+        this.items = buildPaginationItems(currentPage, this.totalPages);
     }
 
     /**
@@ -76,6 +76,15 @@ public class PaginationResult<T> {
      */
     public List<T> getObjects() {
         return objects;
+    }
+
+    /**
+     * Checks if the current pagination result has objects.
+     *
+     * @return Whether the current pagination result has objects.
+     */
+    public boolean hasObjects() {
+        return objects != null && !objects.isEmpty();
     }
 
     /**
@@ -124,12 +133,12 @@ public class PaginationResult<T> {
     }
 
     /**
-     * Returns an unmodifiable list with pagination items.
+     * Returns an unmodifiable list with pagination items (pages).
      *
      * @return Pagination items.
      */
-    public List<Item> getPaginationItems() {
-        return paginationItems;
+    public List<Item> getItems() {
+        return items;
     }
 
     /**
@@ -139,7 +148,7 @@ public class PaginationResult<T> {
      * @param pages Number of all pages.
      * @return List of pages with separator inside.
      */
-    static List<Item> getPaginationItems(long currentPage, long pages) {
+    static List<Item> buildPaginationItems(long currentPage, long pages) {
         if (pages < 0) {
             throw new IllegalArgumentException("Total number of pages is expected to be 0 or positive.");
         }
