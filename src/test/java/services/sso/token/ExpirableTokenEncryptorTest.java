@@ -3,6 +3,7 @@ package services.sso.token;
 import com.google.common.io.BaseEncoding;
 import controllers.sso.web.Escapers;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class ExpirableTokenEncryptorTest {
 
     @Test
     public void testBasic()
-            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+            throws ExpiredTokenException, IllegalTokenException, ExpirableTokenEncryptorException {
         ExpirableToken accessToken = ExpirableToken.newAccessToken("scope1", "userId", "12345678901234567890", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
@@ -54,7 +55,7 @@ public class ExpirableTokenEncryptorTest {
 
     @Test
     public void testBasic_nullScope()
-            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+            throws ExpiredTokenException, IllegalTokenException, ExpirableTokenEncryptorException {
         ExpirableToken accessToken = ExpirableToken.newAccessToken(null, "userId", "12345678901234567890", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
@@ -68,7 +69,7 @@ public class ExpirableTokenEncryptorTest {
 
     @Test
     public void testCaptcha()
-            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+            throws ExpiredTokenException, IllegalTokenException, ExpirableTokenEncryptorException {
         ExpirableToken accessToken = ExpirableToken.newCaptchaToken("captcha", "WORLD768", 30_000L);
 
         String encrypted = encryptor.encrypt(accessToken);
@@ -82,7 +83,7 @@ public class ExpirableTokenEncryptorTest {
 
     @Test
     public void testBiggerToken()
-            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+            throws ExpiredTokenException, IllegalTokenException, ExpirableTokenEncryptorException {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("origin", "http://example.org/");
         attributes.put("sub", "12345678901234567890");
@@ -110,7 +111,7 @@ public class ExpirableTokenEncryptorTest {
 
     @Test
     public void benchmarkEncryptedTokenSize()
-            throws ExpiredTokenException, IllegalTokenException, PasswordBasedEncryptor.EncryptionException {
+            throws ExpiredTokenException, IllegalTokenException, ExpirableTokenEncryptorException {
         String userId = "";
         for (int i = 1; i < 100; i++) {
             userId += i;
