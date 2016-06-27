@@ -6,9 +6,12 @@ import ninja.Filter;
 import ninja.FilterChain;
 import ninja.Result;
 
+import javax.inject.Singleton;
+
 /**
  * JSON/JSONP filter wraps API calls and returns error if exception happens inside the controller.
  */
+@Singleton
 public class ApplicationErrorJsonOrJsonpFilter implements Filter {
 
     @Override

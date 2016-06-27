@@ -9,12 +9,14 @@ import ninja.Results;
 import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
  * Application exception filter to show error page in case of exception.
  */
+@Singleton
 public class ApplicationErrorHtmlFilter implements Filter {
 
     /**

@@ -53,25 +53,26 @@
                 <nav>
                     <ul class="pagination">
                         <#list results.getItems() as item>
-                            <li <#if item.isPage() && item.getPage() == page>class="active"</#if>
+                            <li
+                            <#if item.isPage() && item.getPage() == page>class="active"</#if>
                             <#if !item.isPage()>class="disabled"</#if>
                             >
-                                <#if item.isPage()>
-                                    <a
-                                            href="${contextPath}/auth/admin/users?page=${item.getPage()?url}<#if query?has_content>&query=${query?url}</#if>"
-                                       aria-label="${item.toString()}">
-                                        ${item.toString()}
-                                    </a>
-                                    <#else>
-                                        <a href="#" class="disabled" aria-hidden="true" onclick="return false;">...</a>
-                                </#if>
+                            <#if item.isPage()>
+                                <a
+                                        href="${contextPath}/auth/admin/users?page=${item.getPage()?url}<#if query?has_content>&query=${query?url}</#if>"
+                                        aria-label="${item.toString()}">
+                                    ${item.toString()}
+                                </a>
+                                <#else>
+                                    <a href="#" class="disabled" aria-hidden="true" onclick="return false;">...</a>
+                            </#if>
                             </li>
                         </#list>
                     </ul>
                 </nav>
 
                 <p>
-                   <b>${i18n("adminUsersTotal")}:</b> ${results.getTotalObjects()}
+                    <b>${i18n("adminUsersTotal")}:</b> ${results.getTotalObjects()}
                 </p>
 
                 <#else>
@@ -80,6 +81,15 @@
                     </div>
             </#if>
         </div>
+        <form>
+            <input type="hidden" name="xsrfToken" value="${xsrfToken}"/>
+        </form>
+        <script>
+            var refreshPageIn = ${xsrfTokenTimeToLive};
+            setTimeout(function() {
+                document.location = document.location.toString();
+            }, refreshPageIn);
+        </script>
     </div>
 
 </@layout.adminLayout>

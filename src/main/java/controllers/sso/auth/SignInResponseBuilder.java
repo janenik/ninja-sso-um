@@ -4,13 +4,14 @@ import com.google.inject.servlet.RequestScoped;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import controllers.sso.auth.type.DeviceInputType;
-import controllers.sso.filters.AuthorizationFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
 import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
 import ninja.Context;
 import ninja.Cookie;
@@ -111,7 +112,7 @@ public class SignInResponseBuilder {
                     return getApplicationSignInResponse(user);
                 }
             }
-        } catch (PasswordBasedEncryptor.EncryptionException ee) {
+        } catch (ExpirableTokenEncryptorException ee) {
             throw new RuntimeException(ee);
         }
     }
@@ -123,7 +124,7 @@ public class SignInResponseBuilder {
      * @return Browser authentication response.
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
      */
-    private Result getBrowserSignInResponse(User user) throws PasswordBasedEncryptor.EncryptionException {
+    private Result getBrowserSignInResponse(User user) throws ExpirableTokenEncryptorException {
         String continueUrl = urlBuilder.getContinueUrlParameter();
         String accessTokenAsString = buildNewUserToken(user);
 
@@ -164,7 +165,7 @@ public class SignInResponseBuilder {
      * @return Application authentication response.
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
      */
-    private Result getApplicationSignInResponse(User user) throws PasswordBasedEncryptor.EncryptionException {
+    private Result getApplicationSignInResponse(User user) throws ExpirableTokenEncryptorException {
         String applicationDefinedBaseUrl = properties.getOrDie("application.sso.device.auth.policy.application.url");
         StringBuilder resultUrlBuilder = new StringBuilder(applicationDefinedBaseUrl);
         String accessTokenAsString = buildNewUserToken(user);
@@ -188,12 +189,12 @@ public class SignInResponseBuilder {
      * @return New access token as encrypted string.
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
      */
-    private String buildNewUserToken(User user) throws PasswordBasedEncryptor.EncryptionException {
+    private String buildNewUserToken(User user) throws ExpirableTokenEncryptorException {
         long ttl = 1000L * properties.getIntegerOrDie("application.sso.accessToken.ttl");
         ExpirableToken token;
         if (!UserRole.USER.equals(user.getRole()) && user.getRole() != null) {
             token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS,
-                    user.getId(), AuthorizationFilter.USER_ROLE, user.getRole().toString(), ttl);
+                    user.getId(), AuthenticationFilter.USER_ROLE, user.getRole().toString(), ttl);
         } else {
             token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS, user.getId(), ttl);
         }

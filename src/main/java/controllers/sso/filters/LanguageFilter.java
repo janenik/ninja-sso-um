@@ -7,10 +7,12 @@ import ninja.Result;
 import ninja.i18n.Lang;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Language filter. Extracts language from request and places it into attributes of request context.
  */
+@Singleton
 public class LanguageFilter implements Filter {
 
     /**

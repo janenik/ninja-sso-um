@@ -16,7 +16,7 @@
 
 package controllers;
 
-import controllers.sso.filters.AuthorizationFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -37,7 +37,7 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class,
         HitsPerIpCheckFilter.class,
-        AuthorizationFilter.class
+        AuthenticationFilter.class
 })
 public class ApplicationController {
 
@@ -75,7 +75,7 @@ public class ApplicationController {
      */
     public Result index(Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        Long userId = (Long) context.getAttribute(AuthorizationFilter.USER_ID);
+        Long userId = (Long) context.getAttribute(AuthenticationFilter.USER_ID);
         User user = null;
         if (userId != null) {
             user = userService.get(userId);

@@ -13,6 +13,7 @@ import ninja.Result;
 import ninja.Results;
 import ninja.utils.NinjaProperties;
 import services.sso.UserService;
+import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -50,13 +51,14 @@ public class UsersController {
      * @param userService User service.
      */
     @Inject
-    public UsersController(UserService userService, NinjaProperties properties) {
+    public UsersController(UserService userService,
+                           NinjaProperties properties) {
         this.userService = userService;
         this.properties = properties;
     }
 
     @Transactional
-    public Result users(Context context) {
+    public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
         int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);

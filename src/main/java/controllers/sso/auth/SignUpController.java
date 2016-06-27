@@ -18,6 +18,7 @@ import models.sso.User;
 import models.sso.UserGender;
 import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
@@ -40,7 +41,6 @@ import services.sso.PasswordService;
 import services.sso.UserService;
 import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
-import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -314,7 +314,7 @@ public class SignUpController {
             String verificationTokenAsString = expirableTokenEncryptor.encrypt(signUpVerificationPageToken);
             // Redirect to verification page.
             return urlBuilderProvider.get().getSignUpVerificationPage(verificationTokenAsString);
-        } catch (PasswordBasedEncryptor.EncryptionException e) {
+        } catch (ExpirableTokenEncryptorException e) {
             throw new RuntimeException("Unexpected problem with encryption.", e);
         } catch (MessagingException e) {
             throw new RuntimeException("Problem while sending an email.", e);
@@ -401,7 +401,7 @@ public class SignUpController {
             String localizedTemplate = String.format("signUpConfirmation.%s.ftl.html", locale);
             // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
-        } catch (MessagingException | TemplateException | PasswordBasedEncryptor.EncryptionException ex) {
+        } catch (MessagingException | TemplateException | ExpirableTokenEncryptorException ex) {
             String message = "Error while sending confirmation email for user: " + user.getEmail();
             logger.error(message, ex);
             throw new MessagingException(message, ex);

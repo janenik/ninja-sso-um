@@ -7,6 +7,7 @@ import ninja.Result;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Checks if number of requests from given IP is exceeded and places special boolean attribute
@@ -14,6 +15,7 @@ import javax.inject.Inject;
  * {@link HitsPerIpCheckFilter#HITS_PER_IP_LIMIT_EXCEEDED} into the request. Must be invoked after
  * {@link IpAddressFilter}.
  */
+@Singleton
 public class HitsPerIpCheckFilter implements Filter {
 
     /**

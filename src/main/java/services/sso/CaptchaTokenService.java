@@ -2,13 +2,13 @@ package services.sso;
 
 import com.google.common.collect.Lists;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 import ninja.cache.NinjaCache;
 import ninja.utils.NinjaProperties;
 import services.sso.token.ExpirableTokenEncryptor;
-import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -123,7 +123,7 @@ public class CaptchaTokenService {
         ExpirableToken token = ExpirableToken.newCaptchaToken("captcha", word, captchaTTLInMillis);
         try {
             return encryptor.encrypt(token);
-        } catch (PasswordBasedEncryptor.EncryptionException ee) {
+        } catch (ExpirableTokenEncryptorException ee) {
             throw new IllegalStateException("Unexpected exception while encrypting the captcha.", ee);
         }
     }

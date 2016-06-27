@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
 
@@ -66,7 +67,7 @@ public final class ExpirableTokenEncryptor {
      * @throws PasswordBasedEncryptor.EncryptionException When the problem with encryption happens.
      * @throws IllegalStateException In case of internal JSON processing problem.
      */
-    public String encrypt(ExpirableToken token) throws PasswordBasedEncryptor.EncryptionException {
+    public String encrypt(ExpirableToken token) throws ExpirableTokenEncryptorException {
         if (token == null) {
             throw new IllegalArgumentException("Expects token to encrypt.");
         }

@@ -4,9 +4,8 @@ import com.google.common.base.Strings;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import models.sso.UserRole;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
-import models.sso.token.ExpiredTokenException;
-import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.Cookie;
 import ninja.Filter;
@@ -17,53 +16,70 @@ import org.slf4j.Logger;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
- * Authorization filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
- * and places it into the attributes as {@link AuthorizationFilter#USER_ID}, {@link AuthorizationFilter#USER_ROLE} and
- * {@link AuthorizationFilter#TOKEN}.
+ * Authentication filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
+ * and places it into the attributes as {@link AuthenticationFilter#USER_ID}, {@link AuthenticationFilter#USER_ROLE} and
+ * {@link AuthenticationFilter#TOKEN}.
  */
-public class AuthorizationFilter implements Filter {
+@Singleton
+public class AuthenticationFilter implements Filter {
 
     /**
-     * Authorization context parameter name for user id.
+     * Authentication context parameter name for user id.
      */
     public static final String USER_ID = "userId";
 
     /**
-     * Authorization context parameter name for user role.
+     * Authentication context parameter name for user role.
      */
     public static final String USER_ROLE = "userRole";
 
     /**
-     * Authorization context parameter name for expirable token.
+     * Authentication context parameter name for expirable token.
      */
     public static final String TOKEN = "token";
 
     /**
+     * Newly generated XSRF token as string.
+     */
+    public static final String XSRF_TOKEN = "xsrfToken";
+
+    /**
+     * XSRF token time to live.
+     */
+    public static final String XSRF_TOKEN_TTL = "xsrfTokenTtl";
+
+    /**
      * Encryptor to extract data from token.
      */
-    ExpirableTokenEncryptor encryptor;
+    final ExpirableTokenEncryptor encryptor;
+
+    /**
+     * XSRF token time to live, in milliseconds.
+     */
+    final long xsrfTokenTimeToLive;
 
     /**
      * Device auth policy.
      */
-    DeviceAuthPolicy deviceAuthPolicy;
+    final DeviceAuthPolicy deviceAuthPolicy;
 
     /**
      * Parameter name to hold access token.
      */
-    String parameterName;
+    final String parameterName;
 
     /**
      * Cookie name to hold access token.
      */
-    String cookieName;
+    final String cookieName;
 
     /**
      * Logger.
      */
-    Logger logger;
+    final Logger logger;
 
     /**
      * Constructs authorization filter.
@@ -72,13 +88,14 @@ public class AuthorizationFilter implements Filter {
      * @param properties Properties.
      */
     @Inject
-    public AuthorizationFilter(ExpirableTokenEncryptor encryptor, DeviceAuthPolicy deviceAuthPolicy,
-                               NinjaProperties properties, Logger logger) {
+    public AuthenticationFilter(ExpirableTokenEncryptor encryptor, DeviceAuthPolicy deviceAuthPolicy,
+                                NinjaProperties properties, Logger logger) {
         this.encryptor = encryptor;
         this.deviceAuthPolicy = deviceAuthPolicy;
         this.logger = logger;
         this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
         this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
+        this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1000L;
     }
 
     @Override
@@ -87,12 +104,20 @@ public class AuthorizationFilter implements Filter {
             String token = getToken(context);
             ExpirableToken expirableToken = token != null ? encryptor.decrypt(token) : null;
             if (expirableToken != null && ExpirableTokenType.ACCESS.equals(expirableToken.getType())) {
-                context.setAttribute(USER_ID, expirableToken.getAttributeAsLong(USER_ID));
+                Long userId = expirableToken.getAttributeAsLong(USER_ID);
+                context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue(USER_ROLE)));
                 context.setAttribute(TOKEN, expirableToken);
+
+                ExpirableToken xsrfToken = ExpirableToken.newTokenForUser(
+                        ExpirableTokenType.XSRF,
+                        userId,
+                        xsrfTokenTimeToLive);
+                context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
+                context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
             }
-        } catch (ExpiredTokenException | IllegalTokenException ex) {
-            logger.info("Error while decrypting token.", ex);
+        } catch (ExpirableTokenEncryptorException ex) {
+            logger.info("Error while encrypting/decrypting user or XSRF token.", ex);
         }
         return filterChain.next(context);
     }

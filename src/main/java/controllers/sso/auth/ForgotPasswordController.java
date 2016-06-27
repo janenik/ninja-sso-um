@@ -13,6 +13,7 @@ import dto.sso.ForgotPasswordDto;
 import freemarker.template.TemplateException;
 import models.sso.User;
 import models.sso.token.ExpirableToken;
+import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
@@ -33,7 +34,6 @@ import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
-import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -223,7 +223,7 @@ public class ForgotPasswordController {
             String localizedTemplate = String.format("forgotPassword.%s.ftl.html", locale);
             // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
-        } catch (MessagingException | TemplateException | PasswordBasedEncryptor.EncryptionException ex) {
+        } catch (MessagingException | TemplateException | ExpirableTokenEncryptorException ex) {
             String message = "Error while sending restore password email for user: " + user.getEmail();
             logger.error(message, ex);
             throw new RuntimeException(message, ex);

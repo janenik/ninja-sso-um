@@ -9,12 +9,14 @@ import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Set;
 
 /**
  * IP address filter: extracts IP address from request or headers (for example, provided by nginx front server).
  */
+@Singleton
 public class IpAddressFilter implements Filter {
 
     /**

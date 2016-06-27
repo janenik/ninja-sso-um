@@ -11,11 +11,13 @@ import ninja.Result;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.EnumSet;
 
 /**
  * Filter that identifies the device and its input type: pointer, touchscreen or unknown.
  */
+@Singleton
 public class DeviceTypeFilter implements Filter {
 
     /**

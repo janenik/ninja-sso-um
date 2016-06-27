@@ -1,5 +1,7 @@
 package services.sso.token;
 
+import models.sso.token.ExpirableTokenEncryptorException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -74,7 +76,7 @@ public interface PasswordBasedEncryptor {
     /**
      * Encryption exception. See cause for details.
      */
-    class EncryptionException extends Exception {
+    class EncryptionException extends ExpirableTokenEncryptorException {
 
         public EncryptionException(String message, Throwable cause) {
             super(message, cause);
@@ -84,7 +86,7 @@ public interface PasswordBasedEncryptor {
     /**
      * Decryption exception. See cause for details.
      */
-    class DecryptionException extends Exception {
+    class DecryptionException extends ExpirableTokenEncryptorException {
 
         public DecryptionException(String message, Throwable cause) {
             super(message, cause);
