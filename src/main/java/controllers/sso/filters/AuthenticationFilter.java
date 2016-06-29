@@ -105,14 +105,14 @@ public class AuthenticationFilter implements Filter {
             ExpirableToken expirableToken = token != null ? encryptor.decrypt(token) : null;
             if (expirableToken != null && ExpirableTokenType.ACCESS.equals(expirableToken.getType())) {
                 Long userId = expirableToken.getAttributeAsLong(USER_ID);
+                if (userId == null) {
+                    throw new IllegalStateException("Access token is expected to contain user id: " + token);
+                }
                 context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue(USER_ROLE)));
                 context.setAttribute(TOKEN, expirableToken);
-
-                ExpirableToken xsrfToken = ExpirableToken.newTokenForUser(
-                        ExpirableTokenType.XSRF,
-                        userId,
-                        xsrfTokenTimeToLive);
+                ExpirableToken xsrfToken =
+                        ExpirableToken.newTokenForUser(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
             }
@@ -132,7 +132,7 @@ public class AuthenticationFilter implements Filter {
     private String getToken(Context context) {
         if (DeviceAuthPolicy.BROWSER.equals(deviceAuthPolicy) || DeviceAuthPolicy.AUTO.equals(deviceAuthPolicy)) {
             Cookie cookie = context.getCookie(cookieName);
-            String cookieToken =  cookie != null ? Strings.emptyToNull(cookie.getValue()) : null;
+            String cookieToken = cookie != null ? Strings.emptyToNull(cookie.getValue()) : null;
             if (cookieToken != null) {
                 return cookieToken;
             }
