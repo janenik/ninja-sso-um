@@ -24,6 +24,7 @@ import services.sso.limits.GenericCounterService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -61,6 +62,11 @@ public class SignUpVerificationController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Html result with secure headers.
+     */
+    final Provider<Result> htmlWithSecureHeadersProvider;
+
+    /**
      * Counter service.
      */
     final GenericCounterService counterService;
@@ -88,12 +94,14 @@ public class SignUpVerificationController {
     public SignUpVerificationController(ExpirableTokenEncryptor expirableTokenEncryptor,
                                         UserService userService,
                                         Provider<UrlBuilder> urlBuilderProvider,
+                                        @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                                         GenericCounterService counterService,
                                         NinjaProperties properties,
                                         Logger logger) {
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.userService = userService;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.counterService = counterService;
         this.properties = properties;
         this.logger = logger;
@@ -131,7 +139,7 @@ public class SignUpVerificationController {
             String verificationCodeFromUser = context.getParameter("verificationCode");
             if ("post".equalsIgnoreCase(context.getMethod())) {
                 counterService.increment(tokenAsString);
-                if (verificationToken.getAttributeValue("verificationCode").equals(verificationCodeFromUser)){
+                if (verificationToken.getAttributeValue("verificationCode").equals(verificationCodeFromUser)) {
                     Long userId = verificationToken.getAttributeAsLong("userId");
                     User userForVerification = userService.get(userId);
                     if (userForVerification == null) {
@@ -149,14 +157,12 @@ public class SignUpVerificationController {
         } catch (IllegalTokenException ite) {
             errorType = "wrongToken";
         }
-
-        Result result = Results.html().template(TEMPLATE);
-        result.render(errorType, true);
-        result.render("config", properties);
-        result.render("token", tokenAsString);
-        result.render("continue", continueUrl);
-
-        return result;
+        return htmlWithSecureHeadersProvider.get()
+                .template(TEMPLATE)
+                .render(errorType, true)
+                .render("config", properties)
+                .render("token", tokenAsString)
+                .render("continue", continueUrl);
     }
 
     /**

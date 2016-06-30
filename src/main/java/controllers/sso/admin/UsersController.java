@@ -62,8 +62,7 @@ public class UsersController {
      */
     @Inject
     public UsersController(UserService userService,
-                           @Named("htmlAdminSecureHeaders")
-                           Provider<Result> htmlWithSecureHeadersProvider,
+                           @Named("htmlAdminSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                            NinjaProperties properties) {
         this.userService = userService;
         this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;

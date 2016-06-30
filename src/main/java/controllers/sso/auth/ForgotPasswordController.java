@@ -36,6 +36,7 @@ import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
@@ -95,6 +96,11 @@ public class ForgotPasswordController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Html result with secure headers.
+     */
+    final Provider<Result> htmlWithSecureHeadersProvider;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -139,6 +145,7 @@ public class ForgotPasswordController {
             IPCounterService ipCounterService,
             EmailService emailService,
             Provider<UrlBuilder> urlBuilderProvider,
+            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
             NinjaProperties properties,
             Router router,
             Messages messages,
@@ -149,6 +156,7 @@ public class ForgotPasswordController {
         this.ipCounterService = ipCounterService;
         this.emailService = emailService;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.properties = properties;
         this.router = router;
         this.messages = messages;
@@ -264,11 +272,12 @@ public class ForgotPasswordController {
      * @return Forgot password response object.
      */
     Result createResult(ForgotPasswordDto user, Context context, Validation validation) {
-        Result result = Results.html().template(TEMPLATE);
-        result.render("user", user);
-        result.render("config", properties);
-        result.render("errors", validation);
-        result.render("continue", urlBuilderProvider.get().getContinueUrlParameter());
+        Result result = htmlWithSecureHeadersProvider.get()
+                .template(TEMPLATE)
+                .render("user", user)
+                .render("config", properties)
+                .render("errors", validation)
+                .render("continue", urlBuilderProvider.get().getContinueUrlParameter());
         if (Strings.isNullOrEmpty(user.getCaptchaToken()) || validation.hasViolations()) {
             regenerateCaptchaTokenAndUrl(result, context);
         }

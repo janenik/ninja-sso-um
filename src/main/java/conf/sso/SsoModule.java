@@ -107,7 +107,8 @@ public class SsoModule extends AbstractModule {
     /**
      * Provides HTML result with security headers for application controllers, accessible with
      * {@link models.sso.UserRole#USER} and
-     * {@link models.sso.UserRole#MODERATOR} priveleges. May be simplified to SAMEORIGIN if needed.
+     * {@link models.sso.UserRole#MODERATOR} priveleges. May be simplified to SAMEORIGIN if needed but make sure to
+     * use framebursting script to prevent nested frames attacks.
      *
      * @param properties Ninja properties.
      * @return HTML result with security headers.

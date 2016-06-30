@@ -24,6 +24,7 @@ import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.IllegalFormatException;
@@ -66,6 +67,11 @@ public class RestorePasswordController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Html result with secure headers.
+     */
+    final Provider<Result> htmlWithSecureHeadersProvider;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -84,11 +90,13 @@ public class RestorePasswordController {
                                      PasswordService passwordService,
                                      ExpirableTokenEncryptor expirableTokenEncryptor,
                                      Provider<UrlBuilder> urlBuilderProvider,
+                                     @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                                      NinjaProperties properties) {
         this.userService = userService;
         this.passwordService = passwordService;
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.properties = properties;
     }
 
@@ -167,7 +175,7 @@ public class RestorePasswordController {
      */
     Result createResult(Context context, String restoreToken) {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
-        return Results.html()
+        return htmlWithSecureHeadersProvider.get()
                 .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
                 .render("config", properties)
                 .render("restoreToken", restoreToken)
@@ -182,7 +190,7 @@ public class RestorePasswordController {
      * @param confirmPassword Confirm password.
      * @return Whether the given password is valid.
      */
-    boolean isValidPassword(String password, String confirmPassword) {
+    static boolean isValidPassword(String password, String confirmPassword) {
         return password.length() >= Constants.PASSWORD_MIN_LENGTH
                 && password.length() <= Constants.PASSWORD_MAX_LENGTH
                 && password.equals(confirmPassword);

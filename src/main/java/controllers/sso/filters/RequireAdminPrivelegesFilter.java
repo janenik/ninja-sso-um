@@ -33,9 +33,10 @@ public class RequireAdminPrivelegesFilter implements Filter {
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {
-        Object roleAsObject = context.getAttribute(AuthenticationFilter.USER_ROLE);
-        if (!UserRole.ADMIN.equals(roleAsObject)) {
-            return Results.redirect(urlBuilderProvider.get().getSignInUrl());
+        Object role = context.getAttribute(AuthenticationFilter.USER_ROLE);
+        // Redirect to login page if the current user role is not ADMIN.
+        if (!UserRole.ADMIN.equals(role)) {
+            return Results.redirect(urlBuilderProvider.get().getSignInUrlForCurrentUrl());
         }
         return filterChain.next(context);
     }

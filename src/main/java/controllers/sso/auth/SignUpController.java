@@ -43,6 +43,7 @@ import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
@@ -125,6 +126,11 @@ public class SignUpController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
+     * Html result with secure headers.
+     */
+    final Provider<Result> htmlWithSecureHeadersProvider;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -190,6 +196,7 @@ public class SignUpController {
                             CountryService countryService,
                             EmailService emailService,
                             Provider<UrlBuilder> urlBuilderProvider,
+                            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                             Mapper dtoMapper,
                             NinjaProperties properties,
                             Logger logger,
@@ -202,6 +209,7 @@ public class SignUpController {
         this.userService = userService;
         this.countryService = countryService;
         this.urlBuilderProvider = urlBuilderProvider;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.dtoMapper = dtoMapper;
         this.emailService = emailService;
         this.properties = properties;
@@ -344,7 +352,8 @@ public class SignUpController {
      * @return Sign up response object.
      */
     Result createResult(UserSignUpDto user, Context context, Validation validation) {
-        Result result = Results.html().template(TEMPLATE)
+        Result result = htmlWithSecureHeadersProvider.get()
+                .template(TEMPLATE)
                 .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)

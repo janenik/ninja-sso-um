@@ -16,7 +16,6 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.Router;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
@@ -30,6 +29,7 @@ import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -82,6 +82,11 @@ public class SignInController {
     final Provider<SignInResponseBuilder> signInResponseSupplierProvider;
 
     /**
+     * Html result with secure headers.
+     */
+    final Provider<Result> htmlWithSecureHeadersProvider;
+
+    /**
      * Application properties.
      */
     final NinjaProperties properties;
@@ -118,6 +123,7 @@ public class SignInController {
                             IPCounterService ipCounterService,
                             Provider<UrlBuilder> urlBuilderProvider,
                             Provider<SignInResponseBuilder> signInResponseSupplierProvider,
+                            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                             NinjaProperties properties,
                             Router router,
                             Messages messages,
@@ -127,6 +133,7 @@ public class SignInController {
         this.ipCounterService = ipCounterService;
         this.urlBuilderProvider = urlBuilderProvider;
         this.signInResponseSupplierProvider = signInResponseSupplierProvider;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.properties = properties;
         this.logger = logger;
         this.router = router;
@@ -197,12 +204,13 @@ public class SignInController {
         String langCode = (String) context.getAttribute(LanguageFilter.LANG);
         SignInState state = SignInState.fromString(context.getParameter("state"));
 
-        Result result = Results.html().template(TEMPLATE);
-        result.render("user", user);
-        result.render("errors", validation);
-        result.render("ipHitsExceeded", ipHitsExceeded);
-        result.render("continue", urlBuilderProvider.get().getContinueUrlParameter());
-        result.render("config", properties);
+        Result result = htmlWithSecureHeadersProvider.get()
+                .template(TEMPLATE)
+                .render("user", user)
+                .render("errors", validation)
+                .render("ipHitsExceeded", ipHitsExceeded)
+                .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
+                .render("config", properties);
         if (ipHitsExceeded) {
             regenerateCaptchaTokenAndUrl(result);
         }

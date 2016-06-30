@@ -95,11 +95,12 @@ public class UrlBuilder {
     }
 
     /**
-     * Extracts the redirect URL to the final destination from given context. Also, checks
+     * Extracts the continue URL to the final destination from given context. Also, checks
      * provided URL to match only allowed URL prefixes which saves application from open
      * redirect problem.
+     * URL is absolute.
      *
-     * @return Continue URL to the final project or base URL of application.
+     * @return Absolute continue URL to the final project or base URL of application.
      */
     public String getContinueUrlParameter() {
         String url = Strings.nullToEmpty(context.getParameter("continue")).trim();
@@ -115,13 +116,13 @@ public class UrlBuilder {
                 return url;
             }
         }
-        String cp = context.getContextPath();
         // Nothing matched. Returning default which is a base URL.
         return baseUrlWithContext;
     }
 
     /**
      * Constructs confirmation URL by given parameters.
+     * URL is absolute.
      *
      * @param emailConfirmationToken Confirmation code.
      * @return Confirmation URL.
@@ -138,7 +139,8 @@ public class UrlBuilder {
     }
 
     /**
-     * Returns URL to Sign Up welcome page after successful user sign up and confirmation email sent.
+     * Returns relative URL to Sign Up verification page after successful user sign up and confirmation email sent.
+     * URL is relative.
      *
      * @param signUpVerificationToken Sign up verification token.
      * @return URL to sign up verification page.
@@ -155,10 +157,11 @@ public class UrlBuilder {
     }
 
     /**
-     * Returns relative URL to Sign In page, showing a state message if the state is given, then
+     * Returns URL to Sign In page that contains a state message.
+     * URL is relative.
      *
      * @param state Optional state.
-     * @return Sign in URL.
+     * @return Relative Sign In URL.
      */
     public String getSignInUrl(Object... state) {
         String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
@@ -175,7 +178,25 @@ public class UrlBuilder {
     }
 
     /**
-     * Constructs absolute restore password URL by given parameters. URL may be sent in email.
+     * Returns URL to Sign In page with current URL as continuer URL.
+     * URL is relative.
+     *
+     * @return Relative Sign In URL.
+     */
+    public String getSignInUrlForCurrentUrl() {
+        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
+        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
+        String currentAbsoluteUrl = newAbsoluteUrlBuilder(context,
+                context.getContextPath() + context.getRequestPath()).toString();
+        return urlBuilder
+                .append("&continue=")
+                .append(Escapers.encodePercent(currentAbsoluteUrl))
+                .toString();
+    }
+
+    /**
+     * Constructs restore password URL by given parameters. URL may be sent in email.
+     * URL is absolute.
      *
      * @param token Restore password token.
      * @return Restore password URL.
@@ -191,25 +212,25 @@ public class UrlBuilder {
     }
 
     /**
-     * Returns URL string builder for constructing URLs.
+     * Returns absolute URL string builder for constructing URLs.
      *
      * @param route Application route to controller without context path.
      * @param context Context.
      * @return URL StringBuilder.
      */
     private StringBuilder newAbsoluteUrlBuilder(Context context, String route) {
-        return newAbsoluteUrlBuilder(baseUrl, context, route);
+        return newAbsoluteUrlBuilder(context, baseUrl, route);
     }
 
     /**
-     * Returns URL string builder for constructing URLs.
+     * Returns absolute URL string builder for constructing URLs.
      *
-     * @param baseUrl Base URL.
      * @param context Context.
+     * @param baseUrl Base URL.
      * @param route Application path (without context path).
      * @return URL StringBuilder.
      */
-    private StringBuilder newAbsoluteUrlBuilder(String baseUrl, Context context, String route) {
+    private StringBuilder newAbsoluteUrlBuilder(Context context, String baseUrl, String route) {
         String lang = (String) context.getAttribute(LanguageFilter.LANG);
         return new StringBuilder(baseUrl)
                 .append(route)
@@ -223,10 +244,10 @@ public class UrlBuilder {
      * Returns relative URL builder with optional context path and language parameter.
      *
      * @param context Context.
-     * @param path Path.
+     * @param baseUrl Path.
      * @return Relative URL.
      */
-    private StringBuilder newRelativeUrlBuilder(Context context, String path) {
-        return newAbsoluteUrlBuilder("", context, path);
+    private StringBuilder newRelativeUrlBuilder(Context context, String baseUrl) {
+        return newAbsoluteUrlBuilder(context, "", baseUrl);
     }
 }
