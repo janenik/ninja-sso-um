@@ -1,23 +1,42 @@
 /**<#-- This javascript source is the Freemarker template and supposed to be included. -->*/
 (function() {
-    var signinKey = 'signIn.rememberMe';
-    $('#signInForm').submit(function() {
-        var value = $('#emailOrUsername').val();
-        if ($('#rememberMe').is(':checked') && value) {
-            value = btoa(encodeURIComponent('sde' + value));
-            localStorage.setItem(signinKey, value);
-        } else {
-            localStorage.removeItem(signinKey);
-        }
-        $('#signInSubmit').attr('disabled', 'disabled');
-        $('#signInSubmit').html('${i18n("signInButtonTitleLoading")}');
-    });
-    var savedValue = localStorage.getItem(signinKey);
-    if (savedValue) {
-        var value = decodeURIComponent(atob(savedValue)).substring(3);
-        if (!$('#emailOrUsername').val()) {
-            $('#emailOrUsername').val(value);
-        }
-        $('#rememberMe').prop('checked', true);
+    var signIn = {
+        key: 'signIn.rememberMe',
+        button: '#signInSubmit',
+        input: '#emailOrUsername',
+        checkbox: '#rememberMe'
+    };
+
+    signIn.disableSubmitButton = function() {
+        $(this.button).attr('disabled', 'disabled');
+        $(this.button).html('${i18n("signInButtonTitleLoading")}');
     }
+
+    signIn.saveEmailOrUsername = function() {
+       var value = $(this.input).val();
+       if ($(this.checkbox).is(':checked') && value) {
+           value = btoa(encodeURIComponent('sde' + value));
+           localStorage.setItem(this.key, value);
+        } else {
+           localStorage.removeItem(this.key);
+        }
+    }
+
+    signIn.restoreEmailOrUsername = function() {
+        var savedValue = localStorage.getItem(this.key);
+        if (savedValue) {
+            var value = decodeURIComponent(atob(savedValue)).substring(3);
+            if (!$(this.input).val()) {
+                $(this.input).val(value);
+            }
+            $(this.checkbox).prop('checked', true);
+        }
+    }
+
+    $('#signInForm').submit(function() {
+        signIn.disableSubmitButton();
+        signIn.saveEmailOrUsername();
+    });
+
+    signIn.restoreEmailOrUsername();
 })();
