@@ -143,12 +143,12 @@ public final class Controllers {
 
         @Override
         public void addFieldViolation(String field, ConstraintViolation constraintViolation) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
         public void addViolation(ConstraintViolation constraintViolation) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
@@ -168,12 +168,12 @@ public final class Controllers {
 
         @Override
         public void addFieldViolation(FieldViolation fieldViolation) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
         public void addBeanViolation(FieldViolation fieldViolation) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
@@ -189,6 +189,11 @@ public final class Controllers {
         @Override
         public boolean hasBeanViolation(String name) {
             return false;
+        }
+
+        @Override
+        public List<FieldViolation> getBeanViolations(String s) {
+            return null;
         }
     }
 }
