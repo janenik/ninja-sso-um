@@ -1,10 +1,10 @@
 package controllers.sso.auth;
 
 import com.google.inject.servlet.RequestScoped;
+import controllers.annotations.InjectedContext;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import controllers.sso.auth.type.DeviceInputType;
-import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
@@ -77,7 +77,7 @@ public class SignInResponseBuilder {
             DeviceAuthPolicy deviceAuthPolicy,
             @Named("browser") AppendAuthTokenPolicy browserAppendTokenPolicy,
             @Named("application") AppendAuthTokenPolicy applicationAppendAuthTokenPolicy,
-            @Named("ssoContext") Context context,
+            @InjectedContext Context context,
             ExpirableTokenEncryptor encryptor,
             UrlBuilder urlBuilder,
             NinjaProperties properties) {
@@ -194,7 +194,7 @@ public class SignInResponseBuilder {
         ExpirableToken token;
         if (!UserRole.USER.equals(user.getRole()) && user.getRole() != null) {
             token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS,
-                    user.getId(), AuthenticationFilter.USER_ROLE, user.getRole().toString(), ttl);
+                    user.getId(), "role", user.getRole().toString(), ttl);
         } else {
             token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS, user.getId(), ttl);
         }

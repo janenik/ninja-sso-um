@@ -5,10 +5,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignUpDto;
@@ -61,7 +63,9 @@ import java.util.Random;
         LanguageFilter.class,
         IpAddressFilter.class,
         HitsPerIpCheckFilter.class,
-        DeviceTypeFilter.class
+        DeviceTypeFilter.class,
+        AuthenticationFilter.class,
+        RequireUnauthenticatedUserFilter.class
 })
 public class SignUpController {
 
@@ -354,6 +358,7 @@ public class SignUpController {
     Result createResult(UserSignUpDto user, Context context, Validation validation) {
         Result result = htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
+                .render("context", context)
                 .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)

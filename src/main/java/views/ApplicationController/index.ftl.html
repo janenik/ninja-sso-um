@@ -9,7 +9,7 @@
     <p><b>IP hits:</b> ${ipHits}</p>
     <p><b>IP hits exceeded:</b> ${ipHitsExceeded?c}</p>
     <p><b>Method:</b> ${method}</p>
-    <p><b>Authorized:</b> ${authorized?c}</p>
+    <p><b>Authorized:</b> ${context.getAttribute('authenticated')?c}</p>
     <#if user??>
         <p>
             <b>User:</b>

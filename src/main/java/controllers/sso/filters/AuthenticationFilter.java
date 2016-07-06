@@ -22,6 +22,8 @@ import javax.inject.Singleton;
  * Authentication filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
  * and places it into the attributes as {@link AuthenticationFilter#USER_ID}, {@link AuthenticationFilter#USER_ROLE} and
  * {@link AuthenticationFilter#TOKEN}.
+ * Unauthenticated users have no {@link AuthenticationFilter#USER_ID}, {@link AuthenticationFilter#USER_ROLE}
+ * and {@link AuthenticationFilter#TOKEN} attributes in context.
  */
 @Singleton
 public class AuthenticationFilter implements Filter {
@@ -29,12 +31,18 @@ public class AuthenticationFilter implements Filter {
     /**
      * Authentication context parameter name for user id.
      */
-    public static final String USER_ID = "userId";
+    public static final String USER_ID = "authUserId";
 
     /**
      * Authentication context parameter name for user role.
      */
-    public static final String USER_ROLE = "userRole";
+    public static final String USER_ROLE = "authUserRole";
+
+    /**
+     * Authentication context parameter name that holds boolean value that indicates
+     * whether the user authenticated or not.
+     */
+    public static final String USER_AUTHENTICATED = "authenticated";
 
     /**
      * Authentication context parameter name for expirable token.
@@ -104,20 +112,24 @@ public class AuthenticationFilter implements Filter {
             String token = getToken(context);
             ExpirableToken expirableToken = token != null ? encryptor.decrypt(token) : null;
             if (expirableToken != null && ExpirableTokenType.ACCESS.equals(expirableToken.getType())) {
-                Long userId = expirableToken.getAttributeAsLong(USER_ID);
+                Long userId = expirableToken.getAttributeAsLong("userId");
                 if (userId == null) {
                     throw new IllegalStateException("Access token is expected to contain user id: " + token);
                 }
                 context.setAttribute(USER_ID, userId);
-                context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue(USER_ROLE)));
+                context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue("role")));
                 context.setAttribute(TOKEN, expirableToken);
                 ExpirableToken xsrfToken =
                         ExpirableToken.newTokenForUser(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
+                context.setAttribute(USER_AUTHENTICATED, true);
+            } else {
+                context.setAttribute(USER_AUTHENTICATED, false);
             }
         } catch (ExpirableTokenEncryptorException ex) {
             logger.info("Error while encrypting/decrypting user or XSRF token.", ex);
+            context.setAttribute(USER_AUTHENTICATED, false);
         }
         return filterChain.next(context);
     }

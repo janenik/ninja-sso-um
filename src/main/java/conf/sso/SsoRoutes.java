@@ -47,7 +47,7 @@ public class SsoRoutes implements ApplicationRoutes {
         router.POST().route(subRoute +"/signin").with(SignInController.class, "signIn");
 
         // Sign out.
-        router.GET().route(subRoute + "/signout").with(SignOutController.class, "signOut");
+        router.POST().route(subRoute + "/signout").with(SignOutController.class, "signOut");
 
         // Forgot password.
         router.GET().route(subRoute +"/forgot")

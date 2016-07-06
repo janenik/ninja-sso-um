@@ -24,12 +24,13 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
@@ -60,13 +61,11 @@ public class ApplicationController {
     UserService userService;
 
     /**
-     * Method to put initial data in the db.
-     *
-     * @return Result.
+     * Provider for HTML result with secure headers. Contains context as well.
      */
-    public Result setup() {
-        return Results.ok();
-    }
+    @Named("htmlSecureHeaders")
+    @Inject
+    Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Renders index page.
@@ -80,9 +79,9 @@ public class ApplicationController {
         if (userId != null) {
             user = userService.get(userId);
         }
-        return Results.html()
+        return htmlWithSecureHeadersProvider.get()
+                .render("context", context)
                 .render("method", context.getMethod())
-                .render("authorized", userId != null)
                 .render("user", user)
                 .render("lang", context.getAttribute(LanguageFilter.LANG))
                 .render("remoteIp", ip)

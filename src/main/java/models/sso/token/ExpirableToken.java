@@ -100,7 +100,7 @@ public final class ExpirableToken implements Serializable {
      * @return attribute value for given name or null if there is no such attribute.
      */
     public String getAttributeValue(String name) {
-        return attr.get(name).toString();
+        return attr.get(name);
     }
 
     /**
@@ -111,11 +111,8 @@ public final class ExpirableToken implements Serializable {
      * @return Attribute value or default value if there is no attribute in token.`
      */
     public String getAttributeValue(String name, String defaultValue) {
-        Serializable v = attr.get(name);
-        if (v == null) {
-            return defaultValue;
-        }
-        return v.toString();
+        String v = attr.get(name);
+        return v == null ? defaultValue : v;
     }
 
     /**

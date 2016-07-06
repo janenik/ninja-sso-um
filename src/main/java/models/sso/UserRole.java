@@ -23,7 +23,7 @@ public enum UserRole {
 
     /**
      * Converts given string to {@link UserRole} enum. If the given string doesn't represent enum's
-     * string value, then the least possible privilege returned {@link #USER}.
+     * string value, then the least possible privilege returned: {@link #USER}.
      *
      * @param userRoleAsString User role as string.
      * @return User role from given string.

@@ -13,13 +13,26 @@
 				<li class="active"><a href="${contextPath}/?lang=${lang?url}">Home</a></li>
 			</ul>
 			<ul class="navbar-right nav navbar-nav">
-	            <#if userId??>
+
+                <#if context.getAttribute('authenticated')>
                     <li><a href="${contextPath}/profile?lang=${lang?url}">Username</a></li>
                 </#if>
+
                 <li><a href="${contextPath}/somewhere?lang=${lang?url}">Somewhere</a></li>
-                <#if userId??>
-                    <li><a href="${contextPath}/auth/logout?lang=${lang?url}">Logout</a></li>
+
+                <#if context.getAttribute('authenticated')>
+                    <li>
+                        <a href="#" onclick="$('#signOutForm').submit();return false;">Sign Out</a>
+                        <form action="${contextPath}/auth/signout?lang=${lang?url}"
+                              method="POST"
+                              id="signOutForm"
+                              style="display:none;">
+                            <input type="hidden" name="xsrfToken"
+                                   value="${context.getAttribute('xsrfToken')}" />
+                        </form>
+                    </li>
                 </#if>
+
 			</ul>
 		</div>
 		<!--/.navbar-collapse -->

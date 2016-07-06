@@ -4,9 +4,11 @@ import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.Constants;
 import models.sso.User;
@@ -37,7 +39,9 @@ import java.util.IllegalFormatException;
         ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        AuthenticationFilter.class,
+        RequireUnauthenticatedUserFilter.class
 })
 public class RestorePasswordController {
 
@@ -176,6 +180,7 @@ public class RestorePasswordController {
     Result createResult(Context context, String restoreToken) {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         return htmlWithSecureHeadersProvider.get()
+                .render("context", context)
                 .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
                 .render("config", properties)
                 .render("restoreToken", restoreToken)

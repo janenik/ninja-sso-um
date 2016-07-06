@@ -5,9 +5,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.ForgotPasswordDto;
 import freemarker.template.TemplateException;
@@ -51,7 +53,9 @@ import java.util.Map;
         ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        AuthenticationFilter.class,
+        RequireUnauthenticatedUserFilter.class
 })
 public class ForgotPasswordController {
 
@@ -274,6 +278,7 @@ public class ForgotPasswordController {
     Result createResult(ForgotPasswordDto user, Context context, Validation validation) {
         Result result = htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
+                .render("context", context)
                 .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)

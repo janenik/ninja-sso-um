@@ -3,10 +3,12 @@ package controllers.sso.auth;
 import com.google.inject.persist.Transactional;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.UserSignInDto;
@@ -42,7 +44,9 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class,
         HitsPerIpCheckFilter.class,
-        DeviceTypeFilter.class
+        DeviceTypeFilter.class,
+        AuthenticationFilter.class,
+        RequireUnauthenticatedUserFilter.class
 })
 public class SignInController {
 
@@ -192,36 +196,6 @@ public class SignInController {
     }
 
     /**
-     * Creates response result with given user.
-     *
-     * @param user User to use in response.
-     * @param context Context.
-     * @param validation Validation.
-     * @return Sign in response object.
-     */
-    Result createResult(UserSignInDto user, Context context, Validation validation) {
-        boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
-        String langCode = (String) context.getAttribute(LanguageFilter.LANG);
-        SignInState state = SignInState.fromString(context.getParameter("state"));
-
-        Result result = htmlWithSecureHeadersProvider.get()
-                .template(TEMPLATE)
-                .render("user", user)
-                .render("errors", validation)
-                .render("ipHitsExceeded", ipHitsExceeded)
-                .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
-                .render("config", properties);
-        if (ipHitsExceeded) {
-            regenerateCaptchaTokenAndUrl(result);
-        }
-        if (state != null) {
-            result.render("state", state.getMessage(messages, langCode));
-            result.render("stateSuccessful", state.isSuccessful());
-        }
-        return result;
-    }
-
-    /**
      * Creates response result with given user, validation and field that lead to error.
      *
      * @param user User to use in response.
@@ -233,6 +207,37 @@ public class SignInController {
     Result createResult(UserSignInDto user, Context context, Validation validation, String field) {
         validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
         return createResult(user, context, validation);
+    }
+
+    /**
+     * Creates response result with given user.
+     *
+     * @param user User to use in response.
+     * @param context Context.
+     * @param validation Validation.
+     * @return Sign in response object.
+     */
+    Result createResult(UserSignInDto user, Context context, Validation validation) {
+        boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
+        String langCode = (String) context.getAttribute(LanguageFilter.LANG);
+        Result result = htmlWithSecureHeadersProvider.get()
+                .template(TEMPLATE)
+                .render("context", context)
+                .render("user", user)
+                .render("errors", validation)
+                .render("ipHitsExceeded", ipHitsExceeded)
+                .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
+                .render("config", properties);
+        if (ipHitsExceeded) {
+            regenerateCaptchaTokenAndUrl(result);
+        }
+
+        SignInState state = SignInState.fromString(context.getParameter("state"));
+        if (state != null) {
+            result.render("state", state.getMessage(messages, langCode));
+            result.render("stateSuccessful", state.isSuccessful());
+        }
+        return result;
     }
 
     /**

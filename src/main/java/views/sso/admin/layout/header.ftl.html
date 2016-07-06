@@ -20,9 +20,16 @@
             </ul>
             <ul class="navbar-right nav navbar-nav">
                 <li>
-                    <a href="${contextPath}/auth/logout?lang=${lang?url}">
-                        ${i18n('adminLogout')}
+                    <a href="#" onclick="$('#signOutForm').submit();">
+                        ${i18n('adminSignOut')}
                     </a>
+                    <form action="${contextPath}/auth/signout?lang=${lang?url}"
+                          method="POST"
+                          id="signOutForm"
+                          style="display:none;">
+                        <input type="hidden" name="xsrfToken"
+                               value="${context.getAttribute('xsrfToken')}" />
+                    </form>
                 </li>
             </ul>
         </div>

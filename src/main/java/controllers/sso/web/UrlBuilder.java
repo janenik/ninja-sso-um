@@ -2,6 +2,8 @@ package controllers.sso.web;
 
 import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
+import controllers.ApplicationController;
+import controllers.annotations.InjectedContext;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
@@ -63,7 +65,7 @@ public class UrlBuilder {
     public UrlBuilder(
             NinjaProperties properties,
             Router router,
-            @Named("ssoContext") Context context,
+            @InjectedContext Context context,
             @Named("allowedContinueUrls") List<String> allowedContinueUrls) {
         this.properties = properties;
         this.router = router;
@@ -178,7 +180,7 @@ public class UrlBuilder {
     }
 
     /**
-     * Returns URL to Sign In page with current URL as continuer URL.
+     * Returns URL to Sign In page with current URL as continue URL.
      * URL is relative.
      *
      * @return Relative Sign In URL.
@@ -209,6 +211,17 @@ public class UrlBuilder {
                 .append("&continue=")
                 .append(Escapers.encodePercent(getContinueUrlParameter()))
                 .toString();
+    }
+
+    /**
+     * Constructs application index URL.
+     * URL is relative.
+     *
+     * @return Relative URL to application index.
+     */
+    public String getIndexUrl() {
+        String reverseRoute = router.getReverseRoute(ApplicationController.class, "index");
+        return newRelativeUrlBuilder(context, reverseRoute.replaceAll("\\.\\*", "")).toString();
     }
 
     /**

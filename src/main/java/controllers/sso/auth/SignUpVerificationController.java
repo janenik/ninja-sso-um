@@ -3,9 +3,11 @@ package controllers.sso.auth;
 import com.google.inject.persist.Transactional;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
+import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
 import models.sso.token.ExpirableToken;
@@ -37,7 +39,9 @@ import javax.inject.Singleton;
         ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
-        HitsPerIpCheckFilter.class
+        HitsPerIpCheckFilter.class,
+        AuthenticationFilter.class,
+        RequireUnauthenticatedUserFilter.class
 })
 public class SignUpVerificationController {
 
@@ -62,7 +66,7 @@ public class SignUpVerificationController {
     final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
-     * Html result with secure headers.
+     * HTML result with secure headers.
      */
     final Provider<Result> htmlWithSecureHeadersProvider;
 
@@ -160,6 +164,7 @@ public class SignUpVerificationController {
         return htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render(errorType, true)
+                .render("context", context)
                 .render("config", properties)
                 .render("token", tokenAsString)
                 .render("continue", continueUrl);
