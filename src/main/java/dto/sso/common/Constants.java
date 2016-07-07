@@ -1,4 +1,4 @@
-package dto.sso;
+package dto.sso.common;
 
 import java.util.regex.Pattern;
 

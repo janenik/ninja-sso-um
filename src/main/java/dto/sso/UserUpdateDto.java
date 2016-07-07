@@ -1,6 +1,7 @@
 package dto.sso;
 
 import com.google.common.base.Strings;
+import dto.sso.common.Constants;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;

@@ -1,5 +1,6 @@
 package dto.sso;
 
+import dto.sso.common.Constants;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
@@ -143,7 +144,6 @@ public class UserSignUpDto implements Serializable {
      * Language field.
      */
     String lang;
-    ;
 
     /**
      * Returns email.

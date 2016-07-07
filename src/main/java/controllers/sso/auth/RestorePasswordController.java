@@ -10,7 +10,7 @@ import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireUnauthenticatedUserFilter;
 import controllers.sso.web.UrlBuilder;
-import dto.sso.Constants;
+import dto.sso.common.Constants;
 import models.sso.User;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;

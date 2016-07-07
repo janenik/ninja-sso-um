@@ -1,5 +1,6 @@
 package dto.sso;
 
+import dto.sso.common.Constants;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
+import controllers.sso.admin.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
@@ -222,6 +223,27 @@ public class UrlBuilder {
     public String getIndexUrl() {
         String reverseRoute = router.getReverseRoute(ApplicationController.class, "index");
         return newRelativeUrlBuilder(context, reverseRoute.replaceAll("\\.\\*", "")).toString();
+    }
+
+    /**
+     * Constructs admin URL to users section.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin users section.
+     */
+    public String getAdminUsersUrl(Object... query) {
+        String reverseRoute = router.getReverseRoute(UsersController.class, "users");
+        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
+        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
+            builder.append("&query=");
+            builder.append(Escapers.encodePercent(query[0].toString()));
+            if (query[1] != null) {
+                builder.append("&page=");
+                builder.append(Escapers.encodePercent(query[1].toString()));
+            }
+        }
+        return builder.toString();
     }
 
     /**
