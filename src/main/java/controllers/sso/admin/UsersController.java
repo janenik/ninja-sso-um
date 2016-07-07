@@ -23,7 +23,6 @@ import javax.inject.Singleton;
 
 /**
  * Users' list admin controller.
- * TODO: add admin session filter.
  */
 @Singleton
 @FilterWith({
@@ -78,6 +77,7 @@ public class UsersController {
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
         return htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
+                .render("context", context)
                 .render("config", properties)
                 .render("query", query)
                 .render("page", page)

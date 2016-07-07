@@ -27,6 +27,8 @@
                           method="POST"
                           id="signOutForm"
                           style="display:none;">
+                        <input type="hidden" name="continue"
+                               value="${context.getAttribute('properties').get('application.baseUrl')}${contextPath}/auth/admin/users?lang=${lang?url}" />
                         <input type="hidden" name="xsrfToken"
                                value="${context.getAttribute('xsrfToken')}" />
                     </form>

@@ -10,7 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Language filter. Extracts language from request and places it into attributes of request context.
+ * Language filter. Extracts language from request (URL parameter 'lang') and places it into attributes of request
+ * context.
  */
 @Singleton
 public class LanguageFilter implements Filter {

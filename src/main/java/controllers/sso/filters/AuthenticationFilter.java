@@ -29,35 +29,40 @@ import javax.inject.Singleton;
 public class AuthenticationFilter implements Filter {
 
     /**
-     * Authentication context parameter name for user id.
+     * Authentication context attribute name for user id.
      */
     public static final String USER_ID = "authUserId";
 
     /**
-     * Authentication context parameter name for user role.
+     * Authentication context attribute name for user role.
      */
     public static final String USER_ROLE = "authUserRole";
 
     /**
-     * Authentication context parameter name that holds boolean value that indicates
+     * Authentication context attribute name that holds boolean value that indicates
      * whether the user authenticated or not.
      */
     public static final String USER_AUTHENTICATED = "authenticated";
 
     /**
-     * Authentication context parameter name for expirable token.
+     * Authentication context attribute name for expirable token.
      */
     public static final String TOKEN = "token";
 
     /**
-     * Newly generated XSRF token as string.
+     * Attribute key name for newly generated XSRF token as string.
      */
     public static final String XSRF_TOKEN = "xsrfToken";
 
     /**
-     * XSRF token time to live.
+     * Attribute key name for XSRF token time to live.
      */
-    public static final String XSRF_TOKEN_TTL = "xsrfTokenTtl";
+    public static final String XSRF_TOKEN_TTL = "xsrfTokenTimeToLive";
+
+    /**
+     * Attribute key name for properties.
+     */
+    public static final String PROPERTIES = "properties";
 
     /**
      * Encryptor to extract data from token.
@@ -90,6 +95,11 @@ public class AuthenticationFilter implements Filter {
     final Logger logger;
 
     /**
+     * Application properties.
+     */
+    final NinjaProperties properties;
+
+    /**
      * Constructs authorization filter.
      *
      * @param encryptor Encryptor.
@@ -101,6 +111,7 @@ public class AuthenticationFilter implements Filter {
         this.encryptor = encryptor;
         this.deviceAuthPolicy = deviceAuthPolicy;
         this.logger = logger;
+        this.properties = properties;
         this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
         this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
         this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1000L;
@@ -118,12 +129,12 @@ public class AuthenticationFilter implements Filter {
                 }
                 context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue("role")));
+                context.setAttribute(USER_AUTHENTICATED, true);
                 context.setAttribute(TOKEN, expirableToken);
                 ExpirableToken xsrfToken =
                         ExpirableToken.newTokenForUser(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
-                context.setAttribute(USER_AUTHENTICATED, true);
             } else {
                 context.setAttribute(USER_AUTHENTICATED, false);
             }
@@ -131,6 +142,7 @@ public class AuthenticationFilter implements Filter {
             logger.info("Error while encrypting/decrypting user or XSRF token.", ex);
             context.setAttribute(USER_AUTHENTICATED, false);
         }
+        context.setAttribute(PROPERTIES, properties);
         return filterChain.next(context);
     }
 
