@@ -9,7 +9,7 @@ import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
-import models.sso.UserRole;
+import models.sso.UserSignInState;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
@@ -183,18 +183,29 @@ public class SignInResponseBuilder {
     }
 
     /**
-     * Builds new access token and returns it as encrypted string.
+     * Builds new user access token and returns it as encrypted string.
      *
      * @param user User.
      * @return New access token as encrypted string.
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
+     * @throws IllegalStateException When user's sign-in state is not {@link UserSignInState#ENABLED_AS_USER} or
+     *     {@link UserSignInState#ENABLED}.
      */
     private String buildNewUserToken(User user) throws ExpirableTokenEncryptorException {
+        if (!user.isSignInEnabled()) {
+            throw new IllegalStateException("Unable to provide access token for the user who's sign-in " +
+                    "state is disabled. User id: " + user.getId());
+        }
         long ttl = 1000L * properties.getIntegerOrDie("application.sso.accessToken.ttl");
         ExpirableToken token;
-        if (!UserRole.USER.equals(user.getRole()) && user.getRole() != null) {
-            token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS,
-                    user.getId(), "role", user.getRole().toString(), ttl);
+        if (user.isModeratorOrAdmin()) {
+            token = ExpirableToken.newTokenForUser(
+                    ExpirableTokenType.ACCESS,
+                    user.getId(),
+                    "role",
+                    user.getRole().toString(),
+                    ttl
+            );
         } else {
             token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS, user.getId(), ttl);
         }

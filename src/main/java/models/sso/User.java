@@ -443,6 +443,34 @@ public class User implements Serializable {
     }
 
     /**
+     * Checks if the user is admin and sign in is enabled.
+     *
+     * @return Whether the user is moderator and sign in is enabled.
+     */
+    public boolean isAdmin() {
+        return UserSignInState.ENABLED.equals(this.signInState) && UserRole.ADMIN.equals(this.role);
+    }
+
+    /**
+     * Checks if the user is moderator/admin and sign in is enabled.
+     *
+     * @return Whether the user is moderator/admin and sign in is enabled.
+     */
+    public boolean isModeratorOrAdmin() {
+        return UserSignInState.ENABLED.equals(this.signInState)
+                && (UserRole.ADMIN.equals(this.role) || UserRole.MODERATOR.equals(this.role));
+    }
+
+    /**
+     * Checks if the user is moderator and sign in is enabled.
+     *
+     * @return Whether the user is moderator and sign in is enabled.
+     */
+    public boolean isModerator() {
+        return UserSignInState.ENABLED.equals(this.signInState) && UserRole.MODERATOR.equals(this.role);
+    }
+
+    /**
      * Password hash code.
      *
      * @return Password hash code.
@@ -580,7 +608,8 @@ public class User implements Serializable {
      * @return Whether the user sign in is enabled.
      */
     public boolean isSignInEnabled() {
-        return UserSignInState.ENABLED.equals(this.signInState);
+        return UserSignInState.ENABLED.equals(this.signInState)
+                || UserSignInState.ENABLED_AS_USER.equals(this.signInState);
     }
 
     /**
