@@ -75,7 +75,7 @@ public class SignUpController {
     static final String TEMPLATE = "views/sso/auth/signUp.ftl.html";
 
     /**
-     * Empty effectively immutable user DTO.
+     * Empty user DTO for get request. Effectively immutable.
      */
     static final UserSignUpDto EMPTY_USER = new UserSignUpDto();
 

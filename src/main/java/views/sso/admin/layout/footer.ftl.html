@@ -5,3 +5,8 @@
     </#noescape>
 </footer>
 
+<script>
+setTimeout(function() {
+    document.location = document.location.toString();
+}, ${context.getAttribute('xsrfTokenTimeToLive')});
+</script>

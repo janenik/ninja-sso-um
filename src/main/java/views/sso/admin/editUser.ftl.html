@@ -1,0 +1,26 @@
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
+    <@layout.adminLayout i18n("adminUsers")>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <h3>${i18n("adminEditUserInfo")}: ${user.getId()}</h3>
+
+            <noscript>
+                <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
+            </noscript>
+
+            <#if errors.hasBeanViolations()>
+                <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+            </#if>
+
+
+            <form id="signUpForm" method="POST"
+                  action="${contextPath}/auth/signup?lang=${lang?url}&amp;continue=${continue?url}">
+
+                <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
+            </form>
+        </div>
+    </div>
+
+</@layout.adminLayout>
