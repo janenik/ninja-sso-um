@@ -191,7 +191,7 @@ public class SignInController {
             return createResult(userSignInDto, context, validation, "signInDisabled");
         }
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        userService.updateSignInTime(user, ip);
+        userService.rememberSignIn(user, ip);
         return signInResponseSupplierProvider.get().getSignInResponse(user);
     }
 

@@ -1,5 +1,6 @@
 package conf.sso;
 
+import controllers.sso.admin.EditUserController;
 import controllers.sso.admin.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
@@ -63,5 +64,7 @@ public class SsoRoutes implements ApplicationRoutes {
 
         // Admin routes.
         router.GET().route(subRoute + "/admin/users").with(UsersController.class, "users");
+        router.GET().route(subRoute + "/admin/user/edit/{userId: [0-9]+}").with(EditUserController.class, "editGet");
+        router.POST().route(subRoute + "/admin/user/edit/{userId: [0-9]+}").with(EditUserController.class, "edit");
     }
 }

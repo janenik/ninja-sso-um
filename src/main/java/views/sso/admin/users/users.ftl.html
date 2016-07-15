@@ -48,7 +48,11 @@
                             <td>${user.getLastName()}</td>
                             <td>${user.getRole()}</td>
                             <td>${user.getCreated()}</td>
-                            <td><a href="">${i18n("adminUserEdit")}</a></td>
+                            <td>
+                                <a href="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&query=${query?url}&page=${page?url}">
+                                    ${i18n("adminUserEdit")}
+                                </a>
+                            </td>
                         </tr>
                     </#list>
                 </table>

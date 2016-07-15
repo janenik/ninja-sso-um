@@ -4,7 +4,15 @@
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-            <h3>${i18n("adminEditUserInfo")}: ${user.getId()}</h3>
+            <h3>
+                ${i18n("adminEditUserInfo")}:
+                ${user.getUsername()} /
+                ${user.getFirstName()}
+                <#if user.getMiddleName()??>
+                    ${user.getMiddleName()}
+                </#if>
+                ${user.getLastName()}
+            </h3>
 
             <noscript>
                 <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
@@ -16,7 +24,7 @@
 
 
             <form id="signUpForm" method="POST"
-                  action="${contextPath}/auth/signup?lang=${lang?url}&amp;continue=${continue?url}">
+                  action="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
                 <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
             </form>

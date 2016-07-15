@@ -200,13 +200,13 @@ public class UserService {
     }
 
     /**
-     * Updates sign in time for user in case of successful sign in.
+     * Remembers user sign in time and remote IP as a new event.
      *
      * @param user User.
      * @param remoteIp Remote IP.
      * @return User event with information about sign in.
      */
-    public UserEvent updateSignInTime(User user, String remoteIp) {
+    public UserEvent rememberSignIn(User user, String remoteIp) {
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
         userEvent.setType(UserEventType.SIGN_IN);

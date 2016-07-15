@@ -37,7 +37,7 @@ public class UsersController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users.ftl.html";
+    static final String TEMPLATE = "views/sso/admin/users/users.ftl.html";
 
     /**
      * User service.

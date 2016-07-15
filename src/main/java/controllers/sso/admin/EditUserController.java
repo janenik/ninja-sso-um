@@ -15,6 +15,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
+import ninja.params.PathParam;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.FieldViolation;
@@ -47,7 +48,7 @@ public class EditUserController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/editUser.ftl.html";
+    static final String TEMPLATE = "views/sso/admin/users/edit.ftl.html";
 
     /**
      * User service.
@@ -105,8 +106,8 @@ public class EditUserController {
     }
 
     @Transactional
-    public Result editGet(Context context) {
-        User user = userService.get(context.getParameterAs("userId", long.class));
+    public Result editGet(@PathParam("userId") long userId, Context context) {
+        User user = userService.get(userId);
         if (user == null) {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
                     context.getParameter("query"), context.getParameter("page")));
@@ -120,8 +121,9 @@ public class EditUserController {
     }
 
     @Transactional
-    public Result edit(Context context, Validation validation, @JSR303Validation UserEditDto editDto) {
-        User user = userService.get(context.getParameterAs("userId", long.class));
+    public Result edit(@PathParam("userId") long userId, Context context, Validation validation,
+                       @JSR303Validation UserEditDto editDto) {
+        User user = userService.get(userId);
         if (user == null) {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
                     context.getParameter("query"), context.getParameter("page")));
@@ -168,10 +170,11 @@ public class EditUserController {
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
-                .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)
+                .render("user", user)
                 .render("countries", countryService.getAllSortedByNiceName())
-                .render("continue", urlBuilderProvider.get().getContinueUrlParameter());
+                .render("query", context.getParameter("query", ""))
+                .render("page", context.getParameterAs("page", int.class, 1));
     }
 }
