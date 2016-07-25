@@ -26,6 +26,38 @@
             <form id="signUpForm" method="POST"
                   action="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
+
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-6">
+                        <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
+                            <label class="control-label" for="firstName">${i18n("signUpFirstName")}</label>
+                            <input type="text" id="firstName" name="firstName"
+                                   placeholder="${i18n('signUpFirstNamePlaceHolder')}"
+                                   value="${(user.getFirstName())!}"
+                                   ${_enableHtml5Required}
+                                   class="form-control"/>
+                            <#if errors.hasBeanViolation('firstName') || errors.hasBeanViolation('lastName')>
+                                <p class="help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpNameDescription")}
+                                </p>
+                            </#if>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6">
+                        <div class="form-group <#if errors.hasBeanViolation('lastName')>has-error</#if>">
+                            <label class="control-label" for="lastName">${i18n("signUpLastName")}</label>
+                            <input type="text" id="lastName" name="lastName"
+                                   placeholder="${i18n('signUpLastNamePlaceHolder')}"
+                                   value="${(user.getLastName())!}"
+                                   ${_enableHtml5Required}
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
             </form>
         </div>

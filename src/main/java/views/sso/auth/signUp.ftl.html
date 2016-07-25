@@ -25,7 +25,7 @@
                         <label class="control-label" for="firstName">${i18n("signUpFirstName")}</label>
                         <input type="text" id="firstName" name="firstName"
                                placeholder="${i18n('signUpFirstNamePlaceHolder')}"
-                               value="${(user.firstName)!}"
+                               value="${(user.getFirstName())!}"
                                ${_enableHtml5Required}
                                class="form-control"/>
                         <!--<#--<p class="help-block">Example block-level help text here.</p>-->-->
@@ -41,7 +41,7 @@
                         <label class="control-label" for="lastName">${i18n("signUpLastName")}</label>
                         <input type="text" id="lastName" name="lastName"
                                placeholder="${i18n('signUpLastNamePlaceHolder')}"
-                               value="${(user.lastName)!}"
+                               value="${(user.getLastName())!}"
                                ${_enableHtml5Required}
                                class="form-control"/>
                         <!--<#--<p class="help-block">Example block-level help text here.</p>-->-->
@@ -54,7 +54,7 @@
                 <label class="control-label" for="username">${i18n("signUpUsername")}</label>
                 <input type="text" id="username" name="username"
                        placeholder="${i18n('signUpUsernamePlaceHolder')}"
-                       value="${(user.username)!}"
+                       value="${(user.getUsername())!}"
                        ${_enableHtml5Required}
                        class="form-control"
                 />
@@ -105,14 +105,14 @@
                                         <li rel="12"><a href="#">${i18n("signUpBirthMonthDecember")}</a></li>
                                     </ul>
                                     <input type="hidden" name="birthMonth" id="birthMonth"
-                                           value="${(user.birthMonth)!}"/>
+                                           value="${(user.getBirthMonth())!}"/>
                                 </div>
                             </div>
                             <div class="col-xs-3 col-md-3 <#if errors.hasBeanViolation('birthDay')>has-error</#if>">
                                 <input type="text" id="birthDay" name="birthDay"
                                        placeholder="${i18n('signUpBirthDayPlaceHolder')}"
                                        maxlength="2"
-                                       value="${(user.birthDay)!}"
+                                       value="${(user.getBirthDay())!}"
                                        ${_enableHtml5Required}
                                        class="form-control"/>
                             </div>
@@ -120,7 +120,7 @@
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
-                                       value="${(user.birthYear)!}"
+                                       value="${(user.getBirthYear())!}"
                                        ${_enableHtml5Required}
                                        class="form-control"/>
                             </div>
@@ -150,7 +150,7 @@
                                 <li rel="MALE"><a href="#">${i18n("signUpGenderMale")}</a></li>
                                 <li rel="OTHER"><a href="#">${i18n("signUpGenderOther")}</a></li>
                             </ul>
-                            <input type="hidden" name="gender" id="gender" value="${(user.gender)!}"/>
+                            <input type="hidden" name="gender" id="gender" value="${(user.getGender())!}"/>
                         </div>
                         <#if errors.hasBeanViolation('gender')>
                             <p class="clearfix help-block ssoFieldErrorDescription">
@@ -166,7 +166,7 @@
                 <label class="control-label" for="email">${i18n("signUpEmailAddress")}</label>
                 <input type="email" id="email" name="email"
                        placeholder="${i18n('signUpEmailPlaceHolder')}"
-                       value="${(user.email)!}"
+                       value="${(user.getEmail())!}"
                        ${_enableHtml5Required}
                        class="form-control"
                 />
@@ -228,7 +228,7 @@
                         <label class="control-label" for="phone">${i18n("signUpPhone")}</label>
                         <input type="tel" id="phone" name="phone"
                                placeholder="${i18n('signUpPhonePlaceHolder')}"
-                               value="${(user.phone)!}"
+                               value="${(user.getPhone())!}"
                                ${_enableHtml5Required}
                                class="form-control"/>
                         <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
@@ -249,7 +249,7 @@
                         <label class="control-label" for="password">${i18n("signUpPassword")}</label>
                         <input type="password" id="password" name="password"
                                placeholder="${i18n('signUpPasswordPlaceHolder')}"
-                               value="${(user.password)!}"
+                               value="${(user.getPassword())!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
                                class="form-control"
@@ -265,7 +265,7 @@
                         <label class="control-label" for="passwordRepeat">${i18n("signUpPasswordRepeat")}</label>
                         <input type="password" id="passwordRepeat" name="passwordRepeat"
                                placeholder="${i18n('signUpPasswordRepeatPlaceHolder')}"
-                               value="${(user.passwordRepeat)!}"
+                               value="${(user.getPasswordRepeat())!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
                                class="form-control"
@@ -308,7 +308,7 @@
             <div class="checkbox">
                 <label>
                     <input type="checkbox" id="agreement" name="agreement" value="agree" ${_enableHtml5Required}
-                        <#if 'agree' == (user.agreement)!> checked </#if>
+                        <#if 'agree' == (user.getAgreement())!> checked </#if>
                         />
                     ${i18n("signUpTerm1")} <b>${i18n("signUpButtonTitle")}</b> ${i18n("signUpTerm2")}
                     <a href="${config.get('application.baseUrl')}/terms_of_service${_underscopeLang}.html"
@@ -327,18 +327,6 @@
     </div>
     <div class="clearfix visible-xs-block"></div>
     <div class="col-sm-4 col-md-4 col-lg-4">
-        <!--<#--
-        <h3 class="ssoHeader">
-        ${i18n("signUpWhy")}
-        </h3>
-        <p>${i18n("signUpWhyText")}</p>
-        <ul>
-            <li>${i18n("signUpWhyTextItem1")}</li>
-            <li>${i18n("signUpWhyTextItem2")}</li>
-            <li>${i18n("signUpWhyTextItem3")}</li>
-            <li>${i18n("signUpWhyTextItem4")}</li>
-        </ul>
-        -->-->
         <#include "signInLink.ftl.html" />
         <#include "forgotPasswordLink.ftl.html" />
     </div>
