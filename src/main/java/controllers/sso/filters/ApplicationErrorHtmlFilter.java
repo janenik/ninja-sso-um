@@ -37,13 +37,15 @@ public class ApplicationErrorHtmlFilter implements Filter {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            return Results.internalServerError().html().template(TEMPLATE).
-                    render("config", properties).
-                    render("error", e).
-                    render("errorTitle", 
-                            Strings.isNullOrEmpty(e.getMessage()) ? e.getClass().getName() : e.getMessage()).
-                    render("errorStackTrace", sw.toString()).
-                    render("isRuntime", e instanceof RuntimeException);
+            return Results.internalServerError().html()
+                    .template(TEMPLATE)
+                    .render("config", properties)
+                    .render("context", context)
+                    .render("error", e)
+                    .render("errorTitle",
+                            Strings.isNullOrEmpty(e.getMessage()) ? e.getClass().getName() : e.getMessage())
+                    .render("errorStackTrace", sw.toString())
+                    .render("isRuntime", e instanceof RuntimeException);
         }
     }
 }

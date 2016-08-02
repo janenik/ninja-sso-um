@@ -50,6 +50,10 @@
 
             <#include "header.ftl.html"/>
 
+            <noscript>
+                <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
+            </noscript>
+
             <#if (flash.error)??>
                 <div class="alert alert-danger">
                     ${flash.error}

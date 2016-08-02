@@ -1,0 +1,83 @@
+<#assign
+        _active = 'active'
+        _editUser_personalClass = ''
+        _editUser_contactDataClass = ''
+        _editUser_accessClass = ''
+        _editUser_accessLogClass = ''
+        _editUser_sendEmailClass = ''
+        _editUser_resetPasswordClass = ''
+/>
+
+<#switch editMode>
+    <#case "contact">
+    <#assign _editUser_contactDataClass = _active />
+    <#break/>
+    <#case "access">
+    <#assign _editUser_accessClass = _active />
+    <#break/>
+    <#case "accessLog">
+    <#assign _editUser_accessLogClass = _active />
+    <#break/>
+    <#case "sendEmail">
+    <#assign _editUser_sendEmailClass = _active />
+    <#break/>
+    <#case "resetPassword">
+    <#assign _editUser_resetPasswordClass = _active />
+    <#break/>
+    <#default>
+    <#assign _editUser_personalClass = _active />
+</#switch>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="${_editUser_personalClass}">
+        <a href="#">
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+            ${i18n("adminEditUserPersonalData")}
+        </a>
+    </li>
+
+    <li class="${_editUser_contactDataClass}">
+        <a href="#" role="tab">
+            <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+            ${i18n("adminEditUserContactData")}
+        </a>
+    </li>
+
+    <li role="tab" class="${_editUser_sendEmailClass}">
+        <a href="#">
+            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            ${i18n("adminEditUserSendEmail")}</a>
+    </li>
+
+    <li role="tab" class="${_editUser_accessClass}">
+        <a href="#" role="tab">
+            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+            ${i18n("adminEditUserAccess")}
+        </a>
+    </li>
+
+    <li class="${_editUser_accessLogClass}">
+        <a href="#">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            ${i18n("adminEditUserAccessLog")}</a>
+    </li>
+
+    <li role="tab" class="${_editUser_resetPasswordClass}">
+        <a href="#">
+            <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+            ${i18n("adminEditUserResetPassword")}</a>
+    </li>
+</ul>
+
+<!--
+<h3>
+    ${user.getId()} /
+    ${user.getUsername()}
+    ${user.getFirstName()}
+    <#if user.getMiddleName()??>
+        ${user.getMiddleName()}
+    </#if>
+    ${user.getLastName()}
+</h3>
+-->
+<br/>
