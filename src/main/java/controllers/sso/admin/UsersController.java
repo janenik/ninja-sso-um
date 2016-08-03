@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Users' list admin controller.
@@ -33,6 +34,12 @@ import javax.inject.Singleton;
         RequireAdminPrivelegesFilter.class
 })
 public class UsersController {
+
+    /**
+     * Date formatter for list.
+     */
+
+    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
      * Template to render users' list page.
@@ -82,6 +89,7 @@ public class UsersController {
                 .render("config", properties)
                 .render("query", query)
                 .render("page", page)
+                .render("dateTimeFormatter", formatter)
                 .render("results", results);
     }
 }

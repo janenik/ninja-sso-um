@@ -32,7 +32,13 @@
                     <br>
 
                     <#if results.hasObjects()>
-                        <table class="table table-bordered table-striped table-hover">
+
+                        <style type="text/css">
+                            <#include 'users-table-style.ftl.css' />
+                        </style>
+
+                        <table class="table table-bordered table-striped table-hover"
+                               id="itemsList">
                             <tr>
                                 <th>${i18n("adminUsersId")}</th>
                                 <th>${i18n("adminUsersUsername")}</th>
@@ -40,18 +46,18 @@
                                 <th>${i18n("adminUsersFirstName")}</th>
                                 <th>${i18n("adminUsersLastName")}</th>
                                 <th>${i18n("adminUsersRole")}</th>
-                                <th>${i18n("adminUsersSignUpTime")}</th>
+                                <th title="UTC">${i18n("adminUsersSignUpTime")}</th>
                                 <th>${i18n("adminUsersOperations")}</th>
                             </tr>
                             <#list results.getObjects() as user>
-                                <tr>
+                                <tr <#if user.getRole() == 'ADMIN'>class="warning"</#if>>
                                     <td>${user.getId()}</td>
                                     <td>${user.getUsername()}</td>
                                     <td>${user.getEmail()}</td>
                                     <td>${user.getFirstName()}</td>
                                     <td>${user.getLastName()}</td>
                                     <td>${user.getRole()}</td>
-                                    <td>${user.getCreated()}</td>
+                                    <td>${user.getCreated().format(dateTimeFormatter)}</td>
                                     <td>
                                         <a href="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&query=${query?url}&page=${page?url}">
                                             ${i18n("adminUserEdit")}
