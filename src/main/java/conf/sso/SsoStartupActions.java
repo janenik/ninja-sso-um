@@ -89,7 +89,7 @@ public class SsoStartupActions {
             user.setGender(UserGender.OTHER);
             user.confirm();
 
-            userService.createNew(user, "password", "[::1]");
+            userService.createNew(user, "password");
         }
 
         if (properties.isTest()) {
@@ -108,7 +108,7 @@ public class SsoStartupActions {
                     user.setGender(UserGender.OTHER);
                     user.confirm();
 
-                    userService.createNew(user, "password", "[::1]");
+                    userService.createNew(user, "password");
                 }
             }
         }

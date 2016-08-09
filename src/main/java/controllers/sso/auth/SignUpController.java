@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 import services.sso.CountryService;
 import services.sso.PasswordService;
+import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
@@ -98,6 +99,11 @@ public class SignUpController {
      * User service.
      */
     final UserService userService;
+
+    /**
+     * User's event service.
+     */
+    final UserEventService userEventService;
 
     /**
      * Country service.
@@ -182,6 +188,7 @@ public class SignUpController {
      * @param captchaTokenService Captcha token service.
      * @param passwordService Password service.
      * @param userService User service.
+     * @param userEventService User's event service.
      * @param countryService Country service.
      * @param emailService Email service.
      * @param urlBuilderProvider URL builder provider.
@@ -197,6 +204,7 @@ public class SignUpController {
                             CaptchaTokenService captchaTokenService,
                             PasswordService passwordService,
                             UserService userService,
+                            UserEventService userEventService,
                             CountryService countryService,
                             EmailService emailService,
                             Provider<UrlBuilder> urlBuilderProvider,
@@ -211,6 +219,7 @@ public class SignUpController {
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.passwordService = passwordService;
         this.userService = userService;
+        this.userEventService = userEventService;
         this.countryService = countryService;
         this.urlBuilderProvider = urlBuilderProvider;
         this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
@@ -296,10 +305,11 @@ public class SignUpController {
         userToSave.setGender(UserGender.valueOf(userDto.getGender()));
         userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay()));
         userToSave.setRole(UserRole.USER);
+        // Save the user.
+        userService.createNew(userToSave, userDto.getPassword());
         // Remote IP.
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        // Save the user.
-        userService.createNew(userToSave, userDto.getPassword(), remoteIp);
+        userEventService.onUserSignUp(userToSave, remoteIp, context.getHeaders());
         // Perform post-sign up actions.
         String redirectURL = invokePostSignUpActions(userToSave, context);
         // Redirect.

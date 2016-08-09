@@ -3,8 +3,6 @@ package services.sso;
 import com.google.common.base.Strings;
 import models.sso.PaginationResult;
 import models.sso.User;
-import models.sso.UserEvent;
-import models.sso.UserEventType;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -13,9 +11,6 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -140,23 +135,16 @@ public class UserService {
     }
 
     /**
-     * Saves user into the database and returns user event associated with creation (attached entity).
+     * Saves user into the database and returns attached entity.
      *
      * @param user User to save.
-     * @param remoteIp Remote IP.
-     * @return User event associated with user creation.
+     * @return Created user (as as argument, attached instance).
      */
-    public UserEvent createNew(User user, String password, String remoteIp) {
+    public User createNew(User user, String password) {
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
-        // Sign up event.
-        UserEvent userEvent = new UserEvent();
-        userEvent.setUser(user);
-        userEvent.setType(UserEventType.SIGN_UP);
-        userEvent.setIp(remoteIp);
-        entityManagerProvider.get().persist(userEvent);
-        return userEvent;
+        return user;
     }
 
     /**
@@ -172,47 +160,19 @@ public class UserService {
     }
 
     /**
-     * Updates user password, storing old salt and hash in user event for convenience.
-     * This information may be used as a hint when user tries to sign in with old password.
+     * Updates user password.
      * Since the link to password restoration is sent via email, account becomes verified (confirmed).
      *
      * @param user User.
      * @param password New password.
-     * @param remoteIp Remote IP.
-     * @return User event that contains information about password update.
+     * @return Updated user entity.
      */
-    public UserEvent updatePasswordAndConfirm(User user, String password, String remoteIp) {
-        byte[] oldPasswordSalt = user.getPasswordSalt();
-        byte[] oldPasswordHash = user.getPasswordHash();
+    public User updatePasswordAndConfirm(User user, String password) {
         user.confirm();
         user.setPasswordSalt(passwordService.newSalt());
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
-        // Update password event.
-        UserEvent userEvent = new UserEvent();
-        userEvent.setUser(user);
-        userEvent.setType(UserEventType.PASSWORD_CHANGE);
-        userEvent.setIp(remoteIp);
-        // Event data to store old salt and hash.
-        userEvent.setData(getEventDataForPasswordChange(oldPasswordSalt, oldPasswordHash));
-        entityManagerProvider.get().persist(userEvent);
-        return userEvent;
-    }
-
-    /**
-     * Remembers user sign in time and remote IP as a new event.
-     *
-     * @param user User.
-     * @param remoteIp Remote IP.
-     * @return User event with information about sign in.
-     */
-    public UserEvent rememberSignIn(User user, String remoteIp) {
-        UserEvent userEvent = new UserEvent();
-        userEvent.setUser(user);
-        userEvent.setType(UserEventType.SIGN_IN);
-        userEvent.setIp(remoteIp);
-        entityManagerProvider.get().persist(userEvent);
-        return userEvent;
+        return user;
     }
 
     /**
@@ -277,29 +237,5 @@ public class UserService {
         q.setMaxResults(objectsPerPage);
         List<User> users = (List<User>) q.getResultList();
         return new PaginationResult<>(users, totalObjects, currentPage, objectsPerPage);
-    }
-
-    /**
-     * Constructs event data bytes that contain old password salt and hash. The first 4 bytes are salt length,
-     * followed by salt bytes, then 4 bytes for hash length, followed by hash bytes. Order of bytes for integers is
-     * described in {@link java.io.DataOutput}.
-     *
-     * @param oldSalt Old password salt bytes.
-     * @param oldHash Old password hash bytes.
-     * @return Event data bytes.
-     */
-    private byte[] getEventDataForPasswordChange(byte[] oldSalt, byte[] oldHash) {
-        // Event data to store old salt and hash.
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(8 + oldSalt.length + oldHash.length);
-        DataOutputStream dataOutputStream = new DataOutputStream(bos);
-        try {
-            dataOutputStream.writeInt(oldSalt.length);
-            dataOutputStream.write(oldSalt);
-            dataOutputStream.writeInt(oldHash.length);
-            dataOutputStream.write(oldHash);
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected exception while serializing old password data", e);
-        }
-        return bos.toByteArray();
     }
 }

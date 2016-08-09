@@ -66,11 +66,6 @@ public class ForgotPasswordTest extends WebDriverTest {
     static final String RESTORED_PASSWORD = "restoredPassword";
 
     /**
-     * Remote IP for test account.
-     */
-    static final String REMOTE_IP = "1.2.3.4";
-
-    /**
      * Country for test account.
      */
     static final String COUNTRY_ID = "US";
@@ -130,7 +125,7 @@ public class ForgotPasswordTest extends WebDriverTest {
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
         this.user = createUser();
-        this.userService.createNew(this.user, PASSWORD, REMOTE_IP);
+        this.userService.createNew(this.user, PASSWORD);
         transaction.commit();
     }
 

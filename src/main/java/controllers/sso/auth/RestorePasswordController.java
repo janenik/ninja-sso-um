@@ -22,6 +22,7 @@ import ninja.Results;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import services.sso.PasswordService;
+import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
 
@@ -56,6 +57,11 @@ public class RestorePasswordController {
     final UserService userService;
 
     /**
+     * User's event service.
+     */
+    final UserEventService userEventService;
+
+    /**
      * Password service.
      */
     final PasswordService passwordService;
@@ -84,6 +90,7 @@ public class RestorePasswordController {
      * Constructs controller.
      *
      * @param userService User service.
+     * @param userEventService User's event service.
      * @param passwordService Password service.
      * @param expirableTokenEncryptor Expirable token encryptor.
      * @param urlBuilderProvider URL builder provider.
@@ -91,12 +98,14 @@ public class RestorePasswordController {
      */
     @Inject
     public RestorePasswordController(UserService userService,
+                                     UserEventService userEventService,
                                      PasswordService passwordService,
                                      ExpirableTokenEncryptor expirableTokenEncryptor,
                                      Provider<UrlBuilder> urlBuilderProvider,
                                      @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                                      NinjaProperties properties) {
         this.userService = userService;
+        this.userEventService = userEventService;
         this.passwordService = passwordService;
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.urlBuilderProvider = urlBuilderProvider;
@@ -156,7 +165,11 @@ public class RestorePasswordController {
                 throw new ExpiredTokenException();
             }
             if (isValidPassword(password, confirmPassword)) {
-                userService.updatePasswordAndConfirm(user, password, (String) context.getAttribute(IpAddressFilter.REMOTE_IP));
+                String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+                byte[] oldSalt = user.getPasswordSalt();
+                byte[] oldHash = user.getPasswordHash();
+                userService.updatePasswordAndConfirm(user, password);
+                userEventService.onUserPasswordUpdate(user, oldSalt, oldHash, ip, context.getHeaders());
                 return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED));
             } else {
                 result.render("restorePasswordError", "password");

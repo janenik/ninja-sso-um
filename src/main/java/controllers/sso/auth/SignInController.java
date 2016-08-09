@@ -27,6 +27,7 @@ import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
+import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
@@ -64,6 +65,11 @@ public class SignInController {
      * User service.
      */
     final UserService userService;
+
+    /**
+     * User's event service.
+     */
+    final UserEventService userEventService;
 
     /**
      * Captcha token service.
@@ -114,6 +120,7 @@ public class SignInController {
      * Constructs sign in controller.
      *
      * @param userService User service.
+     * @param userEventService User's event service.
      * @param captchaTokenService Captcha token service.
      * @param urlBuilderProvider URL builder provider.
      * @param properties Application properties./
@@ -123,6 +130,7 @@ public class SignInController {
      */
     @Inject
     public SignInController(UserService userService,
+                            UserEventService userEventService,
                             CaptchaTokenService captchaTokenService,
                             IPCounterService ipCounterService,
                             Provider<UrlBuilder> urlBuilderProvider,
@@ -133,6 +141,7 @@ public class SignInController {
                             Messages messages,
                             Logger logger) {
         this.userService = userService;
+        this.userEventService = userEventService;
         this.captchaTokenService = captchaTokenService;
         this.ipCounterService = ipCounterService;
         this.urlBuilderProvider = urlBuilderProvider;
@@ -190,8 +199,10 @@ public class SignInController {
         if (!user.isSignInEnabled()) {
             return createResult(userSignInDto, context, validation, "signInDisabled");
         }
+        // Remote IP.
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        userService.rememberSignIn(user, ip);
+        /// Remember sign in event.
+        userEventService.onSignIn(user, ip, context.getHeaders());
         return signInResponseSupplierProvider.get().getSignInResponse(user);
     }
 
