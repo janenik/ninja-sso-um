@@ -92,7 +92,7 @@ public class SsoStartupActions {
             userService.createNew(user, "password");
         }
 
-        if (properties.isTest()) {
+        if (properties.isTest() || properties.isDev()) {
             logger.info("Adding {} new test users...", 100);
 
             String login;

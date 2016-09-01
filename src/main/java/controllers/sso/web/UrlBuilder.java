@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
+import controllers.sso.admin.EditUserController;
 import controllers.sso.admin.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -238,7 +239,28 @@ public class UrlBuilder {
         if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
             builder.append("&query=");
             builder.append(Escapers.encodePercent(query[0].toString()));
-            if (query[1] != null) {
+            if (query.length > 1 && query[1] != null) {
+                builder.append("&page=");
+                builder.append(Escapers.encodePercent(query[1].toString()));
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Constructs admin URL to edit personal info.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin users section.
+     */
+    public String getAdminEditPersonalUrl(long userId, Object... query) {
+        String reverseRoute = router.getReverseRoute(EditUserController.class, "editGet", "userId", userId);
+        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
+        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
+            builder.append("&query=");
+            builder.append(Escapers.encodePercent(query[0].toString()));
+            if (query.length > 1 && query[1] != null) {
                 builder.append("&page=");
                 builder.append(Escapers.encodePercent(query[1].toString()));
             }
@@ -279,10 +301,10 @@ public class UrlBuilder {
      * Returns relative URL builder with optional context path and language parameter.
      *
      * @param context Context.
-     * @param baseUrl Path.
+     * @param route Controller route.
      * @return Relative URL.
      */
-    private StringBuilder newRelativeUrlBuilder(Context context, String baseUrl) {
-        return newAbsoluteUrlBuilder(context, "", baseUrl);
+    private StringBuilder newRelativeUrlBuilder(Context context, String route) {
+        return newAbsoluteUrlBuilder(context, "", route);
     }
 }

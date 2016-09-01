@@ -1,5 +1,6 @@
 package controllers.sso.admin;
 
+import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
@@ -28,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 /**
@@ -115,25 +115,36 @@ public class EditUserController {
         editDto.setBirthDay(user.getDateOfBirth().getDayOfMonth());
         editDto.setBirthMonth(user.getDateOfBirth().getMonthValue());
         editDto.setBirthYear(user.getDateOfBirth().getYear());
-        return createResult(editDto, context, Controllers.noViolations());
+        return createEditPersonalResult(editDto, context, Controllers.noViolations());
     }
 
     @Transactional
     public Result edit(@PathParam("userId") long userId, Context context, Validation validation,
                        @JSR303Validation UserEditDto editDto) {
+        // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
-                    context.getParameter("query"), context.getParameter("page")));
+            return Results.redirect(urlBuilderProvider.get()
+                    .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
-        // Username is read only, so remember the old value.
-        String oldUsername = user.getUsername();
+        // Validate all fields.
+        if (validation.hasViolations()) {
+            return createEditPersonalResult(editDto, context, validation);
+        }
+        // Check with existing username.
+        User existingUserWithUsername = userService.getByUsername(editDto.getUsername());
+        if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
+            return createEditPersonalResult(editDto, context, validation, "usernameDuplicate");
+        }
+        // Map edit DTO to user entity.
         dtoMapper.map(editDto, user);
-        user.setUsername(oldUsername);
         user.setGender(UserGender.valueOf(editDto.getGender()));
         user.setDateOfBirth(LocalDate.of(editDto.getBirthYear(), editDto.getBirthMonth(), editDto.getBirthDay()));
-
-        return createResult(editDto, context, Controllers.noViolations());
+        // Update user.
+        userService.update(user);
+        // Redirect to same form.
+        return Results.redirect(urlBuilderProvider.get()
+                .getAdminEditPersonalUrl(user.getId(), context.getParameter("query"), context.getParameter("page")));
     }
 
     /**
@@ -145,9 +156,9 @@ public class EditUserController {
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(UserEditDto user, Context context, Validation validation, String field) {
+    Result createEditPersonalResult(UserEditDto user, Context context, Validation validation, String field) {
         validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
-        return createResult(user, context, validation);
+        return createEditPersonalResult(user, context, validation);
     }
 
     /**
@@ -158,14 +169,13 @@ public class EditUserController {
      * @param validation Validation.
      * @return Sign up response object.
      */
-    Result createResult(UserEditDto user, Context context, Validation validation) {
+    Result createEditPersonalResult(UserEditDto user, Context context, Validation validation) {
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
                 .render("config", properties)
                 .render("errors", validation)
                 .render("user", user)
-                .render("countries", countryService.getAllSortedByNiceName())
                 .render("query", context.getParameter("query", ""))
                 .render("page", context.getParameterAs("page", int.class, 1));
     }

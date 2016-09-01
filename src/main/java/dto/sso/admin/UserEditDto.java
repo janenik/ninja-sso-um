@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -22,6 +23,10 @@ public class UserEditDto implements Serializable {
     /**
      * Username.
      */
+    @Pattern(regexp = Constants.USERNAME_PATTERN)
+    @NotBlank
+    @NotNull
+    @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
     String username;
 
     /**

@@ -119,7 +119,7 @@ public class User implements Serializable {
     /**
      * Date of birth.
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     LocalDate dateOfBirth;
 
     /**
