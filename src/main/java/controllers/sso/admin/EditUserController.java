@@ -8,7 +8,6 @@ import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.admin.UserEditDto;
-import models.sso.Country;
 import models.sso.User;
 import models.sso.UserGender;
 import ninja.Context;
@@ -48,7 +47,7 @@ public class EditUserController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users/edit.ftl.html";
+    static final String TEMPLATE = "views/sso/admin/users/edit-personal.ftl.html";
 
     /**
      * User service.
@@ -113,7 +112,6 @@ public class EditUserController {
                     context.getParameter("query"), context.getParameter("page")));
         }
         UserEditDto editDto = dtoMapper.map(user, UserEditDto.class);
-        editDto.setCountryId(user.getCountry().getIso());
         editDto.setBirthDay(user.getDateOfBirth().getDayOfMonth());
         editDto.setBirthMonth(user.getDateOfBirth().getMonthValue());
         editDto.setBirthYear(user.getDateOfBirth().getYear());
@@ -128,16 +126,10 @@ public class EditUserController {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
                     context.getParameter("query"), context.getParameter("page")));
         }
-        // Fetch country.
-        Country country = countryService.get(editDto.getCountryId());
-        if (country == null) {
-            return createResult(editDto, context, validation, "country");
-        }
+        // Username is read only, so remember the old value.
+        String oldUsername = user.getUsername();
         dtoMapper.map(editDto, user);
-        editDto.setCountryId(user.getCountry().getIso());
-        editDto.setBirthDay(user.getDateOfBirth().getDayOfMonth());
-        editDto.setBirthMonth(user.getDateOfBirth().getMonthValue());
-        editDto.setBirthYear(user.getDateOfBirth().getYear());
+        user.setUsername(oldUsername);
         user.setGender(UserGender.valueOf(editDto.getGender()));
         user.setDateOfBirth(LocalDate.of(editDto.getBirthYear(), editDto.getBirthMonth(), editDto.getBirthDay()));
 

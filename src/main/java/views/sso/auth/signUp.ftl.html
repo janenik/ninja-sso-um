@@ -116,7 +116,7 @@
                                        ${_enableHtml5Required}
                                        class="form-control"/>
                             </div>
-                            <div class="col-xs-4 col-md-4 <#if errors.hasBeanViolation('birthYear')>has-error</#if>">
+                            <div class="col-xs-4 col-md-6 <#if errors.hasBeanViolation('birthYear')>has-error</#if>">
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
@@ -332,7 +332,7 @@
     </div>
 </div>
 
-<!--<#-- CSS below is the template, that contains ${contextPath} -->-->
+<!--<#-- CSS below is the template that uses ${contextPath}  variable-->-->
 <style type="text/css">
     <#include "/assets/css/sso/signup.css" />
     <#include "/assets/css/sso/flags.css" />

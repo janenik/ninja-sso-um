@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -21,21 +20,8 @@ public class UserEditDto implements Serializable {
     long id;
 
     /**
-     * Email.
-     */
-    @Pattern(regexp = Constants.EMAIL_PATTERN)
-    @NotBlank
-    @NotNull
-    @Size(min = Constants.EMAIL_MIN_LENGTH, max = Constants.EMAIL_MAX_LENGTH)
-    String email;
-
-    /**
      * Username.
      */
-    @Pattern(regexp = Constants.USERNAME_PATTERN)
-    @NotBlank
-    @NotNull
-    @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
     String username;
 
     /**
@@ -59,23 +45,6 @@ public class UserEditDto implements Serializable {
     @NotNull
     @Size(min = 1, max = Constants.LAST_NAME_MAX_LENGTH)
     String lastName;
-
-    /**
-     * Phone.
-     */
-    @Pattern(regexp = Constants.PHONE_PATTERN)
-    @NotBlank
-    @NotNull
-    @Size(min = 5, max = Constants.PHONE_MAX_LENGTH)
-    String phone;
-
-    /**
-     * Country id (ISO code).
-     */
-    @NotBlank
-    @NotNull
-    @Size(min = 2, max = Constants.COUNTRY_ISO_MAX_LENGTH)
-    String countryId;
 
     /**
      * User gender.
@@ -122,24 +91,6 @@ public class UserEditDto implements Serializable {
      */
     public void setId(long id) {
         this.id = id;
-    }
-
-    /**
-     * Returns email.
-     *
-     * @return Email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Sets email.
-     *
-     * @param email Email.
-     */
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     /**
@@ -212,42 +163,6 @@ public class UserEditDto implements Serializable {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    /**
-     * Returns phone.
-     *
-     * @return Phone.
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * Sets phone.
-     *
-     * @param phone Phone.
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * Returns countryId.
-     *
-     * @return CountryId.
-     */
-    public String getCountryId() {
-        return countryId;
-    }
-
-    /**
-     * Sets country id.
-     *
-     * @param countryId Country id.
-     */
-    public void setCountryId(String countryId) {
-        this.countryId = countryId;
     }
 
     /**

@@ -1,26 +1,9 @@
-/**<#-- This javascript source is the Fremarker template and supposed to be included. -->*/
-(function() {
-    /**<#-- Sets up a connection between bootstrap dropdown and hidden field. -->*/
-    var setUpDropdown = function(fieldId, opt_callback) {
-        $('#' + fieldId + 'Dropdown li').on('click touchend', function(e) {
-            e.preventDefault();
-            /**<#-- Hides Bootstrap dropdown for touchscreen devices, not done as with desktop browsers -->**/
-            $('#' + fieldId + 'Dropdown').parent().removeClass('open');
-            var li = $(e.target).closest('li');
-            var attrValue = li.attr('rel');
-            var title = opt_callback ? opt_callback(li) : li.find('a').html();
-            $('#' + fieldId).val(attrValue);
-            $('#' + fieldId + 'Title').html(title);
-         });
-        var preloadValue = $('#' + fieldId).val();
-        if (preloadValue != '') {
-            var li = $('#' + fieldId + 'Dropdown li[rel=' + preloadValue + ']');
-            var fieldTitle = opt_callback ? opt_callback(li) : li.find('a').html();
-            $('#' + fieldId + 'Title').html(fieldTitle);
-        }
-    };
+/**<#-- This javascript source is a Freemarker template and is supposed to be included. -->*/
+<#include "/assets/js/sso/setupdropdown.js" />
 
+(function() {
     /**<#-- Birthday month, gender, country. -->*/
+    var setUpDropdown = sso.htmlHelpers.setUpDropdown;
     setUpDropdown('birthMonth');
     setUpDropdown('gender');
     setUpDropdown('countryId', function(li) {

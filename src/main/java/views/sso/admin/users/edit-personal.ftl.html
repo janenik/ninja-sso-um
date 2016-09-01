@@ -1,0 +1,174 @@
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
+    <@layout.adminLayout i18n("adminUsersEdit") + ': ' + user.getId() + ' / ' + user.getUsername()>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <#assign editMode = "personal" />
+                    <#include 'edit-submenu.ftl.html' />
+
+                    <#if errors.hasBeanViolations()>
+                        <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+                    </#if>
+
+                    <form id="signUpForm" method="POST" class="form-horizontal"
+                          action="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+
+                        <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
+                            <label class="control-label col-sm-2" for="firstName">${i18n("signUpFirstName")}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="firstName" name="firstName"
+                                       placeholder="${i18n('signUpFirstNamePlaceHolder')}"
+                                       value="${(user.getFirstName())!}"
+                                       ${_enableHtml5Required}
+                                       class="form-control"/>
+                                <#if errors.hasBeanViolation('firstName') || errors.hasBeanViolation('lastName')>
+                                    <p class="help-block ssoFieldErrorDescription">
+                                        ${i18n("signUpNameDescription")}
+                                    </p>
+                                </#if>
+                            </div>
+                        </div>
+
+                        <div class="form-group <#if errors.hasBeanViolation('middleName')>has-error</#if>">
+                            <label class="control-label col-sm-2" for="middleName">${i18n("signUpMiddleName")}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="middleName" name="middleName"
+                                       placeholder="${i18n('signUpMiddleNamePlaceHolder')}"
+                                       value="${(user.getMiddleName())!}"
+                                       class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group <#if errors.hasBeanViolation('lastName')>has-error</#if>">
+                            <label class="control-label col-sm-2" for="lastName">${i18n("signUpLastName")}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="lastName" name="lastName"
+                                       placeholder="${i18n('signUpLastNamePlaceHolder')}"
+                                       value="${(user.getLastName())!}"
+                                       ${_enableHtml5Required}
+                                       class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
+                                || errors.hasBeanViolation('birthYear')>has-error</#if>">
+                            <label class="control-label col-sm-2" for="birthday">${i18n("signUpBirthday")}</label>
+                            <div class="row col-sm-10">
+                                <div class="col-sm-5">
+                                    <div class="dropdown">
+                                        <button class="btn btn-default dropdown-toggle" type="button"
+                                                id="birthMonthButton"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                            <span id="birthMonthTitle">${i18n("signUpBirthMonth")}</span>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="birthMonthButton"
+                                            id="birthMonthDropdown">
+                                            <li rel="1"><a href="#">${i18n("signUpBirthMonthJanuary")}</a></li>
+                                            <li rel="2"><a href="#">${i18n("signUpBirthMonthFebruary")}</a></li>
+                                            <li rel="3"><a href="#">${i18n("signUpBirthMonthMarch")}</a></li>
+                                            <li rel="4"><a href="#">${i18n("signUpBirthMonthApril")}</a></li>
+                                            <li rel="5"><a href="#">${i18n("signUpBirthMonthMay")}</a></li>
+                                            <li rel="6"><a href="#">${i18n("signUpBirthMonthJune")}</a></li>
+                                            <li rel="7"><a href="#">${i18n("signUpBirthMonthJuly")}</a></li>
+                                            <li rel="8"><a href="#">${i18n("signUpBirthMonthAugust")}</a></li>
+                                            <li rel="9"><a href="#">${i18n("signUpBirthMonthSeptember")}</a></li>
+                                            <li rel="10"><a href="#">${i18n("signUpBirthMonthOctober")}</a></li>
+                                            <li rel="11"><a href="#">${i18n("signUpBirthMonthNovember")}</a></li>
+                                            <li rel="12"><a href="#">${i18n("signUpBirthMonthDecember")}</a></li>
+                                        </ul>
+                                        <input type="hidden" name="birthMonth" id="birthMonth"
+                                               value="${(user.getBirthMonth())!}"/>
+                                    </div>
+                                </div>
+                                <div class="clearfix vertical-separator-for-xs visible-xs-block"></div>
+                                <div class="col-sm-3 <#if errors.hasBeanViolation('birthDay')>has-error</#if>">
+                                    <input type="text" id="birthDay" name="birthDay"
+                                           placeholder="${i18n('signUpBirthDayPlaceHolder')}"
+                                           maxlength="2"
+                                           value="${(user.getBirthDay())!}"
+                                           ${_enableHtml5Required}
+                                           class="form-control"/>
+                                </div>
+                                <div class="clearfix vertical-separator-for-xs visible-xs-block"></div>
+                                <div class="col-sm-4 <#if errors.hasBeanViolation('birthYear')>has-error</#if>">
+                                    <input type="text" id="birthYear" name="birthYear"
+                                           placeholder="${i18n('signUpBirthYearPlaceHolder')}"
+                                           maxlength="4"
+                                           value="${(user.getBirthYear())!}"
+                                           ${_enableHtml5Required}
+                                           class="form-control"/>
+                                </div>
+
+                                <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
+                                        || errors.hasBeanViolation('birthYear')>
+                                    <div class="input-group row">
+                                        <p style="padding-left:15px;" class="help-block ssoFieldErrorDescription">
+                                            ${i18n("signUpBirthDayDescription")}
+                                        </p>
+                                    </div>
+                                </#if>
+                            </div>
+                        </div>
+
+                        <div class="form-group <#if errors.hasBeanViolation('gender')>has-error</#if>">
+                            <label class="control-label col-sm-2" for="genderButton">${i18n("signUpGender")}</label>
+                            <div class="dropdown col-sm-10">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="genderButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span id="genderTitle">${i18n("signUpGender")}</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="gender" id="genderDropdown">
+                                    <li rel="FEMALE"><a href="#">${i18n("signUpGenderFemale")}</a></li>
+                                    <li rel="MALE"><a href="#">${i18n("signUpGenderMale")}</a></li>
+                                    <li rel="OTHER"><a href="#">${i18n("signUpGenderOther")}</a></li>
+                                </ul>
+                                <input type="hidden" name="gender" id="gender" value="${(user.getGender())!}"/>
+                            </div>
+                            <#if errors.hasBeanViolation('gender')>
+                                <p class="clearfix help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpGenderDescription")}
+                                </p>
+                            </#if>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary" id="editPersonalSubmit">
+                            ${i18n("commonSave")}
+                        </button>
+                        <a class="btn btn-danger"
+                           href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                            ${i18n("commonCancel")}
+                        </a>
+
+                        <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        <#include "/assets/js/sso/edit-personal.js" />
+    </script>
+
+    <style>
+        .vertical-separator-for-xs {
+            margin: 5px;
+        }
+        #genderButton {
+            width: 100%;
+        }
+        #birthMonthButton {
+            width: 100%;
+        }
+    </style>
+
+</@layout.adminLayout>
