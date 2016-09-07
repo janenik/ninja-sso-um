@@ -8,7 +8,7 @@ import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
-import dto.sso.admin.UserEditDto;
+import dto.sso.admin.UserEditPersonalDataDto;
 import models.sso.User;
 import models.sso.UserGender;
 import ninja.Context;
@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 import java.time.LocalDate;
 
 /**
- * Edit user controller.
+ * Edit user personal data controller.
  */
 @Singleton
 @FilterWith({
@@ -42,7 +42,7 @@ import java.time.LocalDate;
         AuthenticationFilter.class,
         RequireAdminPrivelegesFilter.class
 })
-public class EditUserController {
+public class EditUserPersonalDataController {
 
     /**
      * Template to render users' list page.
@@ -89,7 +89,7 @@ public class EditUserController {
      * @param properties Application properties.
      */
     @Inject
-    public EditUserController(
+    public EditUserPersonalDataController(
             UserService userService,
             CountryService countryService,
             Mapper dtoMapper,
@@ -105,22 +105,22 @@ public class EditUserController {
     }
 
     @Transactional
-    public Result editGet(@PathParam("userId") long userId, Context context) {
+    public Result get(@PathParam("userId") long userId, Context context) {
         User user = userService.get(userId);
         if (user == null) {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
                     context.getParameter("query"), context.getParameter("page")));
         }
-        UserEditDto editDto = dtoMapper.map(user, UserEditDto.class);
+        UserEditPersonalDataDto editDto = dtoMapper.map(user, UserEditPersonalDataDto.class);
         editDto.setBirthDay(user.getDateOfBirth().getDayOfMonth());
         editDto.setBirthMonth(user.getDateOfBirth().getMonthValue());
         editDto.setBirthYear(user.getDateOfBirth().getYear());
-        return createEditPersonalResult(editDto, context, Controllers.noViolations());
+        return createResult(editDto, context, Controllers.noViolations());
     }
 
     @Transactional
-    public Result edit(@PathParam("userId") long userId, Context context, Validation validation,
-                       @JSR303Validation UserEditDto editDto) {
+    public Result post(@PathParam("userId") long userId, Context context, Validation validation,
+                       @JSR303Validation UserEditPersonalDataDto editDto) {
         // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
@@ -129,12 +129,12 @@ public class EditUserController {
         }
         // Validate all fields.
         if (validation.hasViolations()) {
-            return createEditPersonalResult(editDto, context, validation);
+            return createResult(editDto, context, validation);
         }
         // Check with existing username.
         User existingUserWithUsername = userService.getByUsername(editDto.getUsername());
         if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
-            return createEditPersonalResult(editDto, context, validation, "usernameDuplicate");
+            return createResult(editDto, context, validation, "usernameDuplicate");
         }
         // Map edit DTO to user entity.
         dtoMapper.map(editDto, user);
@@ -156,9 +156,9 @@ public class EditUserController {
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createEditPersonalResult(UserEditDto user, Context context, Validation validation, String field) {
+    Result createResult(UserEditPersonalDataDto user, Context context, Validation validation, String field) {
         validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
-        return createEditPersonalResult(user, context, validation);
+        return createResult(user, context, validation);
     }
 
     /**
@@ -169,7 +169,7 @@ public class EditUserController {
      * @param validation Validation.
      * @return Sign up response object.
      */
-    Result createEditPersonalResult(UserEditDto user, Context context, Validation validation) {
+    Result createResult(UserEditPersonalDataDto user, Context context, Validation validation) {
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)

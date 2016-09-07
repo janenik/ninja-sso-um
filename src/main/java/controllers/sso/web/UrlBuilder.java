@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
-import controllers.sso.admin.EditUserController;
+import controllers.sso.admin.EditUserPersonalDataController;
 import controllers.sso.admin.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -255,7 +255,7 @@ public class UrlBuilder {
      * @return Relative URL to admin users section.
      */
     public String getAdminEditPersonalUrl(long userId, Object... query) {
-        String reverseRoute = router.getReverseRoute(EditUserController.class, "editGet", "userId", userId);
+        String reverseRoute = router.getReverseRoute(EditUserPersonalDataController.class, "get", "userId", userId);
         StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
         if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
             builder.append("&query=");

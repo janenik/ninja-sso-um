@@ -15,7 +15,7 @@
                     </#if>
 
                     <form id="signUpForm" method="POST" class="form-horizontal"
-                          action="${contextPath}/auth/admin/user/edit/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                          action="${contextPath}/auth/admin/user/edit-personal/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
                         <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
                             <label class="control-label col-sm-3" for="firstName">${i18n("signUpFirstName")}</label>
@@ -183,7 +183,6 @@
 
     <script>
         <#include "/assets/js/sso/edit-personal.js" />
-
     </script>
 
     <style>

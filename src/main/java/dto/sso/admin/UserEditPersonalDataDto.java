@@ -11,9 +11,9 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- * User edit DTO.
+ * User edit personal data DTO.
  */
-public class UserEditDto implements Serializable {
+public class UserEditPersonalDataDto implements Serializable {
 
     /**
      * User id.

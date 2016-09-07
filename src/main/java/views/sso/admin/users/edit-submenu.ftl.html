@@ -43,12 +43,6 @@
         </a>
     </li>
 
-    <li role="tab" class="${_editUser_sendEmailClass}">
-        <a href="#">
-            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-            ${i18n("adminEditUserSendEmail")}</a>
-    </li>
-
     <li role="tab" class="${_editUser_accessClass}">
         <a href="#" role="tab">
             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
@@ -67,17 +61,26 @@
             <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
             ${i18n("adminEditUserResetPassword")}</a>
     </li>
+
+    <li role="tab" class="${_editUser_sendEmailClass}">
+        <a href="#">
+            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            ${i18n("adminEditUserSendEmail")}</a>
+    </li>
 </ul>
 
-<!--
-<h3>
-    ${user.getId()} /
-    ${user.getUsername()}
+<div id="user-edit-submenu-id-info">
+    <b>${user.getUsername()} [${user.getId()}]:</b>
     ${user.getFirstName()}
     <#if user.getMiddleName()??>
         ${user.getMiddleName()}
     </#if>
     ${user.getLastName()}
-</h3>
--->
-<br/>
+</div>
+
+<style>
+    #user-edit-submenu-id-info {
+    margin: 5px;
+    text-align: center;
+    }
+</style>
