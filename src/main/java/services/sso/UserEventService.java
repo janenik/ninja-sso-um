@@ -1,5 +1,6 @@
 package services.sso;
 
+import com.google.common.base.Strings;
 import com.google.common.io.BaseEncoding;
 import models.sso.User;
 import models.sso.UserEvent;
@@ -75,14 +76,13 @@ public class UserEventService {
      * @param oldSalt Old password salt.
      * @param oldHash Old password hash.
      * @param ip Remove IP address.
-     * @param headers Additional data for event, headers here.
+     * @param data Additional data for event, headers here.
      * @return Created user event with {@link UserEventType#PASSWORD_CHANGE}.
      */
-    public UserEvent onUserPasswordUpdate(User user, byte[] oldSalt, byte[] oldHash, String ip,
-                                          Map<String, ?> headers) {
-        Map<String, Object> dataToSave = new HashMap<>(headers);
-        dataToSave.put("password:oldSalt", baseEncoding.encode(oldSalt));
-        dataToSave.put("password:oldHash", baseEncoding.encode(oldHash));
+    public UserEvent onUserPasswordUpdate(User user, byte[] oldSalt, byte[] oldHash, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>(data);
+        dataToSave.put("password.old.salt", baseEncoding.encode(oldSalt));
+        dataToSave.put("password.old.hash", baseEncoding.encode(oldHash));
         UserEvent userEvent = newUserEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
@@ -100,6 +100,80 @@ public class UserEventService {
         UserEvent userEvent = newUserEvent(user, UserEventType.SIGN_IN, ip, data);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
+    }
+
+    /**
+     * Saves common data access by source user event, like listing users.
+     *
+     * @param source Source user who performs the action.
+     * @param ip IP address of the source user.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#ACCESS}.
+     */
+    @SuppressWarnings("unchecked")
+    public UserEvent onDataAccess(User source, String query, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave;
+        if (!Strings.isNullOrEmpty(query)) {
+            dataToSave = new HashMap<>(data);
+            dataToSave.put("users.search.query", query);
+        } else {
+            dataToSave = (Map<String, Object>) data;
+        }
+        UserEvent event = newUserEvent(source, UserEventType.ACCESS, ip, dataToSave);
+        entityManagerProvider.get().persist(event);
+        return event;
+    }
+
+    /**
+     * Saves user data access event by source user event.
+     *
+     * @param source Source user who performs the action.
+     * @param target Target user who's data is accessed.
+     * @param appUrl Current application URL.
+     * @param ip IP address of the source user.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#ACCESS}.
+     */
+    public UserEvent onUserDataAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
+        UserEvent event = newUserEvent(source, UserEventType.ACCESS, ip, data);
+        event.setTargetUser(target);
+        event.setUrl(appUrl);
+        entityManagerProvider.get().persist(event);
+        return event;
+    }
+
+    /**
+     * Saves user data update event by source user event.
+     *
+     * @param source Source user who performs the action.
+     * @param target Target user who's data is accessed.
+     * @param appUrl Current application URL.
+     * @param ip IP address of the source user.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#UPDATE}.
+     */
+    public UserEvent onUserDataUpdate(User source, User target, String appUrl, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>(data);
+        dataToSave.put("user.old.username", target.getUsername());
+
+        dataToSave.put("user.old.email", target.getEmail());
+        dataToSave.put("user.old.phone", target.getPhone());
+        dataToSave.put("user.old.countryId", target.getCountry() != null ? target.getCountry().getIso() : "");
+
+        dataToSave.put("user.old.firstName", target.getFirstName());
+        dataToSave.put("user.old.lastName", target.getLastName());
+        dataToSave.put("user.old.middleName", String.valueOf(target.getMiddleName()));
+        dataToSave.put("user.old.birthDay", target.getDateOfBirth().toString());
+
+        dataToSave.put("user.old.version", target.getVersion());
+        dataToSave.put("user.old.role", target.getRole().toString());
+        dataToSave.put("user.old.confirmationState", target.getConfirmationState().toString());
+
+        UserEvent event = newUserEvent(source, UserEventType.UPDATE, ip, dataToSave);
+        event.setTargetUser(target);
+        event.setUrl(appUrl);
+        entityManagerProvider.get().persist(event);
+        return event;
     }
 
     /**

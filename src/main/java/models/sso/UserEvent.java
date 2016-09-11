@@ -45,10 +45,16 @@ public class UserEvent implements Serializable {
     Long id;
 
     /**
-     * User event.
+     * User who produced the event.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     User user;
+
+    /**
+     * Target user of the event. May be null.
+     */
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    User targetUser;
 
     /**
      * Event type.
@@ -70,6 +76,12 @@ public class UserEvent implements Serializable {
     String ip;
 
     /**
+     * Application URL.
+     */
+    @Column(nullable = true, updatable = false, length = 2000)
+    String url;
+
+    /**
      * Data, associated with event.
      */
     @Column(nullable = true, length = 65536)
@@ -84,6 +96,24 @@ public class UserEvent implements Serializable {
         if (time == null) {
             time = nowUtc();
         }
+    }
+
+    /**
+     * Returns event id.
+     *
+     * @return Id.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets event id.
+     *
+     * @param id Id.
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -141,6 +171,24 @@ public class UserEvent implements Serializable {
     }
 
     /**
+     * Returns target user. May me null if event is self-inflicted (like sign-in, sign-up, etc).
+     *
+     * @return Target user.
+     */
+    public User getTargetUser() {
+        return targetUser;
+    }
+
+    /**
+     * Sets target user.
+     *
+     * @param targetUser Target user.
+     */
+    public void setTargetUser(User targetUser) {
+        this.targetUser = targetUser;
+    }
+
+    /**
      * Returns event type.
      *
      * @return Event type.
@@ -192,6 +240,24 @@ public class UserEvent implements Serializable {
      */
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    /**
+     * Returns url.
+     *
+     * @return Url.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Sets url.
+     *
+     * @param url Url.
+     */
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     /**

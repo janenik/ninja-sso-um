@@ -30,14 +30,14 @@
 
 <ul class="nav nav-tabs" role="tablist">
     <li class="${_editUser_personalClass}">
-        <a href="#">
+        <a href="${contextPath}/auth/admin/user/edit-personal/${userEntity.getId()?url}?lang=${lang?url}&query=${query?url}&page=${page?url}">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             ${i18n("adminEditUserPersonalData")}
         </a>
     </li>
 
     <li class="${_editUser_contactDataClass}">
-        <a href="#" role="tab">
+        <a href="${contextPath}/auth/admin/user/edit-contact/${userEntity.getId()?url}?lang=${lang?url}&query=${query?url}&page=${page?url}" role="tab">
             <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
             ${i18n("adminEditUserContactData")}
         </a>
@@ -70,17 +70,17 @@
 </ul>
 
 <div id="user-edit-submenu-id-info">
-    <b>${user.getUsername()} [${user.getId()}]:</b>
-    ${user.getFirstName()}
-    <#if user.getMiddleName()??>
-        ${user.getMiddleName()}
+    <b>${userEntity.getUsername()} [${userEntity.getId()}]:</b>
+    ${userEntity.getFirstName()}
+    <#if userEntity.getMiddleName()??>
+        ${userEntity.getMiddleName()}
     </#if>
-    ${user.getLastName()}
+    ${userEntity.getLastName()}
 </div>
 
 <style>
     #user-edit-submenu-id-info {
-    margin: 5px;
+    margin: 10px;
     text-align: center;
     }
 </style>

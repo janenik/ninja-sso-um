@@ -1,4 +1,4 @@
-package dto.sso.admin;
+package dto.sso.admin.users;
 
 import dto.sso.common.Constants;
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,11 +12,6 @@ import java.io.Serializable;
  * User edit contact data DTO.
  */
 public class UserEditContactDataDto implements Serializable {
-
-    /**
-     * User id.
-     */
-    long id;
 
     /**
      * Email.
@@ -33,7 +28,7 @@ public class UserEditContactDataDto implements Serializable {
     @Pattern(regexp = Constants.PHONE_PATTERN)
     @NotBlank
     @NotNull
-    @Size(min = 5, max = Constants.PHONE_MAX_LENGTH)
+    @Size(min = Constants.PHONE_MIN_LENGTH, max = Constants.PHONE_MAX_LENGTH)
     String phone;
 
     /**
@@ -41,26 +36,8 @@ public class UserEditContactDataDto implements Serializable {
      */
     @NotBlank
     @NotNull
-    @Size(min = 2, max = Constants.COUNTRY_ISO_MAX_LENGTH)
+    @Size(min = Constants.COUNTRY_ISO_MIN_LENGTH, max = Constants.COUNTRY_ISO_MAX_LENGTH)
     String countryId;
-
-    /**
-     * Returns id.
-     *
-     * @return Id.
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * Sets id.
-     *
-     * @param id Id.
-     */
-    public void setId(long id) {
-        this.id = id;
-    }
 
     /**
      * Returns email.

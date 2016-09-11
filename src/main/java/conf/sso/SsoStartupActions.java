@@ -72,7 +72,7 @@ public class SsoStartupActions {
         if (country == null) {
             logger.info("Adding new countries... dev: {}, test: {}...", properties.isDev(), properties.isTest());
 
-            countryService.createNew(new Country("US", "USA", "United States", "United States", 1));
+            countryService.createNew(country = new Country("US", "USA", "United States", "United States", 1));
             countryService.createNew(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
             countryService.createNew(new Country("CA", "CAN", "Canada", "Canada", 1));
         }
@@ -97,10 +97,10 @@ public class SsoStartupActions {
 
             String login;
             for (int i = 1; i <= 100; i++) {
-                login = "user" + i;
+                login = "demouser" + i;
                 user = userService.getByUsername(login);
                 if (user == null) {
-                    user = new User(login, "user" + i + "@example.org", "+1 650-999-99" + i);
+                    user = new User(login, "demouser" + i + "@example.org", "+1 650-999-99" + i);
                     user.setFirstName("Alexis" + i);
                     user.setLastName("Brown" + i);
                     user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));

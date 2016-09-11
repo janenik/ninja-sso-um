@@ -4,8 +4,9 @@ import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
-import controllers.sso.admin.EditUserPersonalDataController;
-import controllers.sso.admin.UsersController;
+import controllers.sso.admin.users.EditUserContactDataController;
+import controllers.sso.admin.users.EditUserPersonalDataController;
+import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
@@ -17,6 +18,7 @@ import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -39,6 +41,11 @@ public class UrlBuilder {
      * Current request context.
      */
     final Context context;
+
+    /**
+     * HTTP request.
+     */
+    final HttpServletRequest servletRequest;
 
     /**
      * Allowed redirect URL prefixes.
@@ -67,11 +74,13 @@ public class UrlBuilder {
     public UrlBuilder(
             NinjaProperties properties,
             Router router,
+            HttpServletRequest servletRequest,
             @InjectedContext Context context,
             @Named("allowedContinueUrls") List<String> allowedContinueUrls) {
         this.properties = properties;
         this.router = router;
         this.context = context;
+        this.servletRequest = servletRequest;
         this.allowedContinueUrls = allowedContinueUrls;
         this.baseUrl = properties.getOrDie("application.baseUrl");
         this.baseUrlWithContext = this.baseUrl + context.getContextPath();
@@ -227,6 +236,18 @@ public class UrlBuilder {
     }
 
     /**
+     * Returns current URL.
+     * @return Current URL of the application.
+     */
+    public String getCurrentUrl() {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(servletRequest.getRequestURL());
+        urlBuilder.append('?');
+        urlBuilder.append(servletRequest.getQueryString());
+        return urlBuilder.toString();
+    }
+
+    /**
      * Constructs admin URL to users section.
      * URL is relative.
      *
@@ -254,8 +275,29 @@ public class UrlBuilder {
      * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
      * @return Relative URL to admin users section.
      */
-    public String getAdminEditPersonalUrl(long userId, Object... query) {
+    public String getAdminEditPersonalDataUrl(long userId, Object... query) {
         String reverseRoute = router.getReverseRoute(EditUserPersonalDataController.class, "get", "userId", userId);
+        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
+        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
+            builder.append("&query=");
+            builder.append(Escapers.encodePercent(query[0].toString()));
+            if (query.length > 1 && query[1] != null) {
+                builder.append("&page=");
+                builder.append(Escapers.encodePercent(query[1].toString()));
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Constructs admin URL to edit contact info.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin users section.
+     */
+    public String getAdminEditContactDataUrl(long userId, Object... query) {
+        String reverseRoute = router.getReverseRoute(EditUserContactDataController.class, "get", "userId", userId);
         StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
         if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
             builder.append("&query=");

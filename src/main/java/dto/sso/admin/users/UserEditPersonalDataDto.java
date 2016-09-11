@@ -1,4 +1,4 @@
-package dto.sso.admin;
+package dto.sso.admin.users;
 
 import dto.sso.common.Constants;
 import org.hibernate.validator.constraints.NotBlank;
@@ -14,11 +14,6 @@ import java.io.Serializable;
  * User edit personal data DTO.
  */
 public class UserEditPersonalDataDto implements Serializable {
-
-    /**
-     * User id.
-     */
-    long id;
 
     /**
      * Username.
@@ -79,24 +74,6 @@ public class UserEditPersonalDataDto implements Serializable {
     @NotNull
     @Min(1800)
     Integer birthYear;
-
-    /**
-     * Returns id.
-     *
-     * @return Id.
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * Sets id.
-     *
-     * @param id Id.
-     */
-    public void setId(long id) {
-        this.id = id;
-    }
 
     /**
      * Returns username.

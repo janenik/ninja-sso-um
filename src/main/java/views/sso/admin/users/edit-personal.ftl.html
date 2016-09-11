@@ -1,5 +1,5 @@
 <#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
-    <@layout.adminLayout i18n("adminUsersEdit") + ': ' + user.getId() + ' / ' + user.getUsername()>
+    <@layout.adminLayout i18n("adminUsersEdit") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
 
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -14,8 +14,8 @@
                         <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
                     </#if>
 
-                    <form id="signUpForm" method="POST" class="form-horizontal"
-                          action="${contextPath}/auth/admin/user/edit-personal/${user.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                    <form id="editPersonalForm" method="POST" class="form-horizontal"
+                          action="${contextPath}/auth/admin/user/edit-personal/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
                         <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
                             <label class="control-label col-sm-3" for="firstName">${i18n("signUpFirstName")}</label>
@@ -173,7 +173,6 @@
                             ${i18n("commonCancel")}
                         </a>
 
-                        <input type="hidden" name="id" value="${user.getId()?url}"/>
                         <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
                     </form>
                 </div>

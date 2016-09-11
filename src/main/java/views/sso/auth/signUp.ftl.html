@@ -214,7 +214,7 @@
                                     </#items>
                                 </ul>
                             </#list>
-                            <input type="hidden" id="countryId" name="countryId" value="${(user.countryId)!}"/>
+                            <input type="hidden" id="countryId" name="countryId" value="${(user.getCountryId())!}"/>
                         </div>
                         <#if errors.hasBeanViolation('countryId')>
                             <p class="help-block ssoFieldErrorDescription">

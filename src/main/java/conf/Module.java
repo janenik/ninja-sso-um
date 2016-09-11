@@ -115,6 +115,4 @@ public class Module extends AbstractModule {
         }
         return result.render("context");
     }
-
-
 }

@@ -1,4 +1,4 @@
-package controllers.sso.admin;
+package controllers.sso.admin.users;
 
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
@@ -13,6 +13,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.utils.NinjaProperties;
+import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.token.PasswordBasedEncryptor;
 
@@ -52,6 +53,11 @@ public class UsersController {
     final UserService userService;
 
     /**
+     * User event service.
+     */
+    final UserEventService userEventService;
+
+    /**
      * Html result with secure headers.
      */
     final Provider<Result> htmlWithSecureHeadersProvider;
@@ -70,9 +76,11 @@ public class UsersController {
      */
     @Inject
     public UsersController(UserService userService,
+                           UserEventService userEventService,
                            @Named("htmlAdminSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
                            NinjaProperties properties) {
         this.userService = userService;
+        this.userEventService = userEventService;
         this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
         this.properties = properties;
     }
@@ -80,6 +88,9 @@ public class UsersController {
     @Transactional
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
+        // Log access.
+        this.logAccess(query, context);
+        // Search.
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
         int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
@@ -91,5 +102,17 @@ public class UsersController {
                 .render("page", page)
                 .render("dateTimeFormatter", formatter)
                 .render("results", results);
+    }
+
+    /**
+     * Logs user data access.
+     *
+     * @param query Search query.
+     * @param context Web context.
+     */
+    void logAccess(String query, Context context) {
+        String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
+        userEventService.onDataAccess(loggedInUser, query, ip, context.getHeaders());
     }
 }

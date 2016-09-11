@@ -43,5 +43,15 @@ public enum UserEventType {
     /**
      * Access event.
      */
-    ACCESS;
+    ACCESS,
+
+    /**
+     * Access to user events.
+     */
+    EVENTS_ACCESS,
+
+    /**
+     * Role change event.
+     */
+    ROLE_CHANGE;
 }

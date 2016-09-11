@@ -9,6 +9,6 @@
 
     $('#editPersonalForm').submit(function() {
         $('#editPersonalSubmit').attr('disabled', 'disabled');
-        $('#editPersonalSubmit').html('${i18n("signInButtonTitleLoading")}');
+        $('#editPersonalSubmit').html('${i18n("commonSaving")}');
     });
  })();

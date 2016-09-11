@@ -1,4 +1,4 @@
-package controllers.sso.admin;
+package controllers.sso.admin.users;
 
 import com.google.inject.persist.Transactional;
 import controllers.sso.filters.ApplicationErrorHtmlFilter;
@@ -8,9 +8,9 @@ import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
-import dto.sso.admin.UserEditPersonalDataDto;
+import converters.sso.admin.users.EditUserPersonalDataConverter;
+import dto.sso.admin.users.UserEditPersonalDataDto;
 import models.sso.User;
-import models.sso.UserGender;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -21,15 +21,14 @@ import ninja.validation.ConstraintViolation;
 import ninja.validation.FieldViolation;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
-import org.dozer.Mapper;
 import services.sso.CountryService;
+import services.sso.UserEventService;
 import services.sso.UserService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.time.LocalDate;
 
 /**
  * Edit user personal data controller.
@@ -42,17 +41,12 @@ import java.time.LocalDate;
         AuthenticationFilter.class,
         RequireAdminPrivelegesFilter.class
 })
-public class EditUserPersonalDataController {
+public class EditUserPersonalDataController extends EditUserAbstractController {
 
     /**
      * Template to render users' list page.
      */
     static final String TEMPLATE = "views/sso/admin/users/edit-personal.ftl.html";
-
-    /**
-     * User service.
-     */
-    final UserService userService;
 
     /**
      * Country service.
@@ -62,12 +56,7 @@ public class EditUserPersonalDataController {
     /**
      * DTO mapper.
      */
-    final Mapper dtoMapper;
-
-    /**
-     * URL builder provider for controller. Instance per request.
-     */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    final EditUserPersonalDataConverter converter;
 
     /**
      * Html result with secure headers.
@@ -84,6 +73,7 @@ public class EditUserPersonalDataController {
      *
      * @param userService User service.
      * @param countryService Country service.
+     * @param userEventService User event service.
      * @param urlBuilderProvider URL builder provider.
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
      * @param properties Application properties.
@@ -92,14 +82,14 @@ public class EditUserPersonalDataController {
     public EditUserPersonalDataController(
             UserService userService,
             CountryService countryService,
-            Mapper dtoMapper,
+            UserEventService userEventService,
+            EditUserPersonalDataConverter converter,
             Provider<UrlBuilder> urlBuilderProvider,
             @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
             NinjaProperties properties) {
-        this.userService = userService;
+        super(userService, userEventService, urlBuilderProvider);
         this.countryService = countryService;
-        this.dtoMapper = dtoMapper;
-        this.urlBuilderProvider = urlBuilderProvider;
+        this.converter = converter;
         this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
         this.properties = properties;
     }
@@ -111,16 +101,16 @@ public class EditUserPersonalDataController {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
                     context.getParameter("query"), context.getParameter("page")));
         }
-        UserEditPersonalDataDto editDto = dtoMapper.map(user, UserEditPersonalDataDto.class);
-        editDto.setBirthDay(user.getDateOfBirth().getDayOfMonth());
-        editDto.setBirthMonth(user.getDateOfBirth().getMonthValue());
-        editDto.setBirthYear(user.getDateOfBirth().getYear());
-        return createResult(editDto, context, Controllers.noViolations());
+        this.logAccess(user, context);
+        return createResult(converter.fromEntity(user), user, context, Controllers.noViolations());
     }
 
     @Transactional
-    public Result post(@PathParam("userId") long userId, Context context, Validation validation,
-                       @JSR303Validation UserEditPersonalDataDto editDto) {
+    public Result post(
+            @PathParam("userId") long userId,
+            Context context,
+            Validation validation,
+            @JSR303Validation UserEditPersonalDataDto dto) {
         // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
@@ -129,54 +119,57 @@ public class EditUserPersonalDataController {
         }
         // Validate all fields.
         if (validation.hasViolations()) {
-            return createResult(editDto, context, validation);
+            return createResult(dto, user, context, validation);
         }
-        // Check with existing username.
-        User existingUserWithUsername = userService.getByUsername(editDto.getUsername());
+        // Check for existing username.
+        User existingUserWithUsername = userService.getByUsername(dto.getUsername());
         if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
-            return createResult(editDto, context, validation, "usernameDuplicate");
+            return createResult(dto, user, context, validation, "usernameDuplicate");
         }
+        // Log update event. Must happen before actual data update to fetch data.
+        this.logUpdate(user, context);
         // Map edit DTO to user entity.
-        dtoMapper.map(editDto, user);
-        user.setGender(UserGender.valueOf(editDto.getGender()));
-        user.setDateOfBirth(LocalDate.of(editDto.getBirthYear(), editDto.getBirthMonth(), editDto.getBirthDay()));
+        converter.update(user, dto);
         // Update user.
         userService.update(user);
         // Redirect to same form.
         return Results.redirect(urlBuilderProvider.get()
-                .getAdminEditPersonalUrl(user.getId(), context.getParameter("query"), context.getParameter("page")));
+                .getAdminEditPersonalDataUrl(user.getId(), context.getParameter("query"), context.getParameter("page")));
     }
 
     /**
      * Creates response result with given user, validation and field that lead to error.
      *
-     * @param user User to use in response.
-     * @param context Context.
+     * @param dto User to use in response.
+     * @param entity Original user entity for read-only data.
+     * @param ctx Context.
      * @param validation Validation.
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(UserEditPersonalDataDto user, Context context, Validation validation, String field) {
+    Result createResult(UserEditPersonalDataDto dto, User entity, Context ctx, Validation validation, String field) {
         validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
-        return createResult(user, context, validation);
+        return createResult(dto, entity, ctx, validation);
     }
 
     /**
      * Creates response result with given user.
      *
-     * @param user User to use in response.
-     * @param context Context.
+     * @param dto User to use in response.
+     * @param userEntity Original user entity for read-only data.
+     * @param ctx Context.
      * @param validation Validation.
      * @return Sign up response object.
      */
-    Result createResult(UserEditPersonalDataDto user, Context context, Validation validation) {
+    Result createResult(UserEditPersonalDataDto dto, User userEntity, Context ctx, Validation validation) {
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
-                .render("context", context)
+                .render("context", ctx)
                 .render("config", properties)
                 .render("errors", validation)
-                .render("user", user)
-                .render("query", context.getParameter("query", ""))
-                .render("page", context.getParameterAs("page", int.class, 1));
+                .render("user", dto)
+                .render("userEntity", userEntity)
+                .render("query", ctx.getParameter("query", ""))
+                .render("page", ctx.getParameterAs("page", int.class, 1));
     }
 }

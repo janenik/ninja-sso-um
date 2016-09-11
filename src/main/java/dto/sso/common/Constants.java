@@ -65,6 +65,11 @@ public interface Constants {
             "?[\\-\\.\\ \\\\\\/]?){0,})(?:[\\-\\.\\ \\\\\\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\\\\\/]?(\\d+))?$";
 
     /**
+     * Min length for the phone.
+     */
+    int PHONE_MIN_LENGTH = 5;
+
+    /**
      * Max length for the phone.
      */
     int PHONE_MAX_LENGTH = 50;
@@ -108,6 +113,11 @@ public interface Constants {
      * Maximum enumeration length (string representation).
      */
     int ENUM_MAX_LENGTH = 64;
+
+    /**
+     * Country mi ISO code length.
+     */
+    int COUNTRY_ISO_MIN_LENGTH = 2;
 
     /**
      * Country max ISO code length.
