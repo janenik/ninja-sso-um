@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * User edit contact data DTO.
  */
-public class UserEditContactDataDto implements Serializable {
+public final class EditUserContactDataDto implements Serializable {
 
     /**
      * Email.

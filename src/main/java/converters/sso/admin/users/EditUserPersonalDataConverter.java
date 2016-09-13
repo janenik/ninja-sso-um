@@ -1,7 +1,7 @@
 package converters.sso.admin.users;
 
 import converters.Converter;
-import dto.sso.admin.users.UserEditPersonalDataDto;
+import dto.sso.admin.users.EditUserPersonalDataDto;
 import models.sso.User;
 import models.sso.UserGender;
 import org.dozer.Mapper;
@@ -11,10 +11,10 @@ import javax.inject.Singleton;
 import java.time.LocalDate;
 
 /**
- * Converter for {@link UserEditPersonalDataDto}.
+ * Converter for {@link EditUserPersonalDataDto}.
  */
 @Singleton
-public class EditUserPersonalDataConverter implements Converter<User, UserEditPersonalDataDto> {
+public class EditUserPersonalDataConverter implements Converter<User, EditUserPersonalDataDto> {
 
     /**
      * DTO mapper.
@@ -32,13 +32,13 @@ public class EditUserPersonalDataConverter implements Converter<User, UserEditPe
     }
 
     @Override
-    public User fromDto(UserEditPersonalDataDto dto) {
+    public User fromDto(EditUserPersonalDataDto dto) {
         return mapper.map(dto, User.class);
     }
 
     @Override
-    public UserEditPersonalDataDto fromEntity(User entity) {
-        UserEditPersonalDataDto dto = mapper.map(entity, UserEditPersonalDataDto.class);
+    public EditUserPersonalDataDto fromEntity(User entity) {
+        EditUserPersonalDataDto dto = mapper.map(entity, EditUserPersonalDataDto.class);
         dto.setBirthDay(entity.getDateOfBirth().getDayOfMonth());
         dto.setBirthMonth(entity.getDateOfBirth().getMonthValue());
         dto.setBirthYear(entity.getDateOfBirth().getYear());
@@ -47,7 +47,7 @@ public class EditUserPersonalDataConverter implements Converter<User, UserEditPe
     }
 
     @Override
-    public User update(User entity, UserEditPersonalDataDto dto) {
+    public User update(User entity, EditUserPersonalDataDto dto) {
         mapper.map(dto, entity);
         entity.setGender(UserGender.valueOf(dto.getGender()));
         entity.setDateOfBirth(LocalDate.of(dto.getBirthYear(), dto.getBirthMonth(), dto.getBirthDay()));

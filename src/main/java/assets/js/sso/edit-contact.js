@@ -2,7 +2,7 @@
 <#include "/assets/js/sso/setupdropdown.js" />
 
 (function() {
-    /**<#-- Birthday month, gender, country. -->*/
+    /**<#-- Country. -->*/
     var setUpDropdown = sso.htmlHelpers.setUpDropdown;
     setUpDropdown('countryId', function(li) {
             var phone = $('#phone');

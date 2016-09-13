@@ -6,6 +6,7 @@ import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import converters.Converter;
 import models.sso.User;
+import models.sso.UserRole;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -205,6 +206,7 @@ public abstract class EditUserAbstractController<C extends Converter<User, DTO>,
                 .render("user", user)
                 .render("userEntity", userEntity)
                 .render("countries", countryService.getAllSortedByNiceName())
+                .render("roles", UserRole.values())
                 .render("query", ctx.getParameter("query", ""))
                 .render("page", ctx.getParameterAs("page", int.class, 1));
     }

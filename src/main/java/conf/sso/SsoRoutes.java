@@ -2,6 +2,7 @@ package conf.sso;
 
 import controllers.sso.admin.users.EditUserContactDataController;
 import controllers.sso.admin.users.EditUserPersonalDataController;
+import controllers.sso.admin.users.EditUserRoleController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
@@ -76,5 +77,10 @@ public class SsoRoutes implements ApplicationRoutes {
                 .with(EditUserContactDataController.class, "get");
         router.POST().route(subRoute + "/admin/user/edit-contact/{userId: [0-9]+}")
                 .with(EditUserContactDataController.class, "post");
+        // Edit user role.
+        router.GET().route(subRoute + "/admin/user/edit-role/{userId: [0-9]+}")
+                .with(EditUserRoleController.class, "get");
+        router.POST().route(subRoute + "/admin/user/edit-role/{userId: [0-9]+}")
+                .with(EditUserRoleController.class, "post");
     }
 }

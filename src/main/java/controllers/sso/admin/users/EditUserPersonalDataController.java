@@ -8,7 +8,7 @@ import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.UrlBuilder;
 import converters.sso.admin.users.EditUserPersonalDataConverter;
-import dto.sso.admin.users.UserEditPersonalDataDto;
+import dto.sso.admin.users.EditUserPersonalDataDto;
 import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
@@ -38,7 +38,7 @@ import javax.inject.Singleton;
         RequireAdminPrivelegesFilter.class
 })
 public class EditUserPersonalDataController extends
-        EditUserAbstractController<EditUserPersonalDataConverter, UserEditPersonalDataDto> {
+        EditUserAbstractController<EditUserPersonalDataConverter, EditUserPersonalDataDto> {
 
     /**
      * Constructs controller.
@@ -71,14 +71,14 @@ public class EditUserPersonalDataController extends
     @Transactional
     public Result post(
             @PathParam("userId") long userId,
-            @JSR303Validation UserEditPersonalDataDto dto,
+            @JSR303Validation EditUserPersonalDataDto dto,
             Context context,
             Validation validation) {
         return super.updateUserOrRedirectToList(userId, dto, context, validation);
     }
 
     @Override
-    protected String validate(User user, UserEditPersonalDataDto dto) {
+    protected String validate(User user, EditUserPersonalDataDto dto) {
         // Check for existing username.
         User existingUserWithUsername = userService.getByUsername(dto.getUsername());
         if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {

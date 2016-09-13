@@ -1,7 +1,7 @@
 package converters.sso.admin.users;
 
 import converters.Converter;
-import dto.sso.admin.users.UserEditContactDataDto;
+import dto.sso.admin.users.EditUserContactDataDto;
 import models.sso.User;
 import org.dozer.Mapper;
 import services.sso.CountryService;
@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Converter for {@link UserEditContactDataDto}.
+ * Converter for {@link EditUserContactDataDto}.
  */
 @Singleton
-public class EditUserContactDataConverter implements Converter<User, UserEditContactDataDto> {
+public class EditUserContactDataConverter implements Converter<User, EditUserContactDataDto> {
 
     /**
      * DTO mapper.
@@ -38,13 +38,13 @@ public class EditUserContactDataConverter implements Converter<User, UserEditCon
     }
 
     @Override
-    public User fromDto(UserEditContactDataDto dto) {
+    public User fromDto(EditUserContactDataDto dto) {
         return mapper.map(dto, User.class);
     }
 
     @Override
-    public UserEditContactDataDto fromEntity(User entity) {
-        UserEditContactDataDto dto =  mapper.map(entity, UserEditContactDataDto.class);
+    public EditUserContactDataDto fromEntity(User entity) {
+        EditUserContactDataDto dto =  mapper.map(entity, EditUserContactDataDto.class);
         if (entity.getCountry() != null) {
             dto.setCountryId(entity.getCountry().getIso());
         }
@@ -52,7 +52,7 @@ public class EditUserContactDataConverter implements Converter<User, UserEditCon
     }
 
     @Override
-    public User update(User entity, UserEditContactDataDto dto) {
+    public User update(User entity, EditUserContactDataDto dto) {
         mapper.map(dto, entity);
         entity.setCountry(countryService.get(dto.getCountryId()));
         return entity;

@@ -6,6 +6,7 @@ import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
 import controllers.sso.admin.users.EditUserContactDataController;
 import controllers.sso.admin.users.EditUserPersonalDataController;
+import controllers.sso.admin.users.EditUserRoleController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -237,6 +238,7 @@ public class UrlBuilder {
 
     /**
      * Returns current URL.
+     *
      * @return Current URL of the application.
      */
     public String getCurrentUrl() {
@@ -255,17 +257,7 @@ public class UrlBuilder {
      * @return Relative URL to admin users section.
      */
     public String getAdminUsersUrl(Object... query) {
-        String reverseRoute = router.getReverseRoute(UsersController.class, "users");
-        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
-        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
-            builder.append("&query=");
-            builder.append(Escapers.encodePercent(query[0].toString()));
-            if (query.length > 1 && query[1] != null) {
-                builder.append("&page=");
-                builder.append(Escapers.encodePercent(query[1].toString()));
-            }
-        }
-        return builder.toString();
+        return getAdminEditUserDataUrl(UsersController.class, "users", null, query);
     }
 
     /**
@@ -273,20 +265,10 @@ public class UrlBuilder {
      * URL is relative.
      *
      * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
-     * @return Relative URL to admin users section.
+     * @return Relative URL to admin personal data section.
      */
     public String getAdminEditPersonalDataUrl(long userId, Object... query) {
-        String reverseRoute = router.getReverseRoute(EditUserPersonalDataController.class, "get", "userId", userId);
-        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
-        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
-            builder.append("&query=");
-            builder.append(Escapers.encodePercent(query[0].toString()));
-            if (query.length > 1 && query[1] != null) {
-                builder.append("&page=");
-                builder.append(Escapers.encodePercent(query[1].toString()));
-            }
-        }
-        return builder.toString();
+        return getAdminEditUserDataUrl(EditUserPersonalDataController.class, "get", userId, query);
     }
 
     /**
@@ -294,10 +276,36 @@ public class UrlBuilder {
      * URL is relative.
      *
      * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
-     * @return Relative URL to admin users section.
+     * @return Relative URL to admin edit contact data section.
      */
     public String getAdminEditContactDataUrl(long userId, Object... query) {
-        String reverseRoute = router.getReverseRoute(EditUserContactDataController.class, "get", "userId", userId);
+        return getAdminEditUserDataUrl(EditUserContactDataController.class, "get", userId, query);
+    }
+
+    /**
+     * Constructs admin URL to edit user role data.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin edit contact data section.
+     */
+    public String getAdminEditUserRoleUrl(long userId, Object... query) {
+        return getAdminEditUserDataUrl(EditUserRoleController.class, "get", userId, query);
+    }
+
+    /**
+     * Constructs admin URL to edit controllers, passing "userId" parameter to reverse route.
+     * URL is relative.
+     *
+     * @param controllerClass Edit user data controller class.
+     * @param methodName Method name.
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to one of the edit user controllers.
+     */
+    private String getAdminEditUserDataUrl(Class<?> controllerClass, String methodName, Long userId, Object... query) {
+        String reverseRoute = userId != null ?
+                router.getReverseRoute(controllerClass, methodName, "userId", userId) :
+                router.getReverseRoute(controllerClass, methodName);
         StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
         if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
             builder.append("&query=");
