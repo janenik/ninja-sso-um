@@ -6,7 +6,9 @@ import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import converters.Converter;
 import models.sso.User;
+import models.sso.UserConfirmationState;
 import models.sso.UserRole;
+import models.sso.UserSignInState;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -26,7 +28,7 @@ import javax.inject.Provider;
  * @param <C> Converter type.
  * @param <DTO> Data transfer object type.
  */
-public abstract class EditUserAbstractController<C extends Converter<User, DTO>, DTO> {
+public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO> {
 
     /**
      * User service.
@@ -74,7 +76,7 @@ public abstract class EditUserAbstractController<C extends Converter<User, DTO>,
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
      * @param properties Application properties.
      */
-    public EditUserAbstractController(
+    public EditAbstractController(
             UserService userService,
             UserEventService userEventService,
             CountryService countryService,
@@ -207,6 +209,8 @@ public abstract class EditUserAbstractController<C extends Converter<User, DTO>,
                 .render("userEntity", userEntity)
                 .render("countries", countryService.getAllSortedByNiceName())
                 .render("roles", UserRole.values())
+                .render("signInStates", UserSignInState.values())
+                .render("confirmationStates", UserConfirmationState.values())
                 .render("query", ctx.getParameter("query", ""))
                 .render("page", ctx.getParameterAs("page", int.class, 1));
     }

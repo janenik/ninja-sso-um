@@ -146,13 +146,13 @@ public class User implements Serializable {
     /**
      * Password salt.
      */
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 512)
     byte[] passwordSalt;
 
     /**
      * Password hash.
      */
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 512)
     byte[] passwordHash;
 
     /**
@@ -228,11 +228,11 @@ public class User implements Serializable {
         if (role == null) {
             role = UserRole.USER;
         }
-        if (confirmationState == null) {
-            confirmationState = UserConfirmationState.UNCONFIRMED;
-        }
         if (signInState == null) {
             signInState = UserSignInState.ENABLED;
+        }
+        if (confirmationState == null) {
+            confirmationState = UserConfirmationState.UNCONFIRMED;
         }
     }
 

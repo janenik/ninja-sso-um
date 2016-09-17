@@ -5,6 +5,8 @@
     /**<#-- Role. -->*/
     var setUpDropdown = sso.htmlHelpers.setUpDropdown;
     setUpDropdown('role');
+    setUpDropdown('signInState');
+    setUpDropdown('confirmationState');
 
     $('#editRoleForm').submit(function() {
         $('#editRoleSubmit').attr('disabled', 'disabled');

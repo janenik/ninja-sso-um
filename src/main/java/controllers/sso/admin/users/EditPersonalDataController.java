@@ -7,10 +7,9 @@ import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.UrlBuilder;
-import converters.sso.admin.users.EditUserRoleConverter;
-import dto.sso.admin.users.EditUserRoleDto;
+import converters.sso.admin.users.EditPersonalDataConverter;
+import dto.sso.admin.users.EditPersonalDataDto;
 import models.sso.User;
-import models.sso.UserRole;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -28,7 +27,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 /**
- * Edit user role controller.
+ * Edit user personal data controller.
  */
 @Singleton
 @FilterWith({
@@ -38,7 +37,8 @@ import javax.inject.Singleton;
         AuthenticationFilter.class,
         RequireAdminPrivelegesFilter.class
 })
-public class EditUserRoleController extends EditUserAbstractController<EditUserRoleConverter, EditUserRoleDto> {
+public class EditPersonalDataController extends
+        EditAbstractController<EditPersonalDataConverter, EditPersonalDataDto> {
 
     /**
      * Constructs controller.
@@ -46,17 +46,16 @@ public class EditUserRoleController extends EditUserAbstractController<EditUserR
      * @param userService User service.
      * @param countryService Country service.
      * @param userEventService User event service.
-     * @param converter Contact data converter.
      * @param urlBuilderProvider URL builder provider.
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
      * @param properties Application properties.
      */
     @Inject
-    public EditUserRoleController(
+    public EditPersonalDataController(
             UserService userService,
-            UserEventService userEventService,
             CountryService countryService,
-            EditUserRoleConverter converter,
+            UserEventService userEventService,
+            EditPersonalDataConverter converter,
             Provider<UrlBuilder> urlBuilderProvider,
             @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
             NinjaProperties properties) {
@@ -72,18 +71,18 @@ public class EditUserRoleController extends EditUserAbstractController<EditUserR
     @Transactional
     public Result post(
             @PathParam("userId") long userId,
-            @JSR303Validation EditUserRoleDto dto,
-            Validation validation,
-            Context context) {
+            @JSR303Validation EditPersonalDataDto dto,
+            Context context,
+            Validation validation) {
         return super.updateUserOrRedirectToList(userId, dto, context, validation);
     }
 
     @Override
-    protected String validate(User user, EditUserRoleDto editUserRoleDto) {
-        try {
-            UserRole.valueOf(editUserRoleDto.getRole());
-        } catch (IllegalArgumentException iae) {
-            return "role";
+    protected String validate(User user, EditPersonalDataDto dto) {
+        // Check for existing username.
+        User existingUserWithUsername = userService.getByUsername(dto.getUsername());
+        if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
+            return "usernameDuplicate";
         }
         return null;
     }
@@ -91,11 +90,11 @@ public class EditUserRoleController extends EditUserAbstractController<EditUserR
     @Override
     protected String getSuccessRedirectUrl(User user, Context context) {
         return urlBuilderProvider.get()
-                .getAdminEditUserRoleUrl(user.getId(), context.getParameter("query"), context.getParameter("page"));
+                .getAdminEditPersonalDataUrl(user.getId(), context.getParameter("query"), context.getParameter("page"));
     }
 
     @Override
     protected String getTemplate() {
-        return "views/sso/admin/users/edit-role.ftl.html";
+        return "views/sso/admin/users/edit-personal.ftl.html";
     }
 }

@@ -2,7 +2,7 @@
         _active = 'active'
         _editUser_personalClass = ''
         _editUser_contactDataClass = ''
-        _editUser_roleClass = ''
+        _editUser_accessClass = ''
         _editUser_accessLogClass = ''
         _editUser_sendEmailClass = ''
         _editUser_resetPasswordClass = ''
@@ -12,8 +12,8 @@
     <#case "contact">
     <#assign _editUser_contactDataClass = _active />
     <#break/>
-    <#case "role">
-    <#assign _editUser_roleClass = _active />
+    <#case "access">
+    <#assign _editUser_accessClass = _active />
     <#break/>
     <#case "accessLog">
     <#assign _editUser_accessLogClass = _active />
@@ -43,8 +43,8 @@
         </a>
     </li>
 
-    <li role="tab" class="${_editUser_roleClass}">
-        <a href="${contextPath}/auth/admin/user/edit-role/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
+    <li role="tab" class="${_editUser_accessClass}">
+        <a href="${contextPath}/auth/admin/user/edit-access/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
             ${i18n("adminEditUserAccess")}
         </a>

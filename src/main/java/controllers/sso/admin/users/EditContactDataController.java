@@ -7,8 +7,9 @@ import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.UrlBuilder;
-import converters.sso.admin.users.EditUserPersonalDataConverter;
-import dto.sso.admin.users.EditUserPersonalDataDto;
+import converters.sso.admin.users.EditContactDataConverter;
+import dto.sso.admin.users.EditContactDataDto;
+import models.sso.Country;
 import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
@@ -37,8 +38,8 @@ import javax.inject.Singleton;
         AuthenticationFilter.class,
         RequireAdminPrivelegesFilter.class
 })
-public class EditUserPersonalDataController extends
-        EditUserAbstractController<EditUserPersonalDataConverter, EditUserPersonalDataDto> {
+public class EditContactDataController extends
+        EditAbstractController<EditContactDataConverter, EditContactDataDto> {
 
     /**
      * Constructs controller.
@@ -46,16 +47,17 @@ public class EditUserPersonalDataController extends
      * @param userService User service.
      * @param countryService Country service.
      * @param userEventService User event service.
+     * @param converter Contact data converter.
      * @param urlBuilderProvider URL builder provider.
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
      * @param properties Application properties.
      */
     @Inject
-    public EditUserPersonalDataController(
+    public EditContactDataController(
             UserService userService,
-            CountryService countryService,
             UserEventService userEventService,
-            EditUserPersonalDataConverter converter,
+            CountryService countryService,
+            EditContactDataConverter converter,
             Provider<UrlBuilder> urlBuilderProvider,
             @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
             NinjaProperties properties) {
@@ -71,18 +73,23 @@ public class EditUserPersonalDataController extends
     @Transactional
     public Result post(
             @PathParam("userId") long userId,
-            @JSR303Validation EditUserPersonalDataDto dto,
-            Context context,
-            Validation validation) {
+            @JSR303Validation EditContactDataDto dto,
+            Validation validation,
+            Context context) {
         return super.updateUserOrRedirectToList(userId, dto, context, validation);
     }
 
     @Override
-    protected String validate(User user, EditUserPersonalDataDto dto) {
-        // Check for existing username.
-        User existingUserWithUsername = userService.getByUsername(dto.getUsername());
-        if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
-            return "usernameDuplicate";
+    protected String validate(User user, EditContactDataDto dto) {
+        // Check for existing email.
+        User existingUserWithEmail = userService.getByEmail(dto.getEmail());
+        if (existingUserWithEmail != null && !existingUserWithEmail.equals(user)) {
+            return "emailDuplicate";
+        }
+        // Fetch country.
+        Country country = countryService.get(dto.getCountryId());
+        if (country == null) {
+            return "country";
         }
         return null;
     }
@@ -90,11 +97,11 @@ public class EditUserPersonalDataController extends
     @Override
     protected String getSuccessRedirectUrl(User user, Context context) {
         return urlBuilderProvider.get()
-                .getAdminEditPersonalDataUrl(user.getId(), context.getParameter("query"), context.getParameter("page"));
+                .getAdminEditContactDataUrl(user.getId(), context.getParameter("query"), context.getParameter("page"));
     }
 
     @Override
     protected String getTemplate() {
-        return "views/sso/admin/users/edit-personal.ftl.html";
+        return "views/sso/admin/users/edit-contact.ftl.html";
     }
 }

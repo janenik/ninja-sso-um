@@ -13,7 +13,7 @@ import java.io.Serializable;
 /**
  * User edit personal data DTO.
  */
-public final class EditUserPersonalDataDto implements Serializable {
+public final class EditPersonalDataDto implements Serializable {
 
     /**
      * Username.

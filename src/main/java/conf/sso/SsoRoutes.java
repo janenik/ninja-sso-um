@@ -1,8 +1,8 @@
 package conf.sso;
 
-import controllers.sso.admin.users.EditUserContactDataController;
-import controllers.sso.admin.users.EditUserPersonalDataController;
-import controllers.sso.admin.users.EditUserRoleController;
+import controllers.sso.admin.users.EditContactDataController;
+import controllers.sso.admin.users.EditPersonalDataController;
+import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
@@ -69,18 +69,18 @@ public class SsoRoutes implements ApplicationRoutes {
         router.GET().route(subRoute + "/admin/users").with(UsersController.class, "users");
         // Edit personal data.
         router.GET().route(subRoute + "/admin/user/edit-personal/{userId: [0-9]+}")
-                .with(EditUserPersonalDataController.class, "get");
+                .with(EditPersonalDataController.class, "get");
         router.POST().route(subRoute + "/admin/user/edit-personal/{userId: [0-9]+}")
-                .with(EditUserPersonalDataController.class, "post");
+                .with(EditPersonalDataController.class, "post");
         // Edit contact data.
         router.GET().route(subRoute + "/admin/user/edit-contact/{userId: [0-9]+}")
-                .with(EditUserContactDataController.class, "get");
+                .with(EditContactDataController.class, "get");
         router.POST().route(subRoute + "/admin/user/edit-contact/{userId: [0-9]+}")
-                .with(EditUserContactDataController.class, "post");
+                .with(EditContactDataController.class, "post");
         // Edit user role.
-        router.GET().route(subRoute + "/admin/user/edit-role/{userId: [0-9]+}")
-                .with(EditUserRoleController.class, "get");
-        router.POST().route(subRoute + "/admin/user/edit-role/{userId: [0-9]+}")
-                .with(EditUserRoleController.class, "post");
+        router.GET().route(subRoute + "/admin/user/edit-access/{userId: [0-9]+}")
+                .with(EditAccessController.class, "get");
+        router.POST().route(subRoute + "/admin/user/edit-access/{userId: [0-9]+}")
+                .with(EditAccessController.class, "post");
     }
 }

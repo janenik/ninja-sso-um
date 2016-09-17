@@ -1,7 +1,7 @@
 package converters.sso.admin.users;
 
 import converters.Converter;
-import dto.sso.admin.users.EditUserContactDataDto;
+import dto.sso.admin.users.EditContactDataDto;
 import models.sso.User;
 import org.dozer.Mapper;
 import services.sso.CountryService;
@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Converter for {@link EditUserContactDataDto}.
+ * Converter for {@link EditContactDataDto}.
  */
 @Singleton
-public class EditUserContactDataConverter implements Converter<User, EditUserContactDataDto> {
+public class EditContactDataConverter implements Converter<User, EditContactDataDto> {
 
     /**
      * DTO mapper.
@@ -32,19 +32,19 @@ public class EditUserContactDataConverter implements Converter<User, EditUserCon
      * @param countryService Country service.
      */
     @Inject
-    public EditUserContactDataConverter(Mapper mapper, CountryService countryService) {
+    public EditContactDataConverter(Mapper mapper, CountryService countryService) {
         this.mapper = mapper;
         this.countryService = countryService;
     }
 
     @Override
-    public User fromDto(EditUserContactDataDto dto) {
+    public User fromDto(EditContactDataDto dto) {
         return mapper.map(dto, User.class);
     }
 
     @Override
-    public EditUserContactDataDto fromEntity(User entity) {
-        EditUserContactDataDto dto =  mapper.map(entity, EditUserContactDataDto.class);
+    public EditContactDataDto fromEntity(User entity) {
+        EditContactDataDto dto =  mapper.map(entity, EditContactDataDto.class);
         if (entity.getCountry() != null) {
             dto.setCountryId(entity.getCountry().getIso());
         }
@@ -52,7 +52,7 @@ public class EditUserContactDataConverter implements Converter<User, EditUserCon
     }
 
     @Override
-    public User update(User entity, EditUserContactDataDto dto) {
+    public User update(User entity, EditContactDataDto dto) {
         mapper.map(dto, entity);
         entity.setCountry(countryService.get(dto.getCountryId()));
         return entity;

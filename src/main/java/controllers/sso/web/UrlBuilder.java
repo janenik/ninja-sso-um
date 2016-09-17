@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
-import controllers.sso.admin.users.EditUserContactDataController;
-import controllers.sso.admin.users.EditUserPersonalDataController;
-import controllers.sso.admin.users.EditUserRoleController;
+import controllers.sso.admin.users.EditContactDataController;
+import controllers.sso.admin.users.EditPersonalDataController;
+import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -268,7 +268,7 @@ public class UrlBuilder {
      * @return Relative URL to admin personal data section.
      */
     public String getAdminEditPersonalDataUrl(long userId, Object... query) {
-        return getAdminEditUserDataUrl(EditUserPersonalDataController.class, "get", userId, query);
+        return getAdminEditUserDataUrl(EditPersonalDataController.class, "get", userId, query);
     }
 
     /**
@@ -279,7 +279,7 @@ public class UrlBuilder {
      * @return Relative URL to admin edit contact data section.
      */
     public String getAdminEditContactDataUrl(long userId, Object... query) {
-        return getAdminEditUserDataUrl(EditUserContactDataController.class, "get", userId, query);
+        return getAdminEditUserDataUrl(EditContactDataController.class, "get", userId, query);
     }
 
     /**
@@ -290,7 +290,7 @@ public class UrlBuilder {
      * @return Relative URL to admin edit contact data section.
      */
     public String getAdminEditUserRoleUrl(long userId, Object... query) {
-        return getAdminEditUserDataUrl(EditUserRoleController.class, "get", userId, query);
+        return getAdminEditUserDataUrl(EditAccessController.class, "get", userId, query);
     }
 
     /**
