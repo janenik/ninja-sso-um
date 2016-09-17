@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.inject.persist.Transactional;
-import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -60,7 +59,6 @@ import java.util.Random;
  */
 @Singleton
 @FilterWith({
-        ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
         HitsPerIpCheckFilter.class,

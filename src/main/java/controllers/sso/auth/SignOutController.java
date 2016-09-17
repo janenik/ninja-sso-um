@@ -1,6 +1,5 @@
 package controllers.sso.auth;
 
-import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.UrlBuilder;
 import ninja.Cookie;
@@ -18,7 +17,6 @@ import javax.inject.Singleton;
  */
 @Singleton
 @FilterWith({
-        ApplicationErrorHtmlFilter.class,
         LanguageFilter.class
 })
 public class SignOutController {

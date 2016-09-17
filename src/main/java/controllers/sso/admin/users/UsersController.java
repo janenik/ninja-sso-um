@@ -2,7 +2,6 @@ package controllers.sso.admin.users;
 
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
-import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -28,7 +27,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Singleton
 @FilterWith({
-        ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,

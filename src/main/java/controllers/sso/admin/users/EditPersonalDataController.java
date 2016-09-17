@@ -1,7 +1,6 @@
 package controllers.sso.admin.users;
 
 import com.google.inject.persist.Transactional;
-import controllers.sso.filters.ApplicationErrorHtmlFilter;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -31,7 +30,6 @@ import javax.inject.Singleton;
  */
 @Singleton
 @FilterWith({
-        ApplicationErrorHtmlFilter.class,
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,
