@@ -84,11 +84,6 @@ public class SignUpController {
     static final Random random = new SecureRandom();
 
     /**
-     * Hit per IP check filter.
-     */
-    final HitsPerIpCheckFilter hitsPerIpCheckFilter;
-
-    /**
      * Expirable token encryptor.
      */
     final ExpirableTokenEncryptor expirableTokenEncryptor;
@@ -182,7 +177,6 @@ public class SignUpController {
      * Constructs sign up controller.
      *
      * @param expirableTokenEncryptor Encryptor.
-     * @param hitsPerIpCheckFilter Hits per IP filter.
      * @param captchaTokenService Captcha token service.
      * @param passwordService Password service.
      * @param userService User service.
@@ -198,7 +192,6 @@ public class SignUpController {
      */
     @Inject
     public SignUpController(ExpirableTokenEncryptor expirableTokenEncryptor,
-                            HitsPerIpCheckFilter hitsPerIpCheckFilter,
                             CaptchaTokenService captchaTokenService,
                             PasswordService passwordService,
                             UserService userService,
@@ -212,7 +205,6 @@ public class SignUpController {
                             Logger logger,
                             Lang lang,
                             Messages messages) {
-        this.hitsPerIpCheckFilter = hitsPerIpCheckFilter;
         this.captchaTokenService = captchaTokenService;
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.passwordService = passwordService;
