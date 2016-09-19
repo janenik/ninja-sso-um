@@ -50,9 +50,10 @@ class SimpleFishEyeGimpyRenderer implements GimpyRenderer {
                 int relY = y - hMid;
                 double d1 = Math.sqrt(relX * relX + relY * relY);
                 if (d1 < distance) {
-                    int j2 = wMid + (int) (((fishEyeFormula(d1 / distance) * distance) / d1) * (x - wMid));
-                    int k2 = hMid + (int) (((fishEyeFormula(d1 / distance) * distance) / d1) * (y - hMid));
-                    image.setRGB(x, y, pix[j2 * height + k2]);
+                    int j2 = wMid + (int) (((fishEyeFormula(d1 / distance) * distance) / d1) * relX);
+                    int k2 = hMid + (int) (((fishEyeFormula(d1 / distance) * distance) / d1) * relY);
+                    int color = pix[j2 * height + k2];
+                    image.setRGB(x, y, color);
                 }
             }
         }

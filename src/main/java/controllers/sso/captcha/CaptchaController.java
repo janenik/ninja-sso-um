@@ -110,13 +110,13 @@ public class CaptchaController {
         Result result = new Result(Result.SC_200_OK).doNotCacheContent();
         try {
             String displaySequence = captchaTokenService.extractCaptchaText(captchaToken);
-            Captcha captcha = new Captcha.Builder(this.width, this.height).
-                    addText(() -> displaySequence).
-                    addBorder().
-                    gimp(fishEyeGimpyRenderer).
-                    addNoise(curvedLineNoiseProducer).
-                    addBackground(Math.random() > 0.5D ? background1 : background2).
-                    build();
+            Captcha captcha = new Captcha.Builder(this.width, this.height)
+                    .addText(() -> displaySequence)
+                    .addBorder()
+                    .gimp(fishEyeGimpyRenderer)
+                    .addNoise(curvedLineNoiseProducer)
+                    .addBackground(Math.random() > 0.5D ? background1 : background2)
+                    .build();
             return result.render(new CaptchaRenderable(captcha, logger));
         } catch (CaptchaTokenService.AlreadyUsedTokenException | ExpiredTokenException |
                 IllegalTokenException ex) {

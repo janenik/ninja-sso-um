@@ -1,6 +1,5 @@
 package services.sso;
 
-import com.google.common.collect.Lists;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpirableTokenEncryptorException;
 import models.sso.token.ExpirableTokenType;
@@ -12,13 +11,7 @@ import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -39,16 +32,6 @@ public class CaptchaTokenService {
     private final ExpirableTokenEncryptor encryptor;
 
     /**
-     * Dictionary.
-     */
-    private final List<String> dictionary;
-
-    /**
-     * Whether the dictionary was read.
-     */
-    private final boolean realDictionary;
-
-    /**
      * Caches used tokens for some time (to prevent subsequent usage). Use clustered cache for scalability
      * (configured in conf/application.conf).
      */
@@ -57,12 +40,22 @@ public class CaptchaTokenService {
     /**
      * Time to live for captcha token, as string, in seconds.
      */
-    private final String captchaTTLAsString;
+    private final String ttlAsString;
 
     /**
      * Time to live for captcha token, in millis.
      */
-    private final long captchaTTLInMillis;
+    private final long ttlInMillis;
+
+    /**
+     * Captcha alphabet.
+     */
+    private final String alphabet;
+
+    /**
+     * Number of characters in captcha.
+     */
+    private final long length;
 
     /**
      * Constructs captcha token service.
@@ -70,32 +63,17 @@ public class CaptchaTokenService {
      * @param cache Cache.
      * @param properties Properties.
      * @param encryptor Encryptor.
-     * @throws IOException In case of error during reading the dictionary.
      */
     @Inject
-    public CaptchaTokenService(NinjaCache cache, NinjaProperties properties, ExpirableTokenEncryptor encryptor)
-            throws IOException {
-        List<String> result = Lists.newArrayListWithCapacity(10000);
-        InputStream is = getClass().getClassLoader().
-                getResourceAsStream(properties.getOrDie("application.sso.captcha.dictionary"));
-        if (is != null) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.add(line.toUpperCase().trim());
-                }
-            }
-            realDictionary = true;
-        } else {
-            realDictionary = false;
-        }
-        this.dictionary = result;
+    public CaptchaTokenService(NinjaCache cache, NinjaProperties properties, ExpirableTokenEncryptor encryptor) {
         this.encryptor = encryptor;
         this.cache = cache;
-
-        int captchaTTLInSeconds = properties.getIntegerWithDefault("application.sso.captcha.ttl", 300);
-        this.captchaTTLAsString = captchaTTLInSeconds + "s";
-        this.captchaTTLInMillis = captchaTTLInSeconds * 1000L;
+        this.alphabet = properties.getWithDefault("application.sso.captcha.aphabet",
+                "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ"); // No 0 and O.
+        this.length = properties.getIntegerWithDefault("application.sso.captcha.length", 8);
+        int ttlInSeconds = properties.getIntegerWithDefault("application.sso.captcha.ttl", 300);
+        this.ttlAsString = ttlInSeconds + "s";
+        this.ttlInMillis = ttlInSeconds * 1000L;
     }
 
     /**
@@ -104,12 +82,11 @@ public class CaptchaTokenService {
      * @return New captcha random word.
      */
     private String nextCaptchaRandomWord() {
-        if (realDictionary) {
-            // Zero not needed.
-            String i = Integer.toString(111 + random.nextInt(889)).replace('0', '5');
-            return dictionary.get(random.nextInt(this.dictionary.size())) + i;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
         }
-        return Integer.toHexString(1000000 + random.nextInt(89999999)).toUpperCase();
+        return sb.toString();
     }
 
     /**
@@ -120,7 +97,7 @@ public class CaptchaTokenService {
      * @throws IllegalStateException In case token encryptor is not set up properly.
      */
     public String newCaptchaToken(String word) {
-        ExpirableToken token = ExpirableToken.newCaptchaToken("captcha", word, captchaTTLInMillis);
+        ExpirableToken token = ExpirableToken.newCaptchaToken("captcha", word, ttlInMillis);
         try {
             return encryptor.encrypt(token);
         } catch (ExpirableTokenEncryptorException ee) {
@@ -199,7 +176,7 @@ public class CaptchaTokenService {
      * @param token Token to invalidate.
      */
     private void invalidateToken(String token) {
-        cache.add(token, "", captchaTTLAsString);
+        cache.add(token, "", ttlAsString);
     }
 
     /**
