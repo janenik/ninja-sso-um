@@ -15,7 +15,7 @@
                     </#if>
 
                     <form id="editPersonalForm" method="POST" class="form-horizontal"
-                          action="${contextPath}/auth/admin/user/edit-personal/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                          action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
                         <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
                             <label class="control-label col-sm-3" for="firstName">${i18n("signUpFirstName")}</label>

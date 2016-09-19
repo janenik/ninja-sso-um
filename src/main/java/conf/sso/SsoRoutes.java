@@ -68,19 +68,19 @@ public class SsoRoutes implements ApplicationRoutes {
         // Users.
         router.GET().route(subRoute + "/admin/users").with(UsersController.class, "users");
         // Edit personal data.
-        router.GET().route(subRoute + "/admin/user/edit-personal/{userId: [0-9]+}")
+        router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-personal")
                 .with(EditPersonalDataController.class, "get");
-        router.POST().route(subRoute + "/admin/user/edit-personal/{userId: [0-9]+}")
+        router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-personal")
                 .with(EditPersonalDataController.class, "post");
         // Edit contact data.
-        router.GET().route(subRoute + "/admin/user/edit-contact/{userId: [0-9]+}")
+        router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-contact")
                 .with(EditContactDataController.class, "get");
-        router.POST().route(subRoute + "/admin/user/edit-contact/{userId: [0-9]+}")
+        router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-contact")
                 .with(EditContactDataController.class, "post");
         // Edit user role.
-        router.GET().route(subRoute + "/admin/user/edit-access/{userId: [0-9]+}")
+        router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-access")
                 .with(EditAccessController.class, "get");
-        router.POST().route(subRoute + "/admin/user/edit-access/{userId: [0-9]+}")
+        router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-access")
                 .with(EditAccessController.class, "post");
     }
 }

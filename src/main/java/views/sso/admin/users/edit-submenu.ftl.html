@@ -30,21 +30,21 @@
 
 <ul class="nav nav-tabs" role="tablist">
     <li class="${_editUser_personalClass}">
-        <a href="${contextPath}/auth/admin/user/edit-personal/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             ${i18n("adminEditUserPersonalData")}
         </a>
     </li>
 
     <li class="${_editUser_contactDataClass}">
-        <a href="${contextPath}/auth/admin/user/edit-contact/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
+        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-contact?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
             <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
             ${i18n("adminEditUserContactData")}
         </a>
     </li>
 
     <li role="tab" class="${_editUser_accessClass}">
-        <a href="${contextPath}/auth/admin/user/edit-access/${userEntity.getId()?url}?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
+        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-access?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
             ${i18n("adminEditUserAccess")}
         </a>

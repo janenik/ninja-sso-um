@@ -59,8 +59,14 @@
                                     <td>${user.getRole()}</td>
                                     <td>${user.getCreated().format(dateTimeFormatter)}</td>
                                     <td>
-                                        <a href="${contextPath}/auth/admin/user/edit-personal/${user.getId()?url}?lang=${lang?url}&query=${query?url}&page=${page?url}">
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}">
                                             ${i18n("adminUserEdit")}
+                                        </a>
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}">
+                                            @
+                                        </a>
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}">
+                                            A
                                         </a>
                                     </td>
                                 </tr>
