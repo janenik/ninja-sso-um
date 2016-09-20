@@ -58,15 +58,18 @@
                                     <td>${user.getLastName()}</td>
                                     <td>${user.getRole()}</td>
                                     <td>${user.getCreated().format(dateTimeFormatter)}</td>
-                                    <td>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}">
-                                            ${i18n("adminUserEdit")}
+                                    <td class="operations">
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                            title="${i18n('adminEditUserPersonalData')}">
+                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}">
-                                            @
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                           title="${i18n('adminEditUserContactData')}">
+                                            <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
                                         </a>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}">
-                                            A
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                           title="${i18n('adminEditUserAccess')}">
+                                            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                                         </a>
                                     </td>
                                 </tr>
