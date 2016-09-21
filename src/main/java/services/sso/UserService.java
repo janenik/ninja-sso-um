@@ -1,7 +1,5 @@
 package services.sso;
 
-import com.google.common.base.Strings;
-import models.sso.PaginationResult;
 import models.sso.User;
 import org.slf4j.Logger;
 
@@ -12,13 +10,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * User service.
  */
 @Singleton
-public class UserService {
+public class UserService implements Paginatable<User> {
 
     /**
      * Entity manager provider.
@@ -191,51 +188,33 @@ public class UserService {
      * @return Number of events removed.
      */
     public int removeUserEvents(User user) {
-        Query q = entityManagerProvider.get().createNamedQuery("UserEvents.removeByUser");
-        q.setParameter("userId", user.getId());
-        return q.executeUpdate();
+        return entityManagerProvider.get().createNamedQuery("UserEvent.removeByUser")
+                .setParameter("userId", user.getId())
+                .executeUpdate();
     }
 
-    /**
-     * Searches for users by given query in email, username, first name or last name.
-     *
-     * @param query Query to search for.
-     * @param currentPage Current page.
-     * @param objectsPerPage Objects per page.
-     * @return Pagination result with users for query and current page.
-     */
-    @SuppressWarnings("unchecked")
-    public PaginationResult<User> search(String query, int currentPage, int objectsPerPage) {
-        if (currentPage < 1 || objectsPerPage < 1) {
-            throw new IllegalArgumentException("Current page and objects per page must be positive.");
-        }
-        if (objectsPerPage <= 0) {
-            throw new IllegalArgumentException("Objects per page must be positive.");
-        }
-        query = Strings.nullToEmpty(query).replace('%', ' ').trim();
-        boolean all = query.isEmpty();
-        query += '%';
-        Query q;
-        long totalObjects;
-        if (all) {
-            totalObjects = ((Long) entityManagerProvider.get().createNamedQuery("User.countAll").getSingleResult());
-        } else {
-            q = entityManagerProvider.get().createNamedQuery("User.countSearch");
-            q.setParameter("q", query);
-            totalObjects = (Long) (q.getSingleResult());
-        }
-        if (totalObjects == 0) {
-            return new PaginationResult<>(objectsPerPage);
-        }
-        if (all) {
-            q = entityManagerProvider.get().createNamedQuery("User.all");
-        } else {
-            q = entityManagerProvider.get().createNamedQuery("User.search");
-            q.setParameter("q", query);
-        }
-        q.setFirstResult((currentPage - 1) * objectsPerPage);
-        q.setMaxResults(objectsPerPage);
-        List<User> users = (List<User>) q.getResultList();
-        return new PaginationResult<>(users, totalObjects, currentPage, objectsPerPage);
+    @Override
+    public String getEntityCountAllQueryName() {
+        return "User.countAll";
+    }
+
+    @Override
+    public String getEntityAllQueryName() {
+        return "User.all";
+    }
+
+    @Override
+    public String getEntityCountSearchQueryName() {
+        return "User.countSearch";
+    }
+
+    @Override
+    public String getEntitySearchQueryName() {
+        return "User.search";
+    }
+
+    @Override
+    public Provider<EntityManager> getEntityManagerProvider() {
+        return entityManagerProvider;
     }
 }

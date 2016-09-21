@@ -2,6 +2,7 @@ package services.sso;
 
 import com.google.common.base.Strings;
 import com.google.common.io.BaseEncoding;
+import models.sso.PaginationResult;
 import models.sso.User;
 import models.sso.UserEvent;
 import models.sso.UserEventType;
@@ -12,6 +13,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ import java.util.Map;
  * Service for user's events.
  */
 @Singleton
-public class UserEventService {
+public class UserEventService implements Paginatable<UserEvent> {
 
     /**
      * Internal charset.
@@ -63,7 +65,7 @@ public class UserEventService {
      * @return Created user event with {@link UserEventType#SIGN_UP}.
      */
     public UserEvent onUserSignUp(User user, String ip, Map<String, ?> data) {
-        UserEvent userEvent = newUserEvent(user, UserEventType.SIGN_UP, ip, data);
+        UserEvent userEvent = newEvent(user, UserEventType.SIGN_UP, ip, data);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -83,7 +85,7 @@ public class UserEventService {
         Map<String, Object> dataToSave = new HashMap<>(data);
         dataToSave.put("password.old.salt", baseEncoding.encode(oldSalt));
         dataToSave.put("password.old.hash", baseEncoding.encode(oldHash));
-        UserEvent userEvent = newUserEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
+        UserEvent userEvent = newEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -97,7 +99,7 @@ public class UserEventService {
      * @return User event with {@link UserEventType#SIGN_IN}.
      */
     public UserEvent onSignIn(User user, String ip, Map<String, ?> data) {
-        UserEvent userEvent = newUserEvent(user, UserEventType.SIGN_IN, ip, data);
+        UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, data);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -119,7 +121,7 @@ public class UserEventService {
         } else {
             dataToSave = (Map<String, Object>) data;
         }
-        UserEvent event = newUserEvent(source, UserEventType.ACCESS, ip, dataToSave);
+        UserEvent event = newEvent(source, UserEventType.ACCESS, ip, dataToSave);
         entityManagerProvider.get().persist(event);
         return event;
     }
@@ -135,7 +137,7 @@ public class UserEventService {
      * @return User event with {@link UserEventType#ACCESS}.
      */
     public UserEvent onUserDataAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
-        UserEvent event = newUserEvent(source, UserEventType.ACCESS, ip, data);
+        UserEvent event = newEvent(source, UserEventType.ACCESS, ip, data);
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
@@ -169,11 +171,63 @@ public class UserEventService {
         dataToSave.put("user.old.role", target.getRole().toString());
         dataToSave.put("user.old.confirmationState", target.getConfirmationState().toString());
 
-        UserEvent event = newUserEvent(source, UserEventType.UPDATE, ip, dataToSave);
+        UserEvent event = newEvent(source, UserEventType.UPDATE, ip, dataToSave);
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
         return event;
+    }
+
+    /**
+     * Searches for users by given query in email, username, first name or last name.
+     *
+     * @param owner Owner of the event (a user who produced it).
+     * @param query Search query.
+     * @param currentPage Current page.
+     * @param objectsPerPage Objects per page.
+     * @return Pagination result with events for user current page.
+     */
+    public PaginationResult<UserEvent> searchByUser(User owner, String query, int currentPage, int objectsPerPage) {
+        return search(query, Collections.singletonMap("userId", owner.getId()), currentPage, objectsPerPage);
+    }
+
+    @Override
+    public PaginationResult<UserEvent> search(String query, int currentPage, int entitiesPerPage) {
+        throw new UnsupportedOperationException("Search for events without user scope is not implemented.");
+    }
+
+    @Override
+    public PaginationResult<UserEvent> search(String query, Map<String, Object> additionalParameters,
+                                              int currentPage, int entitiesPerPage) {
+        if (!additionalParameters.containsKey("userId")) {
+            throw new UnsupportedOperationException("Search for events without user scope is not implemented.");
+        }
+        return Paginatable.super.search(query, additionalParameters, currentPage, entitiesPerPage);
+    }
+
+    @Override
+    public String getEntityCountAllQueryName() {
+        return "UserEvent.countAllByUser";
+    }
+
+    @Override
+    public String getEntityAllQueryName() {
+        return "UserEvent.allByUser";
+    }
+
+    @Override
+    public String getEntityCountSearchQueryName() {
+        return "UserEvent.searchByUser";
+    }
+
+    @Override
+    public String getEntitySearchQueryName() {
+        return "UserEvent.countSearchByUser";
+    }
+
+    @Override
+    public Provider<EntityManager> getEntityManagerProvider() {
+        return entityManagerProvider;
     }
 
     /**
@@ -185,7 +239,7 @@ public class UserEventService {
      * @param data Additional data to save.
      * @return User event to save.
      */
-    private static UserEvent newUserEvent(User user, UserEventType eventType, String ip, Map<String, ?> data) {
+    private static UserEvent newEvent(User user, UserEventType eventType, String ip, Map<String, ?> data) {
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
         userEvent.setType(eventType);

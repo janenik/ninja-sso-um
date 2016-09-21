@@ -38,17 +38,19 @@ import java.util.Objects;
         @NamedQuery(name = "User.getByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
         @NamedQuery(name = "User.getByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
+
         @NamedQuery(name = "User.search", query = "SELECT u FROM User u WHERE " +
-                "u.username LIKE :q OR " +
-                "u.email LIKE :q OR " +
-                "u.firstName LIKE :q OR " +
-                "u.lastName LIKE :q " +
+                "u.username LIKE :query OR " +
+                "u.email LIKE :query OR " +
+                "u.firstName LIKE :query OR " +
+                "u.lastName LIKE :query " +
                 "ORDER BY u.lastName, u.firstName"),
         @NamedQuery(name = "User.countSearch", query = "SELECT COUNT(*) FROM User u WHERE " +
-                "u.username LIKE :q OR " +
-                "u.email LIKE :q OR " +
-                "u.firstName LIKE :q OR " +
-                "u.lastName LIKE :q"),
+                "u.username LIKE :query OR " +
+                "u.email LIKE :query OR " +
+                "u.firstName LIKE :query OR " +
+                "u.lastName LIKE :query"),
+
         @NamedQuery(name = "User.all", query = "SELECT u FROM User u ORDER BY u.lastName, u.firstName"),
         @NamedQuery(name = "User.countAll", query = "SELECT COUNT(*) FROM User u")
 })

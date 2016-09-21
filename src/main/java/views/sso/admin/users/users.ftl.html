@@ -59,7 +59,7 @@
                                     <td>${user.getRole()}</td>
                                     <td>${user.getCreated().format(dateTimeFormatter)}</td>
                                     <td class="operations">
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&page=${page?url}"
                                             title="${i18n('adminEditUserPersonalData')}">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
@@ -84,7 +84,7 @@
                                     <#if !item.isPage()>class="disabled"</#if>
                                     >
                                     <#if item.isPage()>
-                                        <a href="${contextPath}/auth/admin/users?page=${item.getPage()?url}<#if query?has_content>&query=${query?url}</#if>"
+                                        <a href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;page=${item.getPage()?url}<#if query?has_content>&amp;query=${query?url}</#if>"
                                            aria-label="${item.toString()}">
                                             ${item.toString()}
                                         </a>

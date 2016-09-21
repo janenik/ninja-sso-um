@@ -27,12 +27,27 @@ import java.time.ZonedDateTime;
         @Index(name = "userTypeTime_idx", columnList = "user_id,type,time")
 })
 @NamedQueries({
-        @NamedQuery(name = "UserEvents.getByUser",
+        @NamedQuery(name = "UserEvent.allByUser",
                 query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId ORDER BY ue.time DESC"),
-        @NamedQuery(name = "UserEvents.getByUserAndEventType",
-                query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId AND ue.type = :eventType "
-                        + "ORDER BY ue.time DESC"),
-        @NamedQuery(name = "UserEvents.removeByUser",
+        @NamedQuery(name = "UserEvent.countAllByUser",
+                query = "SELECT COUNT(*) FROM UserEvent ue WHERE ue.user.id = :userId"),
+
+        @NamedQuery(name = "UserEvent.searchByUser",
+                query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId AND ( " +
+                        "ue.type = :query " +
+                        "OR ue.ip LIKE :query " +
+                        "OR ue.url LIKE :query " +
+                        "OR ue.data LIKE :query " +
+                        ") ORDER BY ue.time DESC"),
+        @NamedQuery(name = "UserEvent.countSearchByUser",
+                query = "SELECT COUNT(*) FROM UserEvent ue WHERE ue.user.id = :userId AND ( " +
+                        "ue.type = :query " +
+                        "OR ue.ip LIKE :query " +
+                        "OR ue.url LIKE :query " +
+                        "OR ue.data LIKE :query " +
+                        ")"),
+
+        @NamedQuery(name = "UserEvent.removeByUser",
                 query = "DELETE FROM UserEvent ue WHERE ue.user.id = :userId")
 })
 public class UserEvent implements Serializable {
@@ -87,7 +102,6 @@ public class UserEvent implements Serializable {
     @Column(nullable = true, length = 65536)
     byte[] data;
 
-
     /**
      * Before persist.
      */
@@ -126,21 +140,21 @@ public class UserEvent implements Serializable {
     }
 
     /**
-     * Returns event data as UTF-8 string.
-     *
-     * @return Event data as UTF-8 string.
-     */
-    public String getDataAsUtf8String() {
-        return new String(getData(), StandardCharsets.UTF_8);
-    }
-
-    /**
      * Sets event data bytes.
      *
      * @param data Event data bytes.
      */
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    /**
+     * Returns event data as UTF-8 string.
+     *
+     * @return Event data as UTF-8 string.
+     */
+    public String getDataAsUtf8String() {
+        return new String(getData(), StandardCharsets.UTF_8);
     }
 
     /**
