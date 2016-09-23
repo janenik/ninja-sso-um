@@ -1,6 +1,7 @@
 package services.sso;
 
-import com.google.common.base.Strings;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 import models.sso.PaginationResult;
 import models.sso.User;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +24,9 @@ import java.util.Map;
 public class UserEventService implements Paginatable<UserEvent> {
 
     /**
-     * Internal charset.
+     * Namespace for event data payload.
      */
-    static final Charset UTF8 = Charset.forName("UTF-8");
-
-    /**
-     * Logger.
-     */
-    final Logger logger;
+    private static String EVENT_DATA_NAMESPACE = "event.data";
 
     /**
      * Entity manager provider.
@@ -44,16 +39,27 @@ public class UserEventService implements Paginatable<UserEvent> {
     final BaseEncoding baseEncoding;
 
     /**
+     * Json serializer.
+     */
+    final ObjectMapper objectMapper;
+
+    /**
+     * Logger.
+     */
+    final Logger logger;
+
+    /**
      * Constructs user event service.
      *
      * @param entityManagerProvider Entity manager provider.
      * @param logger Logger.
      */
     @Inject
-    public UserEventService(Provider<EntityManager> entityManagerProvider, Logger logger) {
+    public UserEventService(Provider<EntityManager> entityManagerProvider, ObjectMapper objectMapper, Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
-        this.logger = logger;
+        this.objectMapper = objectMapper;
         this.baseEncoding = BaseEncoding.base64Url().omitPadding();
+        this.logger = logger;
     }
 
     /**
@@ -65,7 +71,26 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return Created user event with {@link UserEventType#SIGN_UP}.
      */
     public UserEvent onUserSignUp(User user, String ip, Map<String, ?> data) {
-        UserEvent userEvent = newEvent(user, UserEventType.SIGN_UP, ip, data);
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.SIGN_UP, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
+    }
+
+
+    /**
+     * Remembers user sign in time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#SIGN_IN}.
+     */
+    public UserEvent onSignIn(User user, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, dataToSave);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -82,24 +107,11 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return Created user event with {@link UserEventType#PASSWORD_CHANGE}.
      */
     public UserEvent onUserPasswordUpdate(User user, byte[] oldSalt, byte[] oldHash, String ip, Map<String, ?> data) {
-        Map<String, Object> dataToSave = new HashMap<>(data);
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("password.old.salt", baseEncoding.encode(oldSalt));
         dataToSave.put("password.old.hash", baseEncoding.encode(oldHash));
         UserEvent userEvent = newEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
-        entityManagerProvider.get().persist(userEvent);
-        return userEvent;
-    }
-
-    /**
-     * Remembers user sign in time and remote IP as a new event.
-     *
-     * @param user User.
-     * @param ip Remote IP.
-     * @param data Additional data for event.
-     * @return User event with {@link UserEventType#SIGN_IN}.
-     */
-    public UserEvent onSignIn(User user, String ip, Map<String, ?> data) {
-        UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, data);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -114,13 +126,9 @@ public class UserEventService implements Paginatable<UserEvent> {
      */
     @SuppressWarnings("unchecked")
     public UserEvent onDataAccess(User source, String query, String ip, Map<String, ?> data) {
-        Map<String, Object> dataToSave;
-        if (!Strings.isNullOrEmpty(query)) {
-            dataToSave = new HashMap<>(data);
-            dataToSave.put("users.search.query", query);
-        } else {
-            dataToSave = (Map<String, Object>) data;
-        }
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        dataToSave.put("users.search.query", String.valueOf(query));
         UserEvent event = newEvent(source, UserEventType.ACCESS, ip, dataToSave);
         entityManagerProvider.get().persist(event);
         return event;
@@ -137,7 +145,9 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return User event with {@link UserEventType#ACCESS}.
      */
     public UserEvent onUserDataAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
-        UserEvent event = newEvent(source, UserEventType.ACCESS, ip, data);
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent event = newEvent(source, UserEventType.ACCESS, ip, dataToSave);
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
@@ -155,7 +165,8 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return User event with {@link UserEventType#UPDATE}.
      */
     public UserEvent onUserDataUpdate(User source, User target, String appUrl, String ip, Map<String, ?> data) {
-        Map<String, Object> dataToSave = new HashMap<>(data);
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put("event.payload", data);
         dataToSave.put("user.old.username", target.getUsername());
 
         dataToSave.put("user.old.email", target.getEmail());
@@ -239,13 +250,18 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @param data Additional data to save.
      * @return User event to save.
      */
-    private static UserEvent newEvent(User user, UserEventType eventType, String ip, Map<String, ?> data) {
+    private UserEvent newEvent(User user, UserEventType eventType, String ip, Map<String, ?> data) {
         UserEvent userEvent = new UserEvent();
         userEvent.setUser(user);
         userEvent.setType(eventType);
         userEvent.setIp(ip);
         if (data != null) {
-            userEvent.setData(data.toString().getBytes(UTF8));
+            try {
+                userEvent.setData(objectMapper.writeValueAsBytes(data));
+            } catch (JsonProcessingException jpe) {
+                logger.warn(
+                        "Unexpected error while generating JSON from Map. Event will be saved without payload.", jpe);
+            }
         }
         return userEvent;
     }
