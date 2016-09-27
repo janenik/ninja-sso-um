@@ -16,6 +16,7 @@ import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,5 +138,18 @@ public class SsoModule extends AbstractModule {
             logger.error("Error while parsing " + property + ": " + policy, e);
             return AppendAuthTokenPolicy.URL_PARAM;
         }
+    }
+
+    /**
+     * Provides default date/time formatted for application.
+     *
+     * @param properties Application properties.
+     * @return Date-time formatter.
+     */
+    @Provides
+    @Singleton
+    DateTimeFormatter provideDateTimeFormatter(NinjaProperties properties) {
+        String format = properties.getOrDie("application.sso.admin.dateTimeFormat");
+        return DateTimeFormatter.ofPattern(format);
     }
 }

@@ -7,116 +7,92 @@
             <div class="panel panel-default">
                 <div class="panel-body">
 
-                    <#assign editMode = "access" />
+                    <#assign editMode = "accessLog" />
                     <#include 'edit-submenu.ftl.html' />
 
-                    <#if errors.hasBeanViolations()>
-                        <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
-                    </#if>
 
-                    <form id="editRoleForm" method="POST" class="form-horizontal"
-                          action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-access?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
-
-                        <div class="form-group <#if errors.hasBeanViolation('role')>has-error</#if>">
-                            <label class="control-label col-sm-3" for="roleButton">${i18n("adminUserRole")}</label>
-                            <div class="dropdown col-sm-9">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="roleButton"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span id="roleTitle">${i18n("adminUserRole")}</span>
-                                    <span class="caret"></span>
-                                </button>
-                                <#list roles>
-                                    <ul class="dropdown-menu" aria-labelledby="role" id="roleDropdown">
-                                        <#items as role>
-                                            <li rel="${role}"><a href="#">${i18n("adminUserRole_" + role)}</a></li>
-                                        </#items>
-                                    </ul>
-                                </#list>
-                                <input type="hidden" name="role" id="role"
-                                       value="${(user.getRole())!}"/>
-                            </div>
-                            <#if errors.hasBeanViolation('role')>
-                                <p class="clearfix help-block ssoFieldErrorDescription">
-                                    ${i18n("adminUserRoleDescription")}
-                                </p>
-                            </#if>
+                    <form class="form-inline" method="get"
+                          action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log">
+                        <div class="form-group">
+                            <label for="eventsQuery">${i18n("commonQuery")}</label>
+                            <input type="text" name="eventsQuery" id="eventsQuery"
+                                   value="${eventsQuery}"
+                                   placeholder="${i18n('commonQueryPlaceholder')}"
+                                   class="form-control"/>
+                            <input type="hidden" name="lang" value="${lang}"/>
+                            <input type="hidden" name="query" value="${query}"/>
+                            <input type="hidden" name="page" value="${page}"/>
                         </div>
+                        <button type="submit" class="btn btn-primary">${i18n("commonSearch")}</button>
+                        <#if eventsQuery?has_content>
+                            <button type="submit" class="btn btn-default" onclick="$('#eventsQuery').val('');">
+                                ${i18n('commonReset')}
+                            </button>
+                        </#if>
 
-                        <div class="form-group <#if errors.hasBeanViolation('signInState')>has-error</#if>">
-                            <label class="control-label col-sm-3" for="signInStateButton">
-                                ${i18n("adminUserSignInState")}
-                            </label>
-                            <div class="dropdown col-sm-9">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="signInStateButton"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span id="signInStateTitle">${i18n("adminUserSignInState")}</span>
-                                    <span class="caret"></span>
-                                </button>
-                                <#list signInStates>
-                                    <ul class="dropdown-menu" aria-labelledby="role" id="signInStateDropdown">
-                                        <#items as state>
-                                            <li rel="${state}">
-                                                <a href="#">${i18n("adminUserSignInState_" + state)}</a>
-                                            </li>
-                                        </#items>
-                                    </ul>
-                                </#list>
-                                <input type="hidden" name="signInState" id="signInState"
-                                       value="${(user.getSignInState())!}"/>
-                            </div>
-                            <#if errors.hasBeanViolation('signInState')>
-                                <p class="clearfix help-block ssoFieldErrorDescription">
-                                    ${i18n("adminSignInStateDescription")}
-                                </p>
-                            </#if>
-                        </div>
-
-                        <div class="form-group <#if errors.hasBeanViolation('confirmationState')>has-error</#if>">
-                            <label class="control-label col-sm-3" for="confirmationStateButton">
-                                ${i18n("adminUserConfirmationState")}
-                            </label>
-                            <div class="dropdown col-sm-9">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="confirmationStateButton"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span id="confirmationStateTitle">${i18n("adminUserConfirmationState")}</span>
-                                    <span class="caret"></span>
-                                </button>
-                                <#list confirmationStates>
-                                    <ul class="dropdown-menu" aria-labelledby="role" id="confirmationStateDropdown">
-                                        <#items as state>
-                                            <li rel="${state}">
-                                                <a href="#">${i18n("adminUserConfirmationState_" +state)}</a>
-                                            </li>
-                                        </#items>
-                                    </ul>
-                                </#list>
-                                <input type="hidden" name="confirmationState" id="confirmationState"
-                                       value="${(user.getConfirmationState())!}"/>
-                            </div>
-                            <#if errors.hasBeanViolation('confirmationState')>
-                                <p class="clearfix help-block ssoFieldErrorDescription">
-                                    ${i18n("adminConfirmationStateDescription")}
-                                </p>
-                            </#if>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="editRoleSubmit">
-                            ${i18n("commonSave")}
-                        </button>
                         <a class="btn btn-danger"
                            href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
-                            ${i18n("commonCancel")}
+                            ${i18n("adminUsers")}
                         </a>
-
-                        <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
                     </form>
+
+                    <br>
+
+                    <#if results.hasObjects()>
+                        <table class="table table-bordered table-striped table-hover" id="itemsList">
+                            <tr>
+                                <th>${i18n("adminUsersEventId")}</th>
+                                <th>${i18n("adminUsersEventType")}</th>
+                                <th>${i18n("adminUsersEventTarget")}</th>
+                                <!--<th>${i18n("adminUsersEventURL")}</th>-->
+                                <th title="UTC">${i18n("adminUsersEventTime")}</th>
+                            </tr>
+                            <#list results.getObjects() as userEvent>
+                                <tr class="<#if userEvent.getType() == 'ACCESS' || userEvent.getType() == 'EVENTS_ACCESS'>warning</#if>">
+                                    <td>${userEvent.getId()}</td>
+                                    <td>${userEvent.getType()}</td>
+                                    <td><#if userEvent.getUser()??>${userEvent.getUser().getUsername()}</#if></td>
+                                    <!--<td><#if userEvent.getUrl()??>${userEvent.getUrl()}</#if></td>-->
+                                    <td>${userEvent.getTime().format(dateTimeFormatter)}</td>
+                                </tr>
+                            </#list>
+                        </table>
+
+                        <#assign pagedBaseUrl>${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}</#assign>
+                        <nav>
+                            <ul class="pagination">
+                                <#list results.getItems() as item>
+                                    <li
+                                    <#if item.isPage() && item.getPage() == eventsPage>class="active"</#if>
+                                    <#if !item.isPage()>class="disabled"</#if>
+                                    >
+                                    <#if item.isPage()>
+                                        <a href="${pagedBaseUrl}&amp;eventsQuery=${eventsQuery?url}&amp;eventsPage=${item.getPage()?url}"
+                                           aria-label="${item.toString()}">
+                                            ${item.toString()}
+                                        </a>
+                                        <#else>
+                                            <a href="#" class="disabled" aria-hidden="true"
+                                               onclick="return false;">...</a>
+                                    </#if>
+                                    </li>
+                                </#list>
+                            </ul>
+                        </nav>
+
+                        <span>
+                            <b>${i18n("commonTotal")}:</b> ${results.getTotalObjects()}
+                        </span>
+
+                        <#else>
+                            <div class="alert alert-warning">
+                                ${i18n("commonNoResults")}
+                            </div>
+                    </#if>
+
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        <#include "/assets/js/sso/edit-access.js" />
-    </script>
 
 </@layout.adminLayout>

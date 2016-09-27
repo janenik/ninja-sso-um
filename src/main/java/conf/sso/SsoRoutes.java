@@ -4,6 +4,7 @@ import controllers.sso.admin.users.EditContactDataController;
 import controllers.sso.admin.users.EditPersonalDataController;
 import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.UsersController;
+import controllers.sso.admin.users.ViewAccessLogController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -82,5 +83,8 @@ public class SsoRoutes implements ApplicationRoutes {
                 .with(EditAccessController.class, "get");
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-access")
                 .with(EditAccessController.class, "post");
+        // View access log.
+        router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/access-log")
+                .with(ViewAccessLogController.class, "get");
     }
 }

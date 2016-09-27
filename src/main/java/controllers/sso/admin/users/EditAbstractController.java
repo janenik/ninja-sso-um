@@ -86,8 +86,8 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
             NinjaProperties properties) {
         this.userService = userService;
         this.userEventService = userEventService;
-        this.urlBuilderProvider = urlBuilderProvider;
         this.countryService = countryService;
+        this.urlBuilderProvider = urlBuilderProvider;
         this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
         this.properties = properties;
         this.converter = converter;

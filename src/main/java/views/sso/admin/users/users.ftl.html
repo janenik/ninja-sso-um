@@ -16,17 +16,19 @@
 
                     <form class="form-inline" method="get" action="${contextPath}/auth/admin/users">
                         <div class="form-group">
-                            <label for="query">${i18n("adminUsersQuery")}</label>
+                            <label for="query">${i18n("commonQuery")}</label>
                             <input type="text" name="query" id="query"
                                    value="${query}"
-                                   placeholder="${i18n('adminUsersPlaceholder')}"
+                                   placeholder="${i18n('commonQueryPlaceholder')}"
                                    class="form-control"/>
                             <input type="hidden" name="lang" value="${lang}"/>
                         </div>
-                        <button type="submit" class="btn btn-primary">${i18n("adminUsersSearch")}</button>
-                        <button type="submit" class="btn btn-default" onclick="$('#query').val('');">
-                            ${i18n('adminUsersReset')}
-                        </button>
+                        <button type="submit" class="btn btn-primary">${i18n("commonSearch")}</button>
+                        <#if query?has_content>
+                            <button type="submit" class="btn btn-default" onclick="$('#query').val('');">
+                                ${i18n('commonReset')}
+                            </button>
+                        </#if>
                     </form>
 
                     <br>
@@ -50,7 +52,7 @@
                                 <th>${i18n("adminUsersOperations")}</th>
                             </tr>
                             <#list results.getObjects() as user>
-                                <tr <#if user.getRole() == 'ADMIN'>class="warning"</#if>>
+                                <tr class="<#if user.getRole() == 'ADMIN'>warning</#if>">
                                     <td>${user.getId()}</td>
                                     <td>${user.getUsername()}</td>
                                     <td>${user.getEmail()}</td>
@@ -60,7 +62,7 @@
                                     <td>${user.getCreated().format(dateTimeFormatter)}</td>
                                     <td class="operations">
                                         <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&page=${page?url}"
-                                            title="${i18n('adminEditUserPersonalData')}">
+                                           title="${i18n('adminEditUserPersonalData')}">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
                                         <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}"
@@ -71,11 +73,16 @@
                                            title="${i18n('adminEditUserAccess')}">
                                             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                                         </a>
+                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}"
+                                            title="${i18n('adminEditUserAccessLog')}">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                        </a>
                                     </td>
                                 </tr>
                             </#list>
                         </table>
 
+                        <#assign pagedBaseUrl>${contextPath}/auth/admin/users?lang=${lang?url}</#assign>
                         <nav>
                             <ul class="pagination">
                                 <#list results.getItems() as item>
@@ -84,7 +91,7 @@
                                     <#if !item.isPage()>class="disabled"</#if>
                                     >
                                     <#if item.isPage()>
-                                        <a href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;page=${item.getPage()?url}<#if query?has_content>&amp;query=${query?url}</#if>"
+                                        <a href="${pagedBaseUrl}&amp;page=${item.getPage()?url}<#if query?has_content>&amp;query=${query?url}</#if>"
                                            aria-label="${item.toString()}">
                                             ${item.toString()}
                                         </a>
@@ -98,12 +105,12 @@
                         </nav>
 
                         <span>
-                            <b>${i18n("adminUsersTotal")}:</b> ${results.getTotalObjects()}
+                            <b>${i18n("commonTotal")}:</b> ${results.getTotalObjects()}
                         </span>
 
                         <#else>
                             <div class="alert alert-warning">
-                                ${i18n("adminUsersNoResults")}
+                                ${i18n("commonNoResults")}
                             </div>
                     </#if>
                 </div>

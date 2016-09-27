@@ -35,12 +35,6 @@ import java.time.format.DateTimeFormatter;
 public class UsersController {
 
     /**
-     * Date formatter for list.
-     */
-
-    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    /**
      * Template to render users' list page.
      */
     static final String TEMPLATE = "views/sso/admin/users/users.ftl.html";
@@ -56,9 +50,14 @@ public class UsersController {
     final UserEventService userEventService;
 
     /**
+     * Date formatter for list of users.
+     */
+    final DateTimeFormatter dateTimeFormatter;
+
+    /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Application properties.
@@ -69,36 +68,39 @@ public class UsersController {
      * Constructs controller.
      *
      * @param userService User service.
-     * @param htmlWithSecureHeadersProvider HTML with secure headers provider.
+     * @param htmlAdminSecureHeadersProvider HTML with secure headers provider.
      * @param properties Application properties.
      */
     @Inject
-    public UsersController(UserService userService,
-                           UserEventService userEventService,
-                           @Named("htmlAdminSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
-                           NinjaProperties properties) {
+    public UsersController(
+            UserService userService,
+            UserEventService userEventService,
+            @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
+            DateTimeFormatter dateTimeFormatter,
+            NinjaProperties properties) {
         this.userService = userService;
         this.userEventService = userEventService;
-        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
+        this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
         this.properties = properties;
+        this.dateTimeFormatter = dateTimeFormatter;
     }
 
     @Transactional
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
+        int page = Math.max(1, context.getParameterAsInteger("page", 1));
+        int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         // Log access.
         this.logAccess(query, context);
         // Search.
-        int page = Math.max(1, context.getParameterAsInteger("page", 1));
-        int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
-        return htmlWithSecureHeadersProvider.get()
+        return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
                 .render("config", properties)
                 .render("query", query)
                 .render("page", page)
-                .render("dateTimeFormatter", formatter)
+                .render("dateTimeFormatter", dateTimeFormatter)
                 .render("results", results);
     }
 

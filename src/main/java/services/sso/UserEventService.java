@@ -228,12 +228,12 @@ public class UserEventService implements Paginatable<UserEvent> {
 
     @Override
     public String getEntityCountSearchQueryName() {
-        return "UserEvent.searchByUser";
+        return "UserEvent.countSearchByUser";
     }
 
     @Override
     public String getEntitySearchQueryName() {
-        return "UserEvent.countSearchByUser";
+        return "UserEvent.searchByUser";
     }
 
     @Override

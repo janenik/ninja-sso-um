@@ -34,17 +34,17 @@ import java.time.ZonedDateTime;
 
         @NamedQuery(name = "UserEvent.searchByUser",
                 query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId AND ( " +
-                        "ue.type = :query " +
+                        "cast(ue.type as string) LIKE :query " +
                         "OR ue.ip LIKE :query " +
                         "OR ue.url LIKE :query " +
-                        "OR ue.data LIKE :query " +
+                        "OR cast(ue.data as string) LIKE :query " +
                         ") ORDER BY ue.time DESC"),
         @NamedQuery(name = "UserEvent.countSearchByUser",
                 query = "SELECT COUNT(*) FROM UserEvent ue WHERE ue.user.id = :userId AND ( " +
-                        "ue.type = :query " +
+                        "cast(ue.type as string) LIKE :query " +
                         "OR ue.ip LIKE :query " +
                         "OR ue.url LIKE :query " +
-                        "OR ue.data LIKE :query " +
+                        "OR cast(ue.data as string) LIKE :query " +
                         ")"),
 
         @NamedQuery(name = "UserEvent.removeByUser",

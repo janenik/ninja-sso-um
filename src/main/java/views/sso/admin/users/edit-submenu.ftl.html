@@ -51,9 +51,10 @@
     </li>
 
     <li class="${_editUser_accessLogClass}">
-        <a href="#">
+        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-            ${i18n("adminEditUserAccessLog")}</a>
+            ${i18n("adminEditUserAccessLog")}
+        </a>
     </li>
 
     <li role="tab" class="${_editUser_resetPasswordClass}">
