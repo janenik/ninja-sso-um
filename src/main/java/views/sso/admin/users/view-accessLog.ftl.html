@@ -1,5 +1,5 @@
 <#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
-    <@layout.adminLayout i18n("adminUsersEdit") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
+    <@layout.adminLayout i18n("adminEditUserAccessLog") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
 
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -44,21 +44,27 @@
                                 <th>${i18n("adminUsersEventId")}</th>
                                 <th>${i18n("adminUsersEventType")}</th>
                                 <th>${i18n("adminUsersEventTarget")}</th>
-                                <!--<th>${i18n("adminUsersEventURL")}</th>-->
+                                <th>${i18n("adminUsersEventIP")}</th>
                                 <th title="UTC">${i18n("adminUsersEventTime")}</th>
                             </tr>
                             <#list results.getObjects() as userEvent>
-                                <tr class="<#if userEvent.getType() == 'ACCESS' || userEvent.getType() == 'EVENTS_ACCESS'>warning</#if>">
+                                <tr class="<#if userEvent.getType() != 'ACCESS' && userEvent.getType() != 'EVENTS_ACCESS'>warning</#if>">
                                     <td>${userEvent.getId()}</td>
                                     <td>${userEvent.getType()}</td>
-                                    <td><#if userEvent.getUser()??>${userEvent.getUser().getUsername()}</#if></td>
-                                    <!--<td><#if userEvent.getUrl()??>${userEvent.getUrl()}</#if></td>-->
+                                    <td>
+                                        <#if userEvent.getUser()??>
+                                            ${userEvent.getUser().getId()} / ${userEvent.getUser().getUsername()}
+                                        </#if>
+                                    </td>
+                                    <td>${userEvent.getIp()}</td>
                                     <td>${userEvent.getTime().format(dateTimeFormatter)}</td>
                                 </tr>
                             </#list>
                         </table>
 
-                        <#assign pagedBaseUrl>${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}</#assign>
+                        <#assign pagedBaseUrl>
+                            ${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}
+                        </#assign>
                         <nav>
                             <ul class="pagination">
                                 <#list results.getItems() as item>
