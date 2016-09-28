@@ -142,16 +142,18 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @param appUrl Current application URL.
      * @param ip IP address of the source user.
      * @param data Additional data for event.
-     * @return User event with {@link UserEventType#ACCESS}.
      */
-    public UserEvent onUserDataAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
+    public void onUserDataAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
+        // Don't log own access events assuming that owner knows own data.
+        if (source.equals(target)) {
+            return;
+        }
         Map<String, Object> dataToSave = new HashMap<>();
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         UserEvent event = newEvent(source, UserEventType.ACCESS, ip, dataToSave);
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
-        return event;
     }
 
     /**
