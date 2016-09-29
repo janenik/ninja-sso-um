@@ -65,6 +65,11 @@ public class UsersController {
     final NinjaProperties properties;
 
     /**
+     * Objects per page.
+     */
+    final int objectsPerPage;
+
+    /**
      * Constructs controller.
      *
      * @param userService User service.
@@ -83,15 +88,15 @@ public class UsersController {
         this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
         this.properties = properties;
         this.dateTimeFormatter = dateTimeFormatter;
+        this.objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
     }
 
     @Transactional
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
-        int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
         // Log access.
-        this.logAccess(query, context);
+        this.logSearchAccess(query, context);
         // Search.
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
         return htmlAdminSecureHeadersProvider.get()
@@ -110,9 +115,9 @@ public class UsersController {
      * @param query Search query.
      * @param context Web context.
      */
-    void logAccess(String query, Context context) {
+    void logSearchAccess(String query, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
-        userEventService.onDataAccess(loggedInUser, query, ip, context.getHeaders());
+        userEventService.onUsersSearchAccess(loggedInUser, query, ip, context.getHeaders());
     }
 }

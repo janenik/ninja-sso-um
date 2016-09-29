@@ -117,7 +117,7 @@ public class UserEventService implements Paginatable<UserEvent> {
     }
 
     /**
-     * Saves common data access by source user event, like listing users.
+     * Saves users search data access by source user event, like listing users. Administrative operation.
      *
      * @param source Source user who performs the action.
      * @param ip IP address of the source user.
@@ -125,7 +125,7 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return User event with {@link UserEventType#ACCESS}.
      */
     @SuppressWarnings("unchecked")
-    public UserEvent onDataAccess(User source, String query, String ip, Map<String, ?> data) {
+    public UserEvent onUsersSearchAccess(User source, String query, String ip, Map<String, ?> data) {
         Map<String, Object> dataToSave = new HashMap<>();
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("users.search.query", String.valueOf(query));
@@ -135,7 +135,7 @@ public class UserEventService implements Paginatable<UserEvent> {
     }
 
     /**
-     * Saves user data access event by source user event.
+     * Saves user data access event by source user event. Administrative operation.
      *
      * @param source Source user who performs the action.
      * @param target Target user who's data is accessed.
@@ -157,6 +157,28 @@ public class UserEventService implements Paginatable<UserEvent> {
     }
 
     /**
+     * Saves user data access event by source user event. Administrative operation.
+     *
+     * @param source Source user who performs the action.
+     * @param target Target user who's data is accessed.
+     * @param appUrl Current application URL.
+     * @param ip IP address of the source user.
+     * @param data Additional data for event.
+     */
+    public void onUserLogAccess(User source, User target, String appUrl, String ip, Map<String, ?> data) {
+        // Don't log own access events assuming that owner knows own data.
+        if (source.equals(target)) {
+            return;
+        }
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent event = newEvent(source, UserEventType.EVENTS_ACCESS, ip, dataToSave);
+        event.setTargetUser(target);
+        event.setUrl(appUrl);
+        entityManagerProvider.get().persist(event);
+    }
+
+    /**
      * Saves user data update event by source user event.
      *
      * @param source Source user who performs the action.
@@ -168,7 +190,7 @@ public class UserEventService implements Paginatable<UserEvent> {
      */
     public UserEvent onUserDataUpdate(User source, User target, String appUrl, String ip, Map<String, ?> data) {
         Map<String, Object> dataToSave = new HashMap<>();
-        dataToSave.put("event.payload", data);
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("user.old.username", target.getUsername());
 
         dataToSave.put("user.old.email", target.getEmail());
@@ -210,8 +232,11 @@ public class UserEventService implements Paginatable<UserEvent> {
     }
 
     @Override
-    public PaginationResult<UserEvent> search(String query, Map<String, Object> additionalParameters,
-                                              int currentPage, int entitiesPerPage) {
+    public PaginationResult<UserEvent> search(
+            String query,
+            Map<String, Object> additionalParameters,
+            int currentPage,
+            int entitiesPerPage) {
         if (!additionalParameters.containsKey("userId")) {
             throw new UnsupportedOperationException("Search for events without user scope is not implemented.");
         }

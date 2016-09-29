@@ -73,6 +73,11 @@ public class ViewAccessLogController {
     final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
+     * Objects per page.
+     */
+    final int objectsPerPage;
+
+    /**
      * Constructs access log controller.
      *
      * @param userService User service.
@@ -96,6 +101,7 @@ public class ViewAccessLogController {
         this.dateTimeFormatter = dateTimeFormatter;
         this.properties = properties;
         this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
+        this.objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.events.objectsPerPage", 10);
     }
 
     /**
@@ -109,14 +115,13 @@ public class ViewAccessLogController {
     public Result get(@PathParam("userId") long userId, Context context) {
         String query = Strings.nullToEmpty(context.getParameter("eventsQuery")).trim();
         int page = Math.max(1, context.getParameterAsInteger("eventsPage", 1));
-        int objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.events.objectsPerPage", 10);
         // Fetch target user.
         User target = userService.get(userId);
         if (target == null) {
             return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
         }
         // Log access.
-        this.logAccess(target, context);
+        logEventsAccess(target, context);
         // Search.
         PaginationResult<UserEvent> results = userEventService.searchByUser(target, query, page, objectsPerPage);
         return htmlAdminSecureHeadersProvider.get()
@@ -138,10 +143,10 @@ public class ViewAccessLogController {
      * @param target Target user whose data is accessed.
      * @param context Web context.
      */
-    void logAccess(User target, Context context) {
+    void logEventsAccess(User target, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
-        userEventService.onUserDataAccess(loggedInUser, target, currentUrl, ip, context.getHeaders());
+        userEventService.onUserLogAccess(loggedInUser, target, currentUrl, ip, context.getHeaders());
     }
 }

@@ -48,12 +48,14 @@
                                 <th title="UTC">${i18n("adminUsersEventTime")}</th>
                             </tr>
                             <#list results.getObjects() as userEvent>
-                                <tr class="<#if userEvent.getType() != 'ACCESS' && userEvent.getType() != 'EVENTS_ACCESS'>warning</#if>">
+                                <tr userEventId="${userEvent.getId()}"
+                                    class="<#if userEvent.getType() != 'ACCESS' && userEvent.getType() !=
+                                        'EVENTS_ACCESS'>warning</#if>">
                                     <td>${userEvent.getId()}</td>
                                     <td>${userEvent.getType()}</td>
                                     <td>
-                                        <#if userEvent.getUser()??>
-                                            ${userEvent.getUser().getId()} / ${userEvent.getUser().getUsername()}
+                                        <#if userEvent.getTargetUser()??>
+                                            ${userEvent.getTargetUser().getId()} / ${userEvent.getTargetUser().getUsername()}
                                         </#if>
                                     </td>
                                     <td>${userEvent.getIp()}</td>
@@ -61,6 +63,13 @@
                                 </tr>
                             </#list>
                         </table>
+                        <div style="display:none;" id="userEventDataContainer">
+                            <#list results.getObjects() as userEvent>
+                                <div id="userEventData_${userEvent.getId()}" userEventData="${userEvent.getId()}">
+                                    ${userEvent.getDataAsUtf8String()}
+                                </div>
+                            </#list>
+                        </div>
 
                         <#assign pagedBaseUrl>
                             ${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}
