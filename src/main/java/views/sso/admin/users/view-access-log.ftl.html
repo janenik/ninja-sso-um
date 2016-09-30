@@ -1,16 +1,16 @@
-<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
-    <@layout.adminLayout i18n("adminEditUserAccessLog") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout />
+<@layout.adminLayout i18n("adminEditUserAccessLog") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-body">
 
-                    <#assign editMode = "accessLog" />
-                    <#include 'edit-submenu.ftl.html' />
+                <#assign editMode = "accessLog" />
+                <#include 'edit-submenu.ftl.html' />
 
-
+                <div id="userEventsSearch">
                     <form class="form-inline" method="get"
                           action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log">
                         <div class="form-group">
@@ -30,7 +30,7 @@
                             </button>
                         </#if>
 
-                        <a class="btn btn-danger"
+                        <a class="btn btn-danger pull-right"
                            href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
                             ${i18n("adminUsers")}
                         </a>
@@ -39,10 +39,13 @@
                     <br>
 
                     <#if results.hasObjects()>
+                        <style type="text/css">
+                            <#include 'view-access-log-table-style.ftl.css' />
+                        </style>
                         <table class="table table-bordered table-striped table-hover" id="itemsList">
                             <tr>
-                                <th>${i18n("adminUsersEventId")}</th>
-                                <th>${i18n("adminUsersEventType")}</th>
+                                <th class="events-id">${i18n("adminUsersEventId")}</th>
+                                <th class="events-type">${i18n("adminUsersEventType")}</th>
                                 <th>${i18n("adminUsersEventTarget")}</th>
                                 <th>${i18n("adminUsersEventIP")}</th>
                                 <th title="UTC">${i18n("adminUsersEventTime")}</th>
@@ -55,7 +58,10 @@
                                     <td>${userEvent.getType()}</td>
                                     <td>
                                         <#if userEvent.getTargetUser()??>
-                                            ${userEvent.getTargetUser().getId()} / ${userEvent.getTargetUser().getUsername()}
+                                            ${userEvent.getTargetUser().getId()} /
+                                            ${userEvent.getTargetUser().getUsername()}
+                                        <#else>
+                                            <span class="events-missing-event">---</span>
                                         </#if>
                                     </td>
                                     <td>${userEvent.getIp()}</td>
@@ -65,13 +71,14 @@
                         </table>
                         <div style="display:none;" id="userEventDataContainer">
                             <#list results.getObjects() as userEvent>
-                                <div id="userEventData_${userEvent.getId()}" userEventData="${userEvent.getId()}">
+                                <div id="userEventData_${userEvent.getId()}"
+                                     userEventId="${userEvent.getId()}">
                                     ${userEvent.getDataAsUtf8String()}
                                 </div>
                             </#list>
                         </div>
 
-                        <#assign pagedBaseUrl>
+                        <#assign pageBaseUrl>
                             ${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}
                         </#assign>
                         <nav>
@@ -82,7 +89,7 @@
                                     <#if !item.isPage()>class="disabled"</#if>
                                     >
                                     <#if item.isPage()>
-                                        <a href="${pagedBaseUrl}&amp;eventsQuery=${eventsQuery?url}&amp;eventsPage=${item.getPage()?url}"
+                                        <a href="${pageBaseUrl}&amp;eventsQuery=${eventsQuery?url}&amp;eventsPage=${item.getPage()?url}"
                                            aria-label="${item.toString()}">
                                             ${item.toString()}
                                         </a>
@@ -104,10 +111,29 @@
                                 ${i18n("commonNoResults")}
                             </div>
                     </#if>
-
                 </div>
+
+                <div id="userEventView" style="display:none;">
+                </div>
+
             </div>
         </div>
     </div>
+</div>
+
+
+<script>
+        <#include "/assets/js/sso/view-accesslog.js" />
+</script>
+
+
+<style>
+    .events-id {
+    width: 5%;
+    }
+    .events-type {
+    width: 5%;
+    }
+</style>
 
 </@layout.adminLayout>

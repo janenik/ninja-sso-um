@@ -1,4 +1,4 @@
-<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout />
     <@layout.adminLayout i18n("adminEditUserContactData") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
 
     <div class="row">
@@ -122,14 +122,12 @@
 
     <script>
         <#include "/assets/js/sso/edit-contact.js" />
-
-
     </script>
 
 
     <style>
         .vertical-separator-for-xs {
-        margin: 5px;
+            margin: 5px;
         }
     </style>
 

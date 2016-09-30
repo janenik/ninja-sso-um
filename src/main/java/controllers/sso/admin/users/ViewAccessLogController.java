@@ -40,7 +40,7 @@ public class ViewAccessLogController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users/view-accessLog.ftl.html";
+    static final String TEMPLATE = "views/sso/admin/users/view-access-log.ftl.html";
 
     /**
      * User service.

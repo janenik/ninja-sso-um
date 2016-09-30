@@ -1,125 +1,125 @@
-<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout>
-    <@layout.adminLayout i18n("adminUsers")>
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout />
+<@layout.adminLayout i18n("adminUsers")>
 
-    <div class="panel panel-default">
-        <div class="panel-body">
+<div class="panel panel-default">
+    <div class="panel-body">
 
 
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-                    <h3>${i18n("adminUsers")}</h3>
+                <h3>${i18n("adminUsers")}</h3>
 
-                    <noscript>
-                        <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
-                    </noscript>
+                <noscript>
+                    <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
+                </noscript>
 
-                    <form class="form-inline" method="get" action="${contextPath}/auth/admin/users">
-                        <div class="form-group">
-                            <label for="query">${i18n("commonQuery")}</label>
-                            <input type="text" name="query" id="query"
-                                   value="${query}"
-                                   placeholder="${i18n('commonQueryPlaceholder')}"
-                                   class="form-control"/>
-                            <input type="hidden" name="lang" value="${lang}"/>
-                        </div>
-                        <button type="submit" class="btn btn-primary">${i18n("commonSearch")}</button>
-                        <#if query?has_content>
-                            <button type="submit" class="btn btn-default" onclick="$('#query').val('');">
-                                ${i18n('commonReset')}
-                            </button>
-                        </#if>
-                    </form>
+                <form class="form-inline" method="get" action="${contextPath}/auth/admin/users">
+                    <div class="form-group">
+                        <label for="query">${i18n("commonQuery")}</label>
+                        <input type="text" name="query" id="query"
+                               value="${query}"
+                               placeholder="${i18n('commonQueryPlaceholder')}"
+                               class="form-control"/>
+                        <input type="hidden" name="lang" value="${lang}"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">${i18n("commonSearch")}</button>
+                    <#if query?has_content>
+                        <button type="submit" class="btn btn-default" onclick="$('#query').val('');">
+                            ${i18n('commonReset')}
+                        </button>
+                    </#if>
+                </form>
 
-                    <br>
+                <br>
 
-                    <#if results.hasObjects()>
+                <#if results.hasObjects()>
 
-                        <style type="text/css">
-                            <#include 'users-table-style.ftl.css' />
-                        </style>
+                    <style type="text/css">
+                        <#include 'users-table-style.ftl.css' />
+                    </style>
 
-                        <table class="table table-bordered table-striped table-hover"
-                               id="itemsList">
-                            <tr>
-                                <th>${i18n("adminUsersId")}</th>
-                                <th>${i18n("adminUsersUsername")}</th>
-                                <th>${i18n("adminUsersEmail")}</th>
-                                <th>${i18n("adminUsersFirstName")}</th>
-                                <th>${i18n("adminUsersLastName")}</th>
-                                <th>${i18n("adminUsersRole")}</th>
-                                <th title="UTC">${i18n("adminUsersSignUpTime")}</th>
-                                <th>${i18n("adminUsersOperations")}</th>
+                    <table class="table table-bordered table-striped table-hover"
+                           id="itemsList">
+                        <tr>
+                            <th>${i18n("adminUsersId")}</th>
+                            <th>${i18n("adminUsersUsername")}</th>
+                            <th>${i18n("adminUsersEmail")}</th>
+                            <th>${i18n("adminUsersFirstName")}</th>
+                            <th>${i18n("adminUsersLastName")}</th>
+                            <th>${i18n("adminUsersRole")}</th>
+                            <th title="UTC">${i18n("adminUsersSignUpTime")}</th>
+                            <th>${i18n("adminUsersOperations")}</th>
+                        </tr>
+                        <#list results.getObjects() as user>
+                            <tr class="<#if user.getRole() == 'ADMIN'>warning</#if>">
+                                <td>${user.getId()}</td>
+                                <td>${user.getUsername()}</td>
+                                <td>${user.getEmail()}</td>
+                                <td>${user.getFirstName()}</td>
+                                <td>${user.getLastName()}</td>
+                                <td>${user.getRole()}</td>
+                                <td>${user.getCreated().format(dateTimeFormatter)}</td>
+                                <td class="operations">
+                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&page=${page?url}"
+                                       title="${i18n('adminEditUserPersonalData')}">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                       title="${i18n('adminEditUserContactData')}">
+                                        <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                       title="${i18n('adminEditUserAccess')}">
+                                        <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}"
+                                       title="${i18n('adminEditUserAccessLog')}">
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                    </a>
+                                </td>
                             </tr>
-                            <#list results.getObjects() as user>
-                                <tr class="<#if user.getRole() == 'ADMIN'>warning</#if>">
-                                    <td>${user.getId()}</td>
-                                    <td>${user.getUsername()}</td>
-                                    <td>${user.getEmail()}</td>
-                                    <td>${user.getFirstName()}</td>
-                                    <td>${user.getLastName()}</td>
-                                    <td>${user.getRole()}</td>
-                                    <td>${user.getCreated().format(dateTimeFormatter)}</td>
-                                    <td class="operations">
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&page=${page?url}"
-                                           title="${i18n('adminEditUserPersonalData')}">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </a>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}"
-                                           title="${i18n('adminEditUserContactData')}">
-                                            <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
-                                        </a>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}"
-                                           title="${i18n('adminEditUserAccess')}">
-                                            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-                                        </a>
-                                        <a href="${contextPath}/auth/admin/user/${user.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}"
-                                            title="${i18n('adminEditUserAccessLog')}">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </#list>
-                        </table>
+                        </#list>
+                    </table>
 
-                        <#assign pagedBaseUrl>${contextPath}/auth/admin/users?lang=${lang?url}</#assign>
-                        <nav>
-                            <ul class="pagination">
-                                <#list results.getItems() as item>
-                                    <li
-                                    <#if item.isPage() && item.getPage() == page>class="active"</#if>
-                                    <#if !item.isPage()>class="disabled"</#if>
-                                    >
-                                    <#if item.isPage()>
-                                        <a href="${pagedBaseUrl}&amp;page=${item.getPage()?url}<#if query?has_content>&amp;query=${query?url}</#if>"
-                                           aria-label="${item.toString()}">
-                                            ${item.toString()}
-                                        </a>
-                                        <#else>
-                                            <a href="#" class="disabled" aria-hidden="true"
-                                               onclick="return false;">...</a>
-                                    </#if>
-                                    </li>
-                                </#list>
-                            </ul>
-                        </nav>
+                    <#assign pageBaseUrl>${contextPath}/auth/admin/users?lang=${lang?url}</#assign>
+                    <nav>
+                        <ul class="pagination">
+                            <#list results.getItems() as item>
+                                <li
+                                <#if item.isPage() && item.getPage() == page>class="active"</#if>
+                                <#if !item.isPage()>class="disabled"</#if>
+                                >
+                                <#if item.isPage()>
+                                    <a href="${pageBaseUrl}&amp;page=${item.getPage()?url}<#if query?has_content>&amp;query=${query?url}</#if>"
+                                       aria-label="${item.toString()}">
+                                        ${item.toString()}
+                                    </a>
+                                    <#else>
+                                        <a href="#" class="disabled" aria-hidden="true"
+                                           onclick="return false;">...</a>
+                                </#if>
+                                </li>
+                            </#list>
+                        </ul>
+                    </nav>
 
                         <span>
                             <b>${i18n("commonTotal")}:</b> ${results.getTotalObjects()}
                         </span>
 
-                        <#else>
-                            <div class="alert alert-warning">
-                                ${i18n("commonNoResults")}
-                            </div>
-                    </#if>
-                </div>
-                <form>
-                    <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
-                </form>
+                    <#else>
+                        <div class="alert alert-warning">
+                            ${i18n("commonNoResults")}
+                        </div>
+                </#if>
             </div>
-
+            <form>
+                <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
+            </form>
         </div>
+
     </div>
+</div>
 
 </@layout.adminLayout>
