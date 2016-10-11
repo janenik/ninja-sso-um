@@ -42,7 +42,7 @@
                         <style type="text/css">
                             <#include 'view-access-log-table-style.ftl.css' />
                         </style>
-                        <table class="table table-bordered table-striped table-hover" id="itemsList">
+                        <table id="itemsList" class="table table-bordered table-striped table-hover">
                             <tr>
                                 <th class="events-id">${i18n("adminUsersEventId")}</th>
                                 <th class="events-type">${i18n("adminUsersEventType")}</th>
@@ -51,7 +51,7 @@
                                 <th title="UTC">${i18n("adminUsersEventTime")}</th>
                             </tr>
                             <#list results.getObjects() as userEvent>
-                                <tr userEventId="${userEvent.getId()}"
+                                <tr data-user-event-id="${userEvent.getId()}"
                                     class="<#if userEvent.getType() != 'ACCESS' && userEvent.getType() !=
                                         'EVENTS_ACCESS'>warning</#if>">
                                     <td>${userEvent.getId()}</td>
@@ -60,8 +60,8 @@
                                         <#if userEvent.getTargetUser()??>
                                             ${userEvent.getTargetUser().getId()} /
                                             ${userEvent.getTargetUser().getUsername()}
-                                        <#else>
-                                            <span class="events-missing-event">---</span>
+                                            <#else>
+                                                <span class="events-missing-event">&nbsp;</span>
                                         </#if>
                                     </td>
                                     <td>${userEvent.getIp()}</td>
@@ -71,8 +71,13 @@
                         </table>
                         <div style="display:none;" id="userEventDataContainer">
                             <#list results.getObjects() as userEvent>
-                                <div id="userEventData_${userEvent.getId()}"
-                                     userEventId="${userEvent.getId()}">
+                                <div data-event-id="${userEvent.getId()}"
+                                     data-event-url="${(userEvent.getUrl())!}"
+                                     data-event-ip="${userEvent.getIp()}"
+                                     data-event-type="${userEvent.getType()}"
+                                     data-event-time="${userEvent.getTime().format(dateTimeFormatter)}"
+                                     data-event-target-id="<#if userEvent.getTargetUser()??>${userEvent.getTargetUser().getId()}</#if>"
+                                     data-event-target-username="<#if userEvent.getTargetUser()??>${userEvent.getTargetUser().getUsername()}</#if>">
                                     ${userEvent.getDataAsUtf8String()}
                                 </div>
                             </#list>
@@ -114,26 +119,124 @@
                 </div>
 
                 <div id="userEventView" style="display:none;">
-                </div>
+                    <h4>${i18n("adminUsersEventDetails")}</h4>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventId")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventId" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventType")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventType" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                               <strong>${i18n("adminUsersEventTarget")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventTarget" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3  hidden-xs hidden-sm">
+                            <span class="pull-right">
+                               <strong>${i18n("adminUsersEventIP")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventIP" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventTime")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventTime" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventURL")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventUrl" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventData")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventData" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">
+                            <span class="pull-right">
+                                <strong>${i18n("adminUsersEventDetails")}:</strong>
+                            </span>
+                        </div>
+                        <div id="userEventDataDetails" class="col-md-9"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 hidden-xs hidden-sm">&nbsp;</div>
+                        <div class="col-md-9 align-buttons">
+                            <a class="btn btn-primary" href="#" id="buttonPrevEvent">
+                                ${i18n("adminUsersEventPrevEvent")}
+                            </a>
 
+                            <a class="btn btn-danger" href="#" id="buttonBackToEvents">
+                                ${i18n("adminUsersEventBackToEvents")}
+                            </a>
+
+                            <a class="btn btn-primary pull-right" href="#" id="buttonNextEvent">
+                                ${i18n("adminUsersEventNextEvent")}
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-
-<script>
+    <script>
         <#include "/assets/js/sso/view-accesslog.js" />
-</script>
+    </script>
 
 
-<style>
-    .events-id {
-    width: 5%;
-    }
-    .events-type {
-    width: 5%;
-    }
-</style>
+    <style>
+        .events-id {
+        width: 5%;
+        }
+        .events-type {
+        width: 5%;
+        }
+
+        #userEventView {
+        padding: 15px;
+        }
+
+        #userEventView .row:nth-child(even) {
+        background-color: #ECECEC;
+        }
+        #itemsList td {
+        cursor:pointer;
+        }
+        #userEventDataDetails, #userEventData {
+        overflow-x: scroll;
+        }
+        #userEventView .align-buttons {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        }
+    </style>
 
 </@layout.adminLayout>
