@@ -51,7 +51,7 @@
                                 <th title="UTC">${i18n("adminUsersEventTime")}</th>
                             </tr>
                             <#list results.getObjects() as userEvent>
-                                <tr data-user-event-id="${userEvent.getId()}"
+                                <tr data-event-id="${userEvent.getId()}"
                                     class="<#if userEvent.getType() != 'ACCESS' && userEvent.getType() !=
                                         'EVENTS_ACCESS'>warning</#if>">
                                     <td>${userEvent.getId()}</td>
@@ -65,7 +65,12 @@
                                         </#if>
                                     </td>
                                     <td>${userEvent.getIp()}</td>
-                                    <td>${userEvent.getTime().format(dateTimeFormatter)}</td>
+                                    <td>
+                                        ${userEvent.getTime().format(dateTimeFormatter)}
+                                        <button type="submit" class="btn btn-success pull-right btn-event-view">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </button>
+                                    </td>
                                 </tr>
                             </#list>
                         </table>
@@ -187,16 +192,16 @@
                     <div class="row">
                         <div class="col-md-3 hidden-xs hidden-sm">&nbsp;</div>
                         <div class="col-md-9 align-buttons">
-                            <a class="btn btn-primary" href="#" id="buttonPrevEvent">
-                                ${i18n("adminUsersEventPrevEvent")}
+                            <a class="btn btn-primary" href="#" id="buttonPrevEvent" title="${i18n('adminUsersEventPrevEvent')}">
+                                <span class="glyphicon glyphicon-circle-arrow-left"></span>
                             </a>
 
-                            <a class="btn btn-danger" href="#" id="buttonBackToEvents">
-                                ${i18n("adminUsersEventBackToEvents")}
+                            <a class="btn btn-danger" href="#" id="buttonBackToEvents" title="${i18n('adminUsersEventBackToEvents')}">
+                                <span class="glyphicon glyphicon-circle-arrow-up"></span>
                             </a>
 
-                            <a class="btn btn-primary pull-right" href="#" id="buttonNextEvent">
-                                ${i18n("adminUsersEventNextEvent")}
+                            <a class="btn btn-primary pull-right" href="#" id="buttonNextEvent" title="${i18n('adminUsersEventNextEvent')}">
+                                <span class="glyphicon glyphicon-circle-arrow-right"></span>
                             </a>
                         </div>
                     </div>
@@ -225,9 +230,6 @@
 
         #userEventView .row:nth-child(even) {
         background-color: #ECECEC;
-        }
-        #itemsList td {
-        cursor:pointer;
         }
         #userEventDataDetails {
         overflow-x: scroll;

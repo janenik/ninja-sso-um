@@ -5,33 +5,33 @@
     var nextDataEventId;
     var prevDataEventId;
 
+    function $eventId(element) {
+        return element.length && element.attr('data-event-id');
+    }
+
     function displayUserEvent(eventId) {
-        var dataElement = $('div[data-event-id=' + eventId + ']');
-        dataElement = dataElement.length && dataElement[0] || null;
-        if (!dataElement) {
+        var dataElement = eventId && $('div[data-event-id=' + eventId + ']');
+        if (!dataElement || !dataElement.length) {
             return;
         }
 
         /** <!#-- Handle buttons visibility. --> */
-        var nextDataElement = $(dataElement).next();
-        nextDataEventId = nextDataElement.length && nextDataElement[0].getAttribute('data-event-id');
-
-        var prevDataElement = $(dataElement).prev();
-        prevDataEventId = prevDataElement.length && prevDataElement[0].getAttribute('data-event-id');
+        nextDataEventId = $eventId(dataElement.next());
+        prevDataEventId = $eventId(dataElement.prev());
 
         $('#buttonNextEvent')[0].style.visibility = nextDataEventId ? '' : 'hidden';
         $('#buttonPrevEvent')[0].style.visibility = prevDataEventId ? '' : 'hidden';
 
         /** <!#-- Populate the data. --> */
-        var userTargetId = dataElement.getAttribute('data-event-target-id');
-        var userData = userTargetId + ' / ' + dataElement.getAttribute('data-event-target-username');
+        var userTargetId = dataElement.attr('data-event-target-id');
+        var userData = userTargetId + ' / ' + dataElement.attr('data-event-target-username');
         $('#userEventTarget').text(userTargetId ? userData : '');
 
         $('#userEventId').text(eventId);
-        $('#userEventType').text(dataElement.getAttribute('data-event-type'));
-        $('#userEventUrl').text(dataElement.getAttribute('data-event-url'));
-        $('#userEventIP').text(dataElement.getAttribute('data-event-ip'));
-        $('#userEventTime').text(dataElement.getAttribute('data-event-time'));
+        $('#userEventType').text(dataElement.attr('data-event-type'));
+        $('#userEventUrl').text(dataElement.attr('data-event-url'));
+        $('#userEventIP').text(dataElement.attr('data-event-ip'));
+        $('#userEventTime').text(dataElement.attr('data-event-time'));
 
         var dataJson = JSON.parse($(dataElement).html());
         var details = dataJson['event.data'];
@@ -60,11 +60,10 @@
     });
 
     /** <#-- Table row handler. --> */
-    $('#' + userEventsSearch.id + ' table tr').on('click touchend', function(e) {
+    $('#' + userEventsSearch.id + ' table tr .btn-event-view').on('click touchend', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        var tr = $(e.target).closest('tr');
-        var eventId = tr.length && tr[0].getAttribute('data-user-event-id') || null;
+        var eventId = $eventId($(e.target).closest('tr'));
         displayUserEvent(eventId);
     });
 
