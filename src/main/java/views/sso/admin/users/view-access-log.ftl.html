@@ -67,9 +67,9 @@
                                     <td>${userEvent.getIp()}</td>
                                     <td>
                                         ${userEvent.getTime().format(dateTimeFormatter)}
-                                        <button type="submit" class="btn btn-success pull-right btn-event-view">
+                                        <a href="#" class="pull-right btn-event-view">
                                             <span class="glyphicon glyphicon-eye-open"></span>
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                             </#list>
@@ -88,9 +88,7 @@
                             </#list>
                         </div>
 
-                        <#assign pageBaseUrl>
-                            ${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}
-                        </#assign>
+                        <#assign pageBaseUrl>${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&query=${query?url}&page=${page?url}</#assign>
                         <nav>
                             <ul class="pagination">
                                 <#list results.getItems() as item>
@@ -124,7 +122,7 @@
                 </div>
 
                 <div id="userEventView" style="display:none;">
-                    <h4>${i18n("adminUsersEventDetails")}</h4>
+                    <b>${i18n("adminUsersEventDetails")}</b>
                     <div class="row">
                         <div class="col-md-3 hidden-xs hidden-sm">
                             <span class="pull-right">
@@ -223,9 +221,8 @@
         .events-type {
         width: 5%;
         }
-
         #userEventView {
-        padding: 15px;
+        padding: 0 15px 15px 15px;
         }
 
         #userEventView .row:nth-child(even) {

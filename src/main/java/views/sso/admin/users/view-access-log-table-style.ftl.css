@@ -41,4 +41,7 @@ only screen and (max-width: 1018px),
     table#itemsList td:nth-of-type(3):before { content: "${i18n('adminUsersEventTarget')}"; }
     table#itemsList td:nth-of-type(4):before { content: "${i18n('adminUsersEventIP')}"; }
     table#itemsList td:nth-of-type(5):before { content: "${i18n('adminUsersEventTime')}"; }
+
+    table#itemsList a .glyphicon { font-size: 22px; }
+    table#itemsList a .event-info { display:block; }
 }

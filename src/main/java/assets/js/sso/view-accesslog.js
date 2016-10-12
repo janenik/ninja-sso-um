@@ -65,6 +65,7 @@
         e.stopPropagation();
         var eventId = $eventId($(e.target).closest('tr'));
         displayUserEvent(eventId);
+        return false;
     });
 
  })();
