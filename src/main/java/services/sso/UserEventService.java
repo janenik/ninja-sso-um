@@ -107,11 +107,29 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @return Created user event with {@link UserEventType#PASSWORD_CHANGE}.
      */
     public UserEvent onUserPasswordUpdate(User user, byte[] oldSalt, byte[] oldHash, String ip, Map<String, ?> data) {
+        return onUserPasswordUpdate(user, null, oldSalt, oldHash, ip, data);
+    }
+
+    /**
+     * Creates user event when the user updates someone's password. Data may contain old salt and old password hash to
+     * create hint for user when he tries to log in with the old credentials.
+     *
+     * @param user Admin who changes the password.
+     * @param targetUser User whose password was updated.
+     * @param oldSalt Old password salt.
+     * @param oldHash Old password hash.
+     * @param ip Remove IP address.
+     * @param data Additional data for event, headers here.
+     * @return Created user event with {@link UserEventType#PASSWORD_CHANGE}.
+     */
+    public UserEvent onUserPasswordUpdate(User user, User targetUser, byte[] oldSalt, byte[] oldHash,
+                                          String ip, Map<String, ?> data) {
         Map<String, Object> dataToSave = new HashMap<>();
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("password.old.salt", baseEncoding.encode(oldSalt));
         dataToSave.put("password.old.hash", baseEncoding.encode(oldHash));
         UserEvent userEvent = newEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
+        userEvent.setTargetUser(targetUser);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }

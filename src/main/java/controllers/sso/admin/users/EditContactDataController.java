@@ -68,6 +68,15 @@ public class EditContactDataController extends
         return super.renderUserOrRedirectToList(userId, context);
     }
 
+    /**
+     * Processes POST request from Edit Contact data form. Updates user with necessary information.
+     *
+     * @param userId User id whose access to edit.
+     * @param dto Form Data Transfer Object.
+     * @param validation Validaiton.
+     * @param context Request context.
+     * @return Result with Edit Contact data form.
+     */
     @Transactional
     public Result post(
             @PathParam("userId") long userId,

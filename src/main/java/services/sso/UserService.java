@@ -158,6 +158,20 @@ public class UserService implements Paginatable<User> {
 
     /**
      * Updates user password.
+     *
+     * @param user User.
+     * @param password New password.
+     * @return Updated user entity.
+     */
+    public User updatePassword(User user, String password) {
+        user.setPasswordSalt(passwordService.newSalt());
+        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
+        entityManagerProvider.get().persist(user);
+        return user;
+    }
+
+    /**
+     * Updates user password and changes user's status to confirmed.
      * Since the link to password restoration is sent via email, account becomes verified (confirmed).
      *
      * @param user User.
@@ -166,10 +180,7 @@ public class UserService implements Paginatable<User> {
      */
     public User updatePasswordAndConfirm(User user, String password) {
         user.confirm();
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
-        entityManagerProvider.get().persist(user);
-        return user;
+        return updatePassword(user, password);
     }
 
     /**

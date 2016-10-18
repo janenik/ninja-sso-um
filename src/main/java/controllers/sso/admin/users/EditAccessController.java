@@ -62,11 +62,27 @@ public class EditAccessController extends EditAbstractController<EditAccessConve
                 htmlAdminSecureHeadersProvider, properties);
     }
 
+    /**
+     * Produces Edit Access form.
+     *
+     * @param userId User id whose access to edit.
+     * @param context Request context.
+     * @return Result with Edit Access form.
+     */
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         return super.renderUserOrRedirectToList(userId, context);
     }
 
+    /**
+     * Processes POST request from Edit Access form. Updates user with necessary information.
+     *
+     * @param userId User id whose access to edit.
+     * @param dto Form Data Transfer Object.
+     * @param validation Validaiton.
+     * @param context Request context.
+     * @return Result with Edit Access form.
+     */
     @Transactional
     public Result post(
             @PathParam("userId") long userId,

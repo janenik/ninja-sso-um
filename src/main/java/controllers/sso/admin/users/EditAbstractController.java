@@ -70,7 +70,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      *
      * @param userService User service.
      * @param userEventService User event service.
-     * @param countryService Coutry service.
+     * @param countryService Country service.
      * @param converter Converter.
      * @param urlBuilderProvider Provider for URL builder.
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
@@ -131,8 +131,8 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
     protected final Result renderUserOrRedirectToList(long userId, Context context) {
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(
-                    context.getParameter("query"), context.getParameter("page")));
+            return Results.redirect(urlBuilderProvider.get()
+                    .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         this.logAccess(user, context);
         return createResult(converter.fromEntity(user), user, context, Controllers.noViolations());
@@ -201,7 +201,6 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      */
     private Result createResult(DTO user, User userEntity, Context ctx, Validation validation) {
         return htmlAdminSecureHeadersProvider.get()
-                .template(getTemplate())
                 .render("context", ctx)
                 .render("config", properties)
                 .render("errors", validation)
@@ -212,7 +211,8 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
                 .render("signInStates", UserSignInState.values())
                 .render("confirmationStates", UserConfirmationState.values())
                 .render("query", ctx.getParameter("query", ""))
-                .render("page", ctx.getParameterAs("page", int.class, 1));
+                .render("page", ctx.getParameterAs("page", int.class, 1))
+                .template(getTemplate());
     }
 
     /**

@@ -21,46 +21,50 @@
     <#case "sendEmail">
     <#assign _editUser_sendEmailClass = _active />
     <#break/>
-    <#case "resetPassword">
+    <#case "password">
     <#assign _editUser_resetPasswordClass = _active />
     <#break/>
     <#default>
     <#assign _editUser_personalClass = _active />
 </#switch>
 
+<#assign pageBaseUrl>${contextPath}/auth/admin/user/${userEntity.getId()?url}</#assign>
+<#assign commonParameters>lang=${lang?url}&query=${query?url}&page=${page?url}</#assign>
+
 <ul class="nav nav-tabs" role="tablist">
     <li class="${_editUser_personalClass}">
-        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+        <a href="${pageBaseUrl}/edit-personal?${commonParameters}">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             ${i18n("adminEditUserPersonalData")}
         </a>
     </li>
 
     <li class="${_editUser_contactDataClass}">
-        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-contact?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
+        <a href="${pageBaseUrl}/edit-contact?${commonParameters}" role="tab">
             <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
             ${i18n("adminEditUserContactData")}
         </a>
     </li>
 
     <li role="tab" class="${_editUser_accessClass}">
-        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-access?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}" role="tab">
+        <a href="${pageBaseUrl}/edit-access?${commonParameters}" role="tab">
             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
             ${i18n("adminEditUserAccess")}
         </a>
     </li>
 
     <li class="${_editUser_accessLogClass}">
-        <a href="${contextPath}/auth/admin/user/${userEntity.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+        <a href="${pageBaseUrl}/access-log?${commonParameters}">
             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
             ${i18n("adminEditUserAccessLog")}
         </a>
     </li>
 
     <li role="tab" class="${_editUser_resetPasswordClass}">
-        <a href="#">
+        <a href="${pageBaseUrl}/edit-password?${commonParameters}">
             <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-            ${i18n("adminEditUserResetPassword")}</a>
+            ${i18n("adminEditUserResetPassword")}
+        </a>
     </li>
 
     <li role="tab" class="${_editUser_sendEmailClass}">

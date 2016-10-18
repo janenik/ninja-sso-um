@@ -5,6 +5,7 @@ import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
 import controllers.annotations.InjectedContext;
 import controllers.sso.admin.users.EditContactDataController;
+import controllers.sso.admin.users.EditPasswordController;
 import controllers.sso.admin.users.EditPersonalDataController;
 import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.UsersController;
@@ -294,6 +295,17 @@ public class UrlBuilder {
     }
 
     /**
+     * Constructs admin URL to edit user role data.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin edit contact data section.
+     */
+    public String getAdminEditPasswordUrl(long userId, Object... query) {
+        return getAdminEditUserDataUrl(EditPasswordController.class, "get", userId, query);
+    }
+
+    /**
      * Constructs admin URL to edit controllers, passing "userId" parameter to reverse route.
      * URL is relative.
      *
@@ -310,10 +322,10 @@ public class UrlBuilder {
         if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
             builder.append("&query=");
             builder.append(Escapers.encodePercent(query[0].toString()));
-            if (query.length > 1 && query[1] != null) {
-                builder.append("&page=");
-                builder.append(Escapers.encodePercent(query[1].toString()));
-            }
+        }
+        if (query != null && query.length > 1 && query[1] != null) {
+            builder.append("&page=");
+            builder.append(Escapers.encodePercent(query[1].toString()));
         }
         return builder.toString();
     }
