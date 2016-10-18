@@ -16,6 +16,7 @@
 
 package controllers;
 
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
@@ -29,7 +30,6 @@ import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -63,8 +63,8 @@ public class ApplicationController {
     /**
      * Provider for HTML result with secure headers. Contains context as well.
      */
-    @Named("htmlSecureHeaders")
     @Inject
+    @SecureHtmlHeaders
     Provider<Result> htmlWithSecureHeadersProvider;
 
     /**

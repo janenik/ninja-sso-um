@@ -1,6 +1,7 @@
 package controllers.sso.auth;
 
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
@@ -31,7 +32,6 @@ import services.sso.UserService;
 import services.sso.limits.IPCounterService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -133,7 +133,7 @@ public class SignInController {
                             IPCounterService ipCounterService,
                             Provider<UrlBuilder> urlBuilderProvider,
                             Provider<SignInResponseBuilder> signInResponseSupplierProvider,
-                            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
+                            @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
                             NinjaProperties properties,
                             Router router,
                             Messages messages,

@@ -3,6 +3,7 @@ package controllers.sso.auth;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -37,7 +38,6 @@ import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
@@ -147,7 +147,7 @@ public class ForgotPasswordController {
             IPCounterService ipCounterService,
             EmailService emailService,
             Provider<UrlBuilder> urlBuilderProvider,
-            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
+            @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
             NinjaProperties properties,
             Router router,
             Messages messages,

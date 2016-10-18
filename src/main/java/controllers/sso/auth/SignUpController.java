@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -45,7 +46,6 @@ import services.sso.mail.EmailService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
@@ -199,7 +199,7 @@ public class SignUpController {
                             CountryService countryService,
                             EmailService emailService,
                             Provider<UrlBuilder> urlBuilderProvider,
-                            @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
+                            @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
                             Mapper dtoMapper,
                             NinjaProperties properties,
                             Logger logger,

@@ -2,6 +2,7 @@ package controllers.sso.admin.users;
 
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeadersForAdmin;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -20,7 +21,6 @@ import services.sso.UserEventService;
 import services.sso.UserService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.time.format.DateTimeFormatter;
@@ -94,7 +94,7 @@ public class ViewAccessLogController {
             DateTimeFormatter dateTimeFormatter,
             Provider<UrlBuilder> urlBuilderProvider,
             NinjaProperties properties,
-            @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider) {
+            @SecureHtmlHeadersForAdmin Provider<Result> htmlAdminSecureHeadersProvider) {
         this.userService = userService;
         this.userEventService = userEventService;
         this.urlBuilderProvider = urlBuilderProvider;

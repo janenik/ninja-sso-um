@@ -2,6 +2,7 @@ package controllers.sso.admin.users;
 
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeadersForAdmin;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -17,7 +18,6 @@ import services.sso.UserService;
 import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.time.format.DateTimeFormatter;
@@ -80,7 +80,7 @@ public class UsersController {
     public UsersController(
             UserService userService,
             UserEventService userEventService,
-            @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
+            @SecureHtmlHeadersForAdmin Provider<Result> htmlAdminSecureHeadersProvider,
             DateTimeFormatter dateTimeFormatter,
             NinjaProperties properties) {
         this.userService = userService;

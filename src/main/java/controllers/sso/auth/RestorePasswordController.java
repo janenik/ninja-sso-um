@@ -2,6 +2,7 @@ package controllers.sso.auth;
 
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -26,7 +27,6 @@ import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.IllegalFormatException;
@@ -100,7 +100,7 @@ public class RestorePasswordController {
                                      PasswordService passwordService,
                                      ExpirableTokenEncryptor expirableTokenEncryptor,
                                      Provider<UrlBuilder> urlBuilderProvider,
-                                     @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
+                                     @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
                                      NinjaProperties properties) {
         this.userService = userService;
         this.userEventService = userEventService;

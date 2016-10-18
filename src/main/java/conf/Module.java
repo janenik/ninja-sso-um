@@ -21,6 +21,8 @@ import com.google.inject.Provides;
 import com.google.inject.servlet.RequestScoped;
 import conf.sso.SsoModule;
 import controllers.annotations.InjectedContext;
+import controllers.annotations.SecureHtmlHeaders;
+import controllers.annotations.SecureHtmlHeadersForAdmin;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -28,7 +30,6 @@ import ninja.servlet.NinjaServletContext;
 import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -81,13 +82,13 @@ public class Module extends AbstractModule {
      */
     @RequestScoped
     @Provides
-    @Named("htmlSecureHeaders")
+    @SecureHtmlHeaders
     Result provideHtmlWithSecureHeaders(NinjaProperties properties) {
         Result result = Results.html()
                 .addHeader("X-Content-Type-Options", "nosniff")
                 .addHeader("X-Frame-Options", "DENY")
                 .addHeader("X-XSS-Protection", "1; mode=block");
-        // Application must be under SSL, so sending HSTS header for production.
+        // Application must be under SSL in production: HSTS header for production only.
         if (properties.isProd()) {
             result.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         }
@@ -96,20 +97,21 @@ public class Module extends AbstractModule {
 
     /**
      * Provides HTML result with security headers for application controllers, accessible with
-     * {@link models.sso.UserRole#ADMIN} priveleges.
+     * {@link models.sso.UserRole#ADMIN} priveleges. Please do not change X-Frame-Options for administration
+     * part: it should not be iframed.
      *
      * @param properties Ninja properties.
      * @return HTML result with security headers for admin controllers.
      */
     @RequestScoped
     @Provides
-    @Named("htmlAdminSecureHeaders")
+    @SecureHtmlHeadersForAdmin
     Result provideHtmlWithAdminSecureHeaders(NinjaProperties properties) {
         Result result = Results.html()
                 .addHeader("X-Content-Type-Options", "nosniff")
                 .addHeader("X-Frame-Options", "DENY")
                 .addHeader("X-XSS-Protection", "1; mode=block");
-        // Application must be under SSL, so sending HSTS header for production.
+        // Application must be under SSL in production: HSTS header for production only.
         if (properties.isProd()) {
             result.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         }

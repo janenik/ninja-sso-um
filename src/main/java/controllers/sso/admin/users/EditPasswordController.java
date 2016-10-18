@@ -1,6 +1,7 @@
 package controllers.sso.admin.users;
 
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeadersForAdmin;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -23,7 +24,6 @@ import services.sso.UserEventService;
 import services.sso.UserService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -88,7 +88,7 @@ public class EditPasswordController {
             UserService userService,
             UserEventService userEventService,
             Provider<UrlBuilder> urlBuilderProvider,
-            @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
+            @SecureHtmlHeadersForAdmin Provider<Result> htmlAdminSecureHeadersProvider,
             NinjaProperties properties) {
         this.userService = userService;
         this.userEventService = userEventService;
@@ -127,10 +127,12 @@ public class EditPasswordController {
                        Context context,
                        Validation validation,
                        FlashScope flashScope) {
+        String query = context.getParameter("query");
+        String page = context.getParameter("page");
+
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get()
-                    .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
+            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
         }
         String newPassword = context.getParameter("password", "");
         String newPasswordRepeat = context.getParameter("confirmPassword", "");
@@ -139,15 +141,17 @@ public class EditPasswordController {
                 !newPassword.equals(newPasswordRepeat)) {
             return createResult(user, context, validation, "password");
         }
-        User admin = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
+
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+
+        User admin = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         byte[] oldSalt = user.getPasswordSalt();
         byte[] oldHash = user.getPasswordHash();
         userService.updatePassword(user, newPassword);
         userEventService.onUserPasswordUpdate(admin, user, oldSalt, oldHash, ip, context.getHeaders());
+
         flashScope.success(PASSWORD_CHANGED_MESSAGE);
-        return Results.redirect(urlBuilderProvider.get()
-                .getAdminEditPasswordUrl(userId, context.getParameter("query"), context.getParameter("page")));
+        return Results.redirect(urlBuilderProvider.get().getAdminEditPasswordUrl(userId, query, page));
     }
 
 

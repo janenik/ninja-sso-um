@@ -1,6 +1,7 @@
 package controllers.sso.admin.users;
 
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeadersForAdmin;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
@@ -21,7 +22,6 @@ import services.sso.UserEventService;
 import services.sso.UserService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -55,7 +55,7 @@ public class EditPersonalDataController extends
             UserEventService userEventService,
             EditPersonalDataConverter converter,
             Provider<UrlBuilder> urlBuilderProvider,
-            @Named("htmlAdminSecureHeaders") Provider<Result> htmlAdminSecureHeadersProvider,
+            @SecureHtmlHeadersForAdmin Provider<Result> htmlAdminSecureHeadersProvider,
             NinjaProperties properties) {
         super(userService, userEventService, countryService, converter, urlBuilderProvider,
                 htmlAdminSecureHeadersProvider, properties);

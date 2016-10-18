@@ -1,6 +1,7 @@
 package controllers.sso.auth;
 
 import com.google.inject.persist.Transactional;
+import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -25,7 +26,6 @@ import services.sso.limits.GenericCounterService;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -96,7 +96,7 @@ public class SignUpVerificationController {
     public SignUpVerificationController(ExpirableTokenEncryptor expirableTokenEncryptor,
                                         UserService userService,
                                         Provider<UrlBuilder> urlBuilderProvider,
-                                        @Named("htmlSecureHeaders") Provider<Result> htmlWithSecureHeadersProvider,
+                                        @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
                                         GenericCounterService counterService,
                                         NinjaProperties properties,
                                         Logger logger) {
