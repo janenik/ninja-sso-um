@@ -36,8 +36,8 @@
         var dataJson = JSON.parse($(dataElement).html());
         var details = dataJson['event.data'];
         delete dataJson['event.data'];
-        $('#userEventData').text(JSON.stringify(dataJson));
-        $('#userEventDataDetails').text(JSON.stringify(details));
+        $('#userEventData').text(JSON.stringify(dataJson, null, '  '));
+        $('#userEventDataDetails').text(JSON.stringify(details, null, '  '));
 
         $(userEventsSearch).hide();
         $(userEventView).show();
