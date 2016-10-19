@@ -59,7 +59,7 @@
          return false;
     });
 
-    /** <#-- Table row handler. --> */
+    /** <#-- Table icon handler. --> */
     $('#' + userEventsSearch.id + ' table tr .btn-event-view').on('click touchend', function(e) {
         e.preventDefault();
         e.stopPropagation();

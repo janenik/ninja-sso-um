@@ -12,6 +12,7 @@ import models.sso.UserSignInState;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
+import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.FieldViolation;
@@ -29,6 +30,11 @@ import javax.inject.Provider;
  * @param <DTO> Data transfer object type.
  */
 public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO> {
+
+    /**
+     * Message id for changed password.
+     */
+    protected static final String USER_DATA_SAVED_MESSAGE = "adminUserDataSaved";
 
     /**
      * User service.
@@ -145,11 +151,16 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @param userId User's id whose entity to update.
      * @param dto Data Transfer Object to get data from.
      * @param context Application context.
+     * @param flashScope Flash scope.
      * @param validation DTO/form validation.
      * @return Result with redirect to the URL provided by {@link #getSuccessRedirectUrl(User, Context)} or redirection
      * to the list of users if the user was not found.
      */
-    protected final Result updateUserOrRedirectToList(long userId, DTO dto, Context context, Validation validation) {
+    protected final Result updateUserOrRedirectToList(long userId,
+                                                      DTO dto,
+                                                      Context context,
+                                                      FlashScope flashScope,
+                                                      Validation validation) {
         // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
@@ -171,6 +182,8 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
         converter.update(user, dto);
         // Update user.
         userService.update(user);
+        // Set message.
+        flashScope.success(USER_DATA_SAVED_MESSAGE);
         // Redirect to same form.
         return Results.redirect(getSuccessRedirectUrl(user, context));
     }

@@ -15,6 +15,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.params.PathParam;
+import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
@@ -63,6 +64,13 @@ public class EditContactDataController extends
                 htmlAdminSecureHeadersProvider, properties);
     }
 
+    /**
+     * Renders Contact Data form.
+     *
+     * @param userId User id.
+     * @param context Web request context.
+     * @return Result with contact data form.
+     */
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         return super.renderUserOrRedirectToList(userId, context);
@@ -73,17 +81,19 @@ public class EditContactDataController extends
      *
      * @param userId User id whose access to edit.
      * @param dto Form Data Transfer Object.
-     * @param validation Validaiton.
      * @param context Request context.
+     * @param flashScope Flash scope.
+     * @param validation Validation.
      * @return Result with Edit Contact data form.
      */
     @Transactional
     public Result post(
             @PathParam("userId") long userId,
             @JSR303Validation EditContactDataDto dto,
-            Validation validation,
-            Context context) {
-        return super.updateUserOrRedirectToList(userId, dto, context, validation);
+            Context context,
+            FlashScope flashScope,
+            Validation validation) {
+        return super.updateUserOrRedirectToList(userId, dto, context, flashScope, validation);
     }
 
     @Override

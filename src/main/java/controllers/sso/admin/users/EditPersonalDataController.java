@@ -14,6 +14,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.params.PathParam;
+import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
@@ -71,8 +72,9 @@ public class EditPersonalDataController extends
             @PathParam("userId") long userId,
             @JSR303Validation EditPersonalDataDto dto,
             Context context,
+            FlashScope flashScope,
             Validation validation) {
-        return super.updateUserOrRedirectToList(userId, dto, context, validation);
+        return super.updateUserOrRedirectToList(userId, dto, context, flashScope, validation);
     }
 
     @Override
