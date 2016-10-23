@@ -43,20 +43,41 @@
         $(userEventView).show();
     }
 
-    $('#buttonBackToEvents').on('click touchend', function(e) {
+    function backToAllEvents(e) {
         $(userEventsSearch).show();
         $(userEventView).hide();
+        e.preventDefault();
         return false;
-    });
+    }
 
-    $('#buttonPrevEvent').on('click touchend', function(e) {
+    function moveToNextEvent(e) {
+        if (nextDataEventId) displayUserEvent(nextDataEventId);
+        e.preventDefault();
+        return false;
+    }
+
+    function moveToPrevEvent(e) {
         if (prevDataEventId) displayUserEvent(prevDataEventId);
+        e.preventDefault();
         return false;
-    });
+    }
 
-    $('#buttonNextEvent').on('click touchend', function(e) {
-         if (nextDataEventId) displayUserEvent(nextDataEventId);
-         return false;
+    $('#buttonBackToEvents').on('click touchend', backToAllEvents);
+    $('#buttonPrevEvent').on('click touchend', moveToPrevEvent);
+    $('#buttonNextEvent').on('click touchend', moveToNextEvent);
+
+    $(document).keyup(function(e) {
+        switch(e.which) {
+            case 37:
+                moveToPrevEvent(e);
+            break;
+            case 38:
+                backToAllEvents(e);
+            break;
+            case 39:
+                moveToNextEvent(e);
+            break;
+        }
     });
 
     /** <#-- Table icon handler. --> */
