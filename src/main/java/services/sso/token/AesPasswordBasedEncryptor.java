@@ -1,7 +1,5 @@
 package services.sso.token;
 
-import com.google.common.base.Charsets;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -16,6 +14,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +53,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     private static final ThreadLocal<SecureRandom> secureRandom = new ThreadLocal<SecureRandom>() {
         @Override
         protected SecureRandom initialValue() {
-            return new SecureRandom(UUID.randomUUID().toString().getBytes(Charsets.UTF_8));
+            return new SecureRandom(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
         }
     };
 
