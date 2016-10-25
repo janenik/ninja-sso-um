@@ -1,5 +1,7 @@
 package services.sso.token;
 
+import com.google.common.base.Charsets;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -21,6 +23,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
+import java.util.UUID;
 
 /**
  * AES password based encryptor/decryptor. May use 128-bit encryption without JCE Unlimited Strength Jurisdiction
@@ -41,7 +44,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     private static final String ALGORITHM_FOR_KEY_SPEC = "AES";
 
     /**
-     * Key generator algortithm.
+     * Key generator algorithm.
      */
     private static final String KEY_GENERATOR = "PBKDF2WithHmacSHA1";
 
@@ -51,7 +54,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     private static final ThreadLocal<SecureRandom> secureRandom = new ThreadLocal<SecureRandom>() {
         @Override
         protected SecureRandom initialValue() {
-            return new SecureRandom();
+            return new SecureRandom(UUID.randomUUID().toString().getBytes(Charsets.UTF_8));
         }
     };
 
@@ -128,12 +131,20 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
 
             DataOutputStream dos = new DataOutputStream(outputStream);
 
+            // 1. Key size into the data stream.
+            // Since this is power of two and no one needs keys less than 64 bits we can divide it
+            // by 2^6. This allows to use keys up to 8192 bits and have it packed in single byte.
             dos.write(keySize >>> 6);
+            // 2. Write key specification + salt length.
             dos.writeShort(keySpecAndSalt.salt.length);
+            // 3. Write initialization vector length.
             dos.writeShort(iv.length);
+            // 4. Write key specification and salt.
             dos.write(keySpecAndSalt.salt);
+            // 5. Write initialization vector.
             dos.write(iv);
 
+            // 6. Write encrypted data until the end of the input stream.
             byte[] readBuffer = new byte[readBufferSize];
             int readBytes;
             byte[] encrypted;
@@ -159,26 +170,36 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     @Override
     public void decrypt(InputStream inputStream, OutputStream outputStream) throws IOException, DecryptionException {
         DataInputStream dis = new DataInputStream(inputStream);
+
+        // 1. Read key size and restore it by multiplying it by 2^6.
         short encryptedKeySize = (short) (dis.read() << 6);
+        // 2. Read key specification + salt length.
         short encryptedSaltLength = dis.readShort();
+        // 3. Read initialization vector length.
         short ivLength = dis.readShort();
 
+        // 4. Create buffer for salt and read it.
         byte[] salt = new byte[encryptedSaltLength];
         dis.read(salt);
 
+        // 5. Create buffer for initialization vector and read it.
         byte[] iv = new byte[ivLength];
         dis.read(iv);
 
         try {
+            // 6. Initialize cipher, key specification and salt.
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             KeySpecAndSalt keySpecAndSalt = new KeySpecAndSalt(password, passwordIterations, encryptedKeySize, salt);
 
             cipher.init(Cipher.DECRYPT_MODE, keySpecAndSalt.encryptionKeySpec, new IvParameterSpec(iv));
 
+            // 7. Create read buffer.
             byte[] readBuffer = new byte[readBufferSize];
 
             int readBytes;
             byte[] decrypted;
+
+            // 8. Read and decrypt data.
             while ((readBytes = dis.read(readBuffer)) > 0) {
                 decrypted = cipher.update(readBuffer, 0, readBytes);
                 if (decrypted != null) {
