@@ -96,7 +96,7 @@ public class AesPasswordBasedEncryptorTest {
      * @throws NoSuchAlgorithmException If there is no AES algorithm.
      */
     private void invokeAesTest(short keySize, boolean logSuccess) throws NoSuchAlgorithmException {
-        if (keySize > 128 && !isUnlimitedStrengthCrypto()) {
+        if (keySize > 128 && !isUnlimitedStrengthCryptographySupported()) {
             logger.warn("Unlimited policy is not installed: {} bit encryption is not expected to work.", keySize);
         }
 
@@ -108,8 +108,8 @@ public class AesPasswordBasedEncryptorTest {
 
             assertArrayEquals("Decrypted data must match the original.", data, decrypted);
             if (logSuccess) {
-                logger.info("{} bits: success. Data: {}, encrypted: {} (bytes).", keySize, data
-                        .length, decrypted.length);
+                logger.info("{} bits: success. Data: {}, encrypted: {} (bytes).", keySize,
+                        data.length, decrypted.length);
             }
         } catch (PasswordBasedEncryptor.EncryptionException | PasswordBasedEncryptor.DecryptionException ee) {
             logger.warn("{} bit encryption does not work: {} / {}",
@@ -129,7 +129,7 @@ public class AesPasswordBasedEncryptorTest {
      * @return whether unlimited policy is enabled.
      * @throws NoSuchAlgorithmException Should not happen.
      */
-    static boolean isUnlimitedStrengthCrypto() throws NoSuchAlgorithmException {
+    static boolean isUnlimitedStrengthCryptographySupported() throws NoSuchAlgorithmException {
         return Cipher.getMaxAllowedKeyLength("AES") > 128;
     }
 }

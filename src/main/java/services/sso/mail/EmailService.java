@@ -17,7 +17,7 @@ import java.io.StringWriter;
 import java.util.Map;
 
 /**
- * Email service with templating.
+ * Email service with templating support.
  */
 @Singleton
 public class EmailService {
@@ -63,14 +63,15 @@ public class EmailService {
         this.properties = properties;
 
         this.templateConfiguration = new Configuration(Configuration.getVersion());
-        this.templateConfiguration.setTemplateLoader(new ClassTemplateLoader(this.getClass(),
-                properties.getWithDefault("smtp.templates.basepath", DEFAULT_EMAIL_TEMPLATE_PACKAGE)));
+        this.templateConfiguration.setTemplateLoader(
+                new ClassTemplateLoader(this.getClass(),
+                        properties.getWithDefault("smtp.templates.basepath", DEFAULT_EMAIL_TEMPLATE_PACKAGE)));
     }
 
     /**
      * Sends email to recipient with subject, template name, data.
      *
-     * @param to To.
+     * @param to To recipient.
      * @param subject Subject.
      * @param templateName Template name in file system.
      * @param data Data for template.
@@ -88,10 +89,10 @@ public class EmailService {
     }
 
     /**
-     * Sends email from recipient to recipient with subject, template name, data and attachments.
+     * Sends email from recipient to recipient with subject, template name and template data.
      *
-     * @param from From.
-     * @param to To.
+     * @param from From recipient.
+     * @param to To recipient.
      * @param subject Subject.
      * @param templateName Template name in file system.
      * @param data Data for template.
@@ -106,12 +107,39 @@ public class EmailService {
         StringWriter sw = new StringWriter();
         template.process(data, sw);
         String body = sw.toString();
+        send(from, to, subject, body);
+    }
 
+    /**
+     * Sends email to recipient with subject and contents.
+     *
+     * @param to To recipient.
+     * @param subject Subject.
+     * @param content Template name in file system.
+     * @throws MessagingException In case of error.
+     * @throws IOException In case of error.
+     */
+    public void send(String to, String subject, String content) throws MessagingException, IOException {
+        String from = properties.getWithDefault("smtp.from.default", "user@localhost");
+        send(from, to, subject, content);
+    }
+
+    /**
+     * Sends email from recipient to recipient with subject and contents.
+     *
+     * @param from From recipient.
+     * @param to To recipient.
+     * @param subject Subject.
+     * @param content Template name in file system.
+     * @throws MessagingException In case of error.
+     * @throws IOException In case of error.
+     */
+    public void send(String from, String to, String subject, String content) throws MessagingException, IOException {
         Mail mail = mailProvider.get();
         mail.setFrom(from);
         mail.addTo(to);
         mail.setSubject(subject);
-        mail.setBodyHtml(body);
+        mail.setBodyHtml(content);
         mail.setCharset("UTF-8");
 
         try {

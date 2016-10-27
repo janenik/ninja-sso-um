@@ -118,7 +118,8 @@ public class ViewAccessLogController {
         // Fetch target user.
         User target = userService.get(userId);
         if (target == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
+            return Results.redirect(urlBuilderProvider.get()
+                    .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         // Log access.
         logEventsAccess(target, context);

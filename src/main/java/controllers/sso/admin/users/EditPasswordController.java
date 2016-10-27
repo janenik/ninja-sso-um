@@ -120,7 +120,7 @@ public class EditPasswordController {
      * @param userId User id.
      * @param context Web context.
      * @param validation Form validation.
-     * @return Form with errors or redirect back to the form.
+     * @return Form with errors or redirect back to the form in case of success.
      */
     @Transactional
     public Result post(@PathParam("userId") long userId,

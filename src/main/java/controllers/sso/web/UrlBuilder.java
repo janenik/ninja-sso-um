@@ -8,6 +8,7 @@ import controllers.sso.admin.users.EditContactDataController;
 import controllers.sso.admin.users.EditPasswordController;
 import controllers.sso.admin.users.EditPersonalDataController;
 import controllers.sso.admin.users.EditAccessController;
+import controllers.sso.admin.users.SendEmailController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -126,6 +127,7 @@ public class UrlBuilder {
         if (properties.isTest()) {
             return url;
         }
+        // Check whether the continue URL is allowed / whitelisted.
         for (String urlPrefix : allowedContinueUrls) {
             if (url.startsWith(urlPrefix)) {
                 return url;
@@ -295,7 +297,7 @@ public class UrlBuilder {
     }
 
     /**
-     * Constructs admin URL to edit user role data.
+     * Constructs admin URL to edit user password form.
      * URL is relative.
      *
      * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
@@ -303,6 +305,17 @@ public class UrlBuilder {
      */
     public String getAdminEditPasswordUrl(long userId, Object... query) {
         return getAdminEditUserDataUrl(EditPasswordController.class, "get", userId, query);
+    }
+
+    /**
+     * Constructs admin URL to send email form.
+     * URL is relative.
+     *
+     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @return Relative URL to admin edit contact data section.
+     */
+    public String getAdminSendEmailUrl(long userId, Object... query) {
+        return getAdminEditUserDataUrl(SendEmailController.class, "get", userId, query);
     }
 
     /**

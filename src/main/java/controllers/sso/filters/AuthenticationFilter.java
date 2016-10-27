@@ -106,8 +106,11 @@ public class AuthenticationFilter implements Filter {
      * @param properties Properties.
      */
     @Inject
-    public AuthenticationFilter(ExpirableTokenEncryptor encryptor, DeviceAuthPolicy deviceAuthPolicy,
-                                NinjaProperties properties, Logger logger) {
+    public AuthenticationFilter(
+            ExpirableTokenEncryptor encryptor,
+            DeviceAuthPolicy deviceAuthPolicy,
+            NinjaProperties properties,
+            Logger logger) {
         this.encryptor = encryptor;
         this.deviceAuthPolicy = deviceAuthPolicy;
         this.logger = logger;
@@ -127,12 +130,14 @@ public class AuthenticationFilter implements Filter {
                 if (userId == null) {
                     throw new IllegalStateException("Access token is expected to contain user id: " + token);
                 }
-                context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue("role")));
+                context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_AUTHENTICATED, true);
+
                 context.setAttribute(TOKEN, expirableToken);
                 ExpirableToken xsrfToken =
                         ExpirableToken.newTokenForUser(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
+
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
             } else {

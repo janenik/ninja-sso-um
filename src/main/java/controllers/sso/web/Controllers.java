@@ -38,7 +38,7 @@ public final class Controllers {
      * @param context Context.
      * @return Result.
      */
-    public static Result badRequest(String field, String message, Context context) {
+    public static Result jsonOrJsonPBadRequest(String field, String message, Context context) {
         return jsonOrJsonpResponse(context,
                 RestResponse.badRequestWithViolation(field, message, field + ": " + message));
     }
@@ -51,7 +51,7 @@ public final class Controllers {
      * @param context Context.
      * @return Bad request response.
      */
-    public static Result badRequest(String field, Exception ex, Context context) {
+    public static Result jsonOrJsonPBadRequest(String field, Exception ex, Context context) {
         return jsonOrJsonpResponse(context, RestResponse.badRequestWithViolation(field, ex));
     }
 

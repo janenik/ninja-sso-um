@@ -19,7 +19,7 @@ public class ApplicationErrorJsonOrJsonpFilter implements Filter {
         try {
             return filterChain.next(context);
         } catch (Exception e) {
-            return Controllers.badRequest("error", e, context);
+            return Controllers.jsonOrJsonPBadRequest("error", e, context);
         }
     }
 }
