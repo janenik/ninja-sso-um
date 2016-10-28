@@ -28,6 +28,8 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -172,6 +174,7 @@ public class SendEmailController {
     Result createResult(User user, Context context, Validation validation, String... emailData) {
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
+                .render("now", ZonedDateTime.now(ZoneId.of("UTC")))
                 .render("context", context)
                 .render("config", properties)
                 .render("errors", validation)

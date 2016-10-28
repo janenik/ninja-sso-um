@@ -49,7 +49,12 @@
                                 <textarea class="form-control"
                                           name="body"
                                           id="body"
-                                          ${_enableHtml5Required}>${(body)!}</textarea>
+                                          style="min-height:250px;"
+                                          ${_enableHtml5Required}><#if body?has_content>${body}<#else>
+                                        ${userEntity.getFirstName()} ${(userEntity.getMiddleName())!} ${userEntity.getLastName()}
+                                    ${userEntity.getUsername()}
+                                    ${now.format(dateTimeFormatter)}
+                                    </#if></textarea>
                             </div>
                         </div>
 
