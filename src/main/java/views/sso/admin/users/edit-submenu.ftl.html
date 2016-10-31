@@ -82,11 +82,18 @@
         ${userEntity.getMiddleName()}
     </#if>
     ${userEntity.getLastName()}
+    <span>
+        <small>[${i18n("adminEditUserLastUsedLocale")}: ${userEntity.getLastUsedLocale()}]</small>
+    </span>
 </div>
 
 <style>
     #user-edit-submenu-id-info {
-    margin: 10px;
-    text-align: center;
+        margin: 10px;
+        text-align: center;
+    }
+    #user-edit-submenu-id-info span {
+        display: inline-block;
+        padding-left: 20px;
     }
 </style>

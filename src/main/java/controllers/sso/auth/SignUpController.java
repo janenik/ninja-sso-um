@@ -295,6 +295,7 @@ public class SignUpController {
         userToSave.setGender(UserGender.valueOf(userDto.getGender()));
         userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay()));
         userToSave.setRole(UserRole.USER);
+        userToSave.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
         // Save the user.
         userService.createNew(userToSave, userDto.getPassword());
         // Remote IP.

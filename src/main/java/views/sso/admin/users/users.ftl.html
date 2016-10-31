@@ -60,22 +60,30 @@
                                 <td>${user.getLastName()}</td>
                                 <td>${user.getRole()}</td>
                                 <td>${user.getCreated().format(dateTimeFormatter)}</td>
+
+                                <#assign pageBaseUrl>${contextPath}/auth/admin/user/${user.getId()?url}</#assign>
+                                <#assign commonParameters>lang=${lang?url}&query=${query?url}&page=${page?url}</#assign>
+
                                 <td class="operations">
-                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-personal?lang=${lang?url}&amp;query=${query?url}&page=${page?url}"
+                                    <a href="${pageBaseUrl}/edit-personal?${commonParameters}"
                                        title="${i18n('adminEditUserPersonalData')}">
                                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </a>
-                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-contact?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                    <a href="${pageBaseUrl}/edit-contact?${commonParameters}"
                                        title="${i18n('adminEditUserContactData')}">
                                         <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
                                     </a>
-                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/edit-access?lang=${lang?url}&query=${query?url}&page=${page?url}"
+                                    <a href="${pageBaseUrl}/edit-access?${commonParameters}"
                                        title="${i18n('adminEditUserAccess')}">
                                         <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                                     </a>
-                                    <a href="${contextPath}/auth/admin/user/${user.getId()?url}/access-log?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}"
+                                    <a href="${pageBaseUrl}/access-log?${commonParameters}"
                                        title="${i18n('adminEditUserAccessLog')}">
                                         <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${pageBaseUrl}/send-email?${commonParameters}"
+                                       title="${i18n('adminEditUserSendEmail')}">
+                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                                     </a>
                                 </td>
                             </tr>

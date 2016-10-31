@@ -170,6 +170,12 @@ public class User implements Serializable {
     ZonedDateTime updated;
 
     /**
+     * Last used locale.
+     */
+    @Column(nullable = true, length = 5)
+    String lastUsedLocale;
+
+    /**
      * Version.
      */
     @Version
@@ -630,6 +636,24 @@ public class User implements Serializable {
      */
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    /**
+     * Returns last used locale.
+     *
+     * @return Last used locale.
+     */
+    public String getLastUsedLocale() {
+        return lastUsedLocale;
+    }
+
+    /**
+     * Sets last used locale.
+     *
+     * @param lastUsedLocale Last used locale.
+     */
+    public void setLastUsedLocale(String lastUsedLocale) {
+        this.lastUsedLocale = lastUsedLocale;
     }
 
     @Override

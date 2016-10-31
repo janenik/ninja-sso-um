@@ -87,6 +87,7 @@ public class SsoStartupActions {
             user.setDateOfBirth(LocalDate.of(1984, 11, 24));
             user.setCountry(country);
             user.setGender(UserGender.OTHER);
+            user.setLastUsedLocale("en");
             user.confirm();
 
             userService.createNew(user, "password");
@@ -106,6 +107,7 @@ public class SsoStartupActions {
                     user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));
                     user.setCountry(country);
                     user.setGender(UserGender.OTHER);
+                    user.setLastUsedLocale("en");
                     user.confirm();
 
                     userService.createNew(user, "password");

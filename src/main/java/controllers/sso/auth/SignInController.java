@@ -197,9 +197,12 @@ public class SignInController {
         if (!user.isSignInEnabled()) {
             return createResult(userSignInDto, context, validation, "signInDisabled");
         }
+        // Remember last used locale.
+        user.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
+        userService.update(user);
         // Remote IP.
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        /// Remember sign in event.
+        // Remember sign in event.
         userEventService.onSignIn(user, ip, context.getHeaders());
         return signInResponseSupplierProvider.get().getSignInResponse(user);
     }
