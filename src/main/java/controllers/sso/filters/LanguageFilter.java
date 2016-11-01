@@ -52,13 +52,13 @@ public class LanguageFilter implements Filter {
 
     @Inject
     public LanguageFilter(Lang lang, NinjaProperties properties) {
-        Map<String, String> mapping = new LinkedHashMap<>();
         String[] languages = properties.getStringArray("application.languages");
         String[] languageTitles = properties.getStringArray("application.languageTitles");
         if (languages.length < 1 || languages.length > languageTitles.length) {
             throw new IllegalStateException("Number of supported languages must be positive.  "
                     + "Number of language titles must be equal or greater than number of languages.");
         }
+        Map<String, String> mapping = new LinkedHashMap<>();
         for (int index = 0; index < languages.length; index++) {
             mapping.put(languages[index], languageTitles[index]);
         }
