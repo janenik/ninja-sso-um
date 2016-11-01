@@ -50,6 +50,12 @@ public class LanguageFilter implements Filter {
      */
     final Map<String, String> mappedLanguages;
 
+    /**
+     * Constructs language filter.
+     *
+     * @param lang Language holder for current request.
+     * @param properties Application properties.
+     */
     @Inject
     public LanguageFilter(Lang lang, NinjaProperties properties) {
         String[] languages = properties.getStringArray("application.languages");

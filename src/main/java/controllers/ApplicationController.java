@@ -82,7 +82,7 @@ public class ApplicationController {
         return htmlWithSecureHeadersProvider.get()
                 .render("context", context)
                 .render("method", context.getMethod())
-                .render("user", user)
+                .render("userEntity", user)
                 .render("lang", context.getAttribute(LanguageFilter.LANG))
                 .render("remoteIp", ip)
                 .render("captchaToken", captchaTokenService.newCaptchaToken())

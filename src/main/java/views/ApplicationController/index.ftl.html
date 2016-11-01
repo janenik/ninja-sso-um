@@ -10,11 +10,11 @@
     <p><b>IP threshold exceeded:</b> ${ipHitsExceeded?c}</p>
     <p><b>Method:</b> ${method}</p>
     <p><b>Authorized:</b> ${context.getAttribute('authenticated')?c}</p>
-    <#if user??>
+    <#if userEntity??>
         <p>
             <b>User:</b>
-            ${user.getFirstName()}
-            ${user.getLastName()}
+            ${userEntity.getFirstName()}
+            ${userEntity.getLastName()}
         </p>
     </#if>
     <p>
