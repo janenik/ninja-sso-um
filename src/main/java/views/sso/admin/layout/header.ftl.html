@@ -1,3 +1,5 @@
+<#assign pageBaseUrl>${contextPath}/auth/admin/users?lang=${lang?url}</#assign>
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -6,19 +8,34 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${contextPath}/auth/admin/users?lang=${lang?url}">
+            <a class="navbar-brand" href="${pageBaseUrl}">
                 ${i18n('adminTitle')}
             </a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="active">
-                    <a href="${contextPath}/auth/admin/users?lang=${lang?url}">
+                    <a href="${pageBaseUrl}">
                         ${i18n('adminUsers')}
                     </a>
                 </li>
             </ul>
+            <#assign languagesMap = context.getAttribute('languages') />
             <ul class="navbar-right nav navbar-nav">
+                <li>
+                    <a href="#" id="languageDropdownMenu" data-toggle="dropdown" aria-haspopup="true">
+                        ${languagesMap[context.getAttribute('lang')]}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdownMenu">
+                        <#list languagesMap?keys as langId>
+                            <li>
+                                <a href="#" onclick="return sso.htmlHelpers.changeLanguage('${langId}');">
+                                    ${languagesMap[langId]}
+                                </a>
+                            </li>
+                        </#list>
+                    </ul>
+                </li>
                 <li>
                     <a href="#" onclick="$('#signOutForm').submit();">
                         ${i18n('adminSignOut')}
@@ -28,14 +45,16 @@
                           id="signOutForm"
                           style="display:none;">
                         <input type="hidden" name="continue"
-                               value="${context.getAttribute('properties').get('application.baseUrl')}${contextPath}/auth/admin/users?lang=${lang?url}" />
+                               value="${context.getAttribute('properties').get('application.baseUrl')}${pageBaseUrl}"/>
                         <input type="hidden" name="xsrfToken"
-                               value="${context.getAttribute('xsrfToken')}" />
+                               value="${context.getAttribute('xsrfToken')}"/>
                     </form>
                 </li>
-
             </ul>
         </div>
-        <!--/.navbar-collapse -->
     </div>
 </div>
+
+<script>
+  <#include "/assets/js/sso/language-selector.js" />
+</script>
