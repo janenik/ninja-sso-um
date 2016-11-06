@@ -39,6 +39,7 @@ sso.security.password.Observer.prototype.onFieldChange = function() {
     this.inputFeedback.hide();
     return;
   }
+  this.meter.css('display', 'inline-block');
   var verdict = this.classifier.classify(value);
   text = this.meterMessages[verdict - 1] || '?No translation for verdict: ' + (verdict);
   this.meter.text(text);
@@ -50,7 +51,6 @@ sso.security.password.Observer.prototype.onFieldChange = function() {
     this.meter.removeClass('weak medium').addClass('strong');
   }
   this.inputFeedback.show();
-  this.meter.css('display', 'inline-block');
   this.input.closest('.has-error')
       .removeClass('has-error')
       .find('p.help-block').hide();
