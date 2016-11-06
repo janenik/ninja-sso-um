@@ -245,8 +245,11 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group <#if errors.hasBeanViolation('password')>has-error</#if>">
-                        <label class="control-label" for="password">${i18n("signUpPassword")}</label>
+                    <div class="form-group has-feedback <#if errors.hasBeanViolation('password')>has-error</#if>">
+                        <label class="control-label password-meter-container" for="password">
+                            ${i18n("signUpPassword")}
+                            <span id="password-meter"></span>
+                        </label>
                         <input type="password" id="password" name="password"
                                placeholder="${i18n('signUpPasswordPlaceHolder')}"
                                value="${(user.getPassword())!}"
@@ -254,6 +257,8 @@
                                autocomplete="off"
                                class="form-control"
                         />
+                        <i id="password-feedback"
+                           class="glyphicon glyphicon-ok-circle form-control-feedback"></i>
                         <#if errors.hasBeanViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp1")}</p>
                         </#if>
@@ -261,15 +266,19 @@
                 </div>
 
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group <#if errors.hasBeanViolation('passwordRepeat')>has-error</#if>">
-                        <label class="control-label" for="passwordRepeat">${i18n("signUpPasswordRepeat")}</label>
-                        <input type="password" id="passwordRepeat" name="passwordRepeat"
+                    <div class="form-group has-feedback <#if errors.hasBeanViolation('passwordRepeat')>has-error</#if>">
+                        <label class="control-label" for="password-repeat">
+                            ${i18n("signUpPasswordRepeat")}
+                        </label>
+                        <input type="password" id="password-repeat" name="passwordRepeat"
                                placeholder="${i18n('signUpPasswordRepeatPlaceHolder')}"
                                value="${(user.getPasswordRepeat())!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
                                class="form-control"
                         />
+                        <i id="password-repeat-feedback"
+                           class="glyphicon glyphicon-ok-circle form-control-feedback"></i>
                         <#if errors.hasBeanViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp2")}</p>
                         </#if>
@@ -280,7 +289,7 @@
             <div class="row">
                 <div class="col-xs-6 col-md-6">
                     <div class="form-group <#if errors.hasBeanViolation('captchaCode')>has-error</#if>">
-                        <label class="control-label" for="captchaCode">${i18n("signUpCaptchaCode")}</label>
+                        <label class=ter"control-label" for="captchaCode">${i18n("signUpCaptchaCode")}</label>
                         <input type="text" class="form-control" id="captchaCode"
                                name="captchaCode"
                                ${_enableHtml5Required}

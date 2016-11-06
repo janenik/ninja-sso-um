@@ -1,54 +1,108 @@
+/**<#-- This CSS source is a Freemarker template and is supposed to be included. -->*/
 #signUpForm {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
+
 #birthMonthButton, #countryIdButton {
-    width:100%;
+  width:100%;
 }
+
 #genderButton {
-    width: 100%;
+  width: 100%;
 }
+
 .ssoSignupCaptchaContainer {
-    text-align: left;
+  text-align: left;
 }
+
 .ssoFieldError {
-    background-color: #f5f59c;
+  background-color: #f5f59c;
 }
+
 .ssoFieldErrorDescription {
-    color: #cc4a4a;
+  color: #cc4a4a;
 }
+
 .ssoCaptchaImage {
-    background-color: #fff;
-    cursor: pointer;
-    margin-top: 15px;
+  background-color: #fff;
+  cursor: pointer;
+  margin-top: 15px;
 }
+
 @media (max-width: 768px) {
-    .ssoCaptchaImage {
-        margin-top: 24px;
-        width: 170px;
-    }
+  .ssoCaptchaImage {
+    margin-top: 24px;
+    width: 170px;
+  }
 }
+
 @media (max-width: 600px) {
-    .ssoCaptchaImage {
-        margin-top: 28px;
-        width: 130px;
-    }
+  .ssoCaptchaImage {
+    margin-top: 28px;
+    width: 130px;
+  }
 }
+
 .flag {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    background:url(${contextPath}/assets/i/flags.png) no-repeat
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background:url(${contextPath}/assets/i/flags.png) no-repeat
 }
+
 .countryEntry a {
-    height: 32px;
-    width: 220px;
-    position: relative;
+  height: 32px;
+  width: 220px;
+  position: relative;
 }
+
 .countryEntry .flag {
-    position: absolute;
+  position: absolute;
 }
+
 .countryEntry .countryNameCode {
-    position: absolute;
-    top: 10px;
-    left: 67px;
+  position: absolute;
+  top: 10px;
+  left: 67px;
+}
+
+.password-meter-container {
+  position: relative;
+}
+
+#password-meter {
+  display: none;
+  font-weight: lighter;
+  font-size: small;
+  padding-left: 15px;
+  position: absolute;
+  width: 400px;
+}
+
+#password-meter.weak {
+  color: red;
+}
+
+#password-meter.medium {
+  color: orange;
+}
+
+#password-meter.strong {
+  color: green;
+}
+
+#password-feedback {
+  display: none;
+}
+
+#password-repeat-feedback {
+  display: none;
+}
+
+#password-feedback.glyphicon-ok-circle, #password-repeat-feedback.glyphicon-ok-circle {
+  color: green;
+}
+
+#password-feedback.glyphicon-remove-circle, #password-repeat-feedback.glyphicon-remove-circle {
+  color: red;
 }

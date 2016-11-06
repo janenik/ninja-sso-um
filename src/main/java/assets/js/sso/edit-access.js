@@ -1,5 +1,5 @@
 /**<#-- This javascript source is a Freemarker template and is supposed to be included. -->*/
-<#include "/assets/js/sso/setupdropdown.js" />
+<#include "/assets/js/sso/setup-dropdown.js" />
 
 (function() {
     /**<#-- Role. -->*/
