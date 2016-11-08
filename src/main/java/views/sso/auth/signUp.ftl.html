@@ -12,8 +12,12 @@
             <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
         </noscript>
 
-        <#if errors.hasBeanViolations()>
+        <#if errors.hasBeanViolations() && !errors.hasBeanViolation('age')>
             <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+        </#if>
+
+        <#if errors.hasBeanViolation('age')>
+            <div class="alert alert-danger">${i18n("signUpAgeRestriction")}</div>
         </#if>
 
         <form id="signUpForm" method="POST"
@@ -76,7 +80,7 @@
             <div class="row">
                 <div class="col-xs-12 col-md-8">
                     <div class="form-group <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
-                                || errors.hasBeanViolation('birthYear')>has-error</#if>">
+                                || errors.hasBeanViolation('birthYear') || errors.hasBeanViolation('age')>has-error</#if>">
                         <label class="control-label" for="birthday">${i18n("signUpBirthday")}</label>
                         <div class="row">
                             <div class="col-xs-5 col-md-3">

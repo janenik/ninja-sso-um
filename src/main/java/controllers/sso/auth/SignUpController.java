@@ -164,6 +164,11 @@ public class SignUpController {
     final long emailTokenTtl;
 
     /**
+     * Minimum registration age.
+     */
+    final int minimumRegistrationAge;
+
+    /**
      * Sign up verification token time to live, in millis.
      */
     final long signUpVerificationTokenTtl;
@@ -226,6 +231,8 @@ public class SignUpController {
                 getIntegerWithDefault("application.sso.emailToken.ttl", 24 * 3600);
         this.signUpVerificationTokenTtl = 1000L * properties.
                 getIntegerWithDefault("application.sso.signUpVerificationToken.ttl", 30 * 60);
+        this.minimumRegistrationAge = properties
+                .getIntegerWithDefault("application.minimumRegistrationAge", 13);
     }
 
     /**
@@ -267,6 +274,11 @@ public class SignUpController {
         if (!"agree".equals(userDto.getAgreement())) {
             return createResult(userDto, context, validation, "agreement");
         }
+        // Check if the user is old enough.
+        LocalDate birthDate = LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay());
+        if (birthDate.plusYears(minimumRegistrationAge).isAfter(LocalDate.now())) {
+            return createResult(userDto, context, validation, "age");
+        }
         // Check if user has correct token/captcha.
         try {
             captchaTokenService.verifyCaptchaToken(userDto.getToken(), userDto.getCaptchaCode());
@@ -293,7 +305,7 @@ public class SignUpController {
         User userToSave = dtoMapper.map(userDto, User.class);
         userToSave.setCountry(country);
         userToSave.setGender(UserGender.valueOf(userDto.getGender()));
-        userToSave.setDateOfBirth(LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay()));
+        userToSave.setDateOfBirth(birthDate);
         userToSave.setRole(UserRole.USER);
         userToSave.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
         // Save the user.
