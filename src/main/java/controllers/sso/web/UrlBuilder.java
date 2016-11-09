@@ -3,11 +3,12 @@ package controllers.sso.web;
 import com.google.common.base.Strings;
 import com.google.inject.servlet.RequestScoped;
 import controllers.ApplicationController;
+import controllers.annotations.AllowedContinueUrls;
 import controllers.annotations.InjectedContext;
+import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.EditContactDataController;
 import controllers.sso.admin.users.EditPasswordController;
 import controllers.sso.admin.users.EditPersonalDataController;
-import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.SendEmailController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.RestorePasswordController;
@@ -20,7 +21,6 @@ import ninja.Router;
 import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class UrlBuilder {
             Router router,
             HttpServletRequest servletRequest,
             @InjectedContext Context context,
-            @Named("allowedContinueUrls") List<String> allowedContinueUrls) {
+            @AllowedContinueUrls List<String> allowedContinueUrls) {
         this.properties = properties;
         this.router = router;
         this.context = context;

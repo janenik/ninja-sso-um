@@ -1,6 +1,8 @@
 package controllers.sso.auth;
 
 import com.google.inject.servlet.RequestScoped;
+import controllers.annotations.ApplicationPolicy;
+import controllers.annotations.BrowserPolicy;
 import controllers.annotations.InjectedContext;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
@@ -22,7 +24,6 @@ import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Provides Sign In response with appropriate URL redirect and needed headers.
@@ -75,8 +76,8 @@ public class SignInResponseBuilder {
     @Inject
     public SignInResponseBuilder(
             DeviceAuthPolicy deviceAuthPolicy,
-            @Named("browser") AppendAuthTokenPolicy browserAppendTokenPolicy,
-            @Named("application") AppendAuthTokenPolicy applicationAppendAuthTokenPolicy,
+            @BrowserPolicy AppendAuthTokenPolicy browserAppendTokenPolicy,
+            @ApplicationPolicy AppendAuthTokenPolicy applicationAppendAuthTokenPolicy,
             @InjectedContext Context context,
             ExpirableTokenEncryptor encryptor,
             UrlBuilder urlBuilder,

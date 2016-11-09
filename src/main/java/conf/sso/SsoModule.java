@@ -4,6 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import controllers.annotations.AllowedContinueUrls;
+import controllers.annotations.ApplicationPolicy;
+import controllers.annotations.BrowserPolicy;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import ninja.utils.NinjaProperties;
@@ -14,7 +17,6 @@ import services.sso.token.AesPasswordBasedEncryptor;
 import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -58,7 +60,7 @@ public class SsoModule extends AbstractModule {
      * @return List of allowed continue URL prefixes, including self.
      */
     @Provides
-    @Named("allowedContinueUrls")
+    @AllowedContinueUrls
     @Singleton
     List<String> provideAllowedContinueUrls(NinjaProperties properties) {
         String baseUrl = properties.get("application.baseUrl");
@@ -105,9 +107,9 @@ public class SsoModule extends AbstractModule {
      * @return Desktop append token policy.
      */
     @Provides
-    @Named("browser")
+    @BrowserPolicy
     @Singleton
-    AppendAuthTokenPolicy provideDesktopAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
+    AppendAuthTokenPolicy provideBrowserAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
         String property = "application.sso.device.auth.policy.append.browser";
         String policy = properties.getWithDefault(property, AppendAuthTokenPolicy.COOKIE.toString());
         try {
@@ -127,9 +129,9 @@ public class SsoModule extends AbstractModule {
      * @return Application append token policy.
      */
     @Provides
-    @Named("application")
+    @ApplicationPolicy
     @Singleton
-    AppendAuthTokenPolicy provideMobileAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
+    AppendAuthTokenPolicy provideApplicationAppendAuthTokenPolicy(NinjaProperties properties, Logger logger) {
         String property = "application.sso.device.auth.policy.append.application";
         String policy = properties.getWithDefault(property, AppendAuthTokenPolicy.URL_PARAM.toString());
         try {
