@@ -23,6 +23,13 @@
             <#assign languagesMap = context.getAttribute('languages') />
             <ul class="navbar-right nav navbar-nav">
                 <li>
+                    <#assign loggedInUser = context.getAttribute('loggedInUser') />
+                    <a href="${contextPath}/auth/admin/user/${loggedInUser.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}">
+                        ${loggedInUser.getFirstName()}
+                        ${loggedInUser.getLastName()}
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="languageDropdownMenu" data-toggle="dropdown" aria-haspopup="true">
                         ${languagesMap[context.getAttribute('lang')]}
                     </a>
@@ -57,4 +64,6 @@
 
 <script>
   <#include "/assets/js/sso/language-selector.js" />
+
+
 </script>

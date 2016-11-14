@@ -1,7 +1,7 @@
 package controllers.sso.admin.users;
 
-import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
+import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import converters.Converter;
@@ -235,7 +235,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @param context Context.
      */
     private void logAccess(User user, Context context) {
-        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
+        User loggedInUser = (User) context.getAttribute(RequireAdminPrivelegesFilter.LOGGED_IN_USER);
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         userEventService.onUserDataAccess(loggedInUser, user, currentUrl, remoteIp, context.getHeaders());
@@ -248,7 +248,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @param context Context.
      */
     private void logUpdate(User user, Context context) {
-        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
+        User loggedInUser = (User) context.getAttribute(RequireAdminPrivelegesFilter.LOGGED_IN_USER);
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         userEventService.onUserDataUpdate(loggedInUser, user, currentUrl, remoteIp, context.getHeaders());
