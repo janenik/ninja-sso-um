@@ -1,7 +1,9 @@
 package services.sso;
 
+import services.sso.annotations.ExclusionDictionary;
 import models.sso.User;
 import org.slf4j.Logger;
+import services.sso.annotations.ExclusionSubstrings;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -10,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * User service.
@@ -21,6 +24,16 @@ public class UserService implements Paginatable<User> {
      * Entity manager provider.
      */
     final Provider<EntityManager> entityManagerProvider;
+
+    /**
+     * Exclusion dictionary for username check.
+     */
+    final Set<String> usernameExclusionDictionary;
+
+    /**
+     * Exclusion substrings for username check.
+     */
+    final Set<String> usernameExclusionSubstrings;
 
     /**
      * Password service.
@@ -36,11 +49,19 @@ public class UserService implements Paginatable<User> {
      * Constructs user service.
      *
      * @param entityManagerProvider Entity manager provider.
+     * @param usernameExclusionDictionary Username exclusion dictionary.
+     * @param passwordService Password service.
      * @param logger Logger.
      */
     @Inject
-    public UserService(Provider<EntityManager> entityManagerProvider, PasswordService passwordService, Logger logger) {
+    public UserService(
+            Provider<EntityManager> entityManagerProvider,
+            @ExclusionDictionary Set<String> usernameExclusionDictionary,
+            @ExclusionSubstrings Set<String> usernameExclusionSubstrings,
+            PasswordService passwordService, Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
+        this.usernameExclusionDictionary = usernameExclusionDictionary;
+        this.usernameExclusionSubstrings = usernameExclusionSubstrings;
         this.passwordService = passwordService;
         this.logger = logger;
     }
@@ -142,6 +163,31 @@ public class UserService implements Paginatable<User> {
         user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
         entityManagerProvider.get().persist(user);
         return user;
+    }
+
+    /**
+     * Tests if the given username is avaiable.
+     *
+     * @param username Username to test for availability.
+     * @return Whether the given username is available.
+     */
+    public boolean isUsernameAvailable(String username) {
+        if (username == null) {
+            return false;
+        }
+        username = username.trim().toLowerCase();
+        if (username.isEmpty()) {
+            return false;
+        }
+        if (usernameExclusionDictionary.contains(username)) {
+            return false;
+        }
+        for (String exclusionSubstring : usernameExclusionSubstrings) {
+            if (username.contains(exclusionSubstring)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

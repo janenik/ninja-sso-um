@@ -7,25 +7,40 @@ import com.google.inject.Provides;
 import controllers.annotations.AllowedContinueUrls;
 import controllers.annotations.ApplicationPolicy;
 import controllers.annotations.BrowserPolicy;
+import services.sso.annotations.ExclusionDictionary;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import ninja.utils.NinjaProperties;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
+import services.sso.annotations.ExclusionSubstrings;
 import services.sso.token.AesPasswordBasedEncryptor;
 import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Singleton;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * SSO module.
  */
 public class SsoModule extends AbstractModule {
+
+    /**
+     * Exclusion dictionaries directory.
+     */
+    private static final String EXCLUSION_DICTIONARIES_DIRECTORY = "dictionaries";
 
     @Override
     protected void configure() {
@@ -153,5 +168,77 @@ public class SsoModule extends AbstractModule {
     DateTimeFormatter provideDateTimeFormatter(NinjaProperties properties) {
         String format = properties.getOrDie("application.sso.admin.dateTimeFormat");
         return DateTimeFormatter.ofPattern(format);
+    }
+
+    /**
+     * Provides exclusion substrings for username validation.
+     *
+     * @param dictionary All exclusion dictionary.
+     * @param properties Application properties.
+     * @param logger Logger.
+     * @return A set of exclusion keywords.
+     */
+    @Provides
+    @ExclusionSubstrings
+    @Singleton
+    Set<String> provideExclusionSubstrings(
+            @ExclusionDictionary Set<String> dictionary,
+            NinjaProperties properties,
+            Logger logger) throws IOException {
+        int minKeywordLengthForSubstring =
+                properties.getIntegerWithDefault("application.sso.minKeywordLengthForSubstringExclusion", 5);
+        Set<String> exclusionSubstrings = new HashSet<>();
+        Pattern starPattern = Pattern.compile("\\*");
+        for (String keyword : dictionary) {
+            if (keyword.startsWith("*") || keyword.endsWith("*")) {
+                exclusionSubstrings.add(starPattern.matcher(keyword).replaceAll(""));
+            } else if (keyword.length() >= minKeywordLengthForSubstring) {
+                exclusionSubstrings.add(keyword);
+            }
+        }
+        logger.info("Exclusion substrings set contains {} substrings.", exclusionSubstrings.size());
+        return Collections.unmodifiableSet(exclusionSubstrings);
+    }
+
+    /**
+     * Provides exclusion dictionary for username validation.
+     *
+     * @param logger Logger.
+     * @return A set of exclusion keywords.
+     */
+    @Provides
+    @ExclusionDictionary
+    @Singleton
+    Set<String> provideExclusionDictionary(Logger logger) throws IOException {
+        List<String> files = getResourceLines(EXCLUSION_DICTIONARIES_DIRECTORY);
+        logger.info("Found {} dictionary resources.", files);
+        Set<String> result = new HashSet<>();
+        for (String file : files) {
+            String dictionaryResource = EXCLUSION_DICTIONARIES_DIRECTORY + "/" + file;
+            logger.info("Reading dictionary resource: {}", dictionaryResource);
+            result.addAll(getResourceLines(dictionaryResource));
+        }
+        logger.info("Exclusion dictionary contains {} keywords.", result.size());
+        return Collections.unmodifiableSet(result);
+    }
+
+    /**
+     * Reads non-empty lines from given resource relative to the current class.
+     * Excludes lines that start with '#' character.
+     *
+     * @param resource Resource to read.
+     * @return List of lines from resource.
+     * @throws IOException In case of read exception.
+     */
+    private static List<String> getResourceLines(String resource) throws IOException {
+        InputStream is = SsoModule.class.getResourceAsStream(resource);
+        if (is == null) {
+            return Collections.emptyList();
+        }
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
+            return buffer.lines()
+                    .filter(s -> !s.isEmpty() && !s.startsWith("#"))
+                    .collect(Collectors.toList());
+        }
     }
 }

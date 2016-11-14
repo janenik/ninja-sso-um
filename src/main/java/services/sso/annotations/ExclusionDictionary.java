@@ -1,4 +1,4 @@
-package controllers.annotations;
+package services.sso.annotations;
 
 import com.google.inject.BindingAnnotation;
 
@@ -6,9 +6,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * A list of allowed continue URLs.
+ * A set of exclusion keywords that are not allowed in usernames, etc.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @BindingAnnotation
-public @interface AllowedContinueUrls {
+public @interface ExclusionDictionary {
 }

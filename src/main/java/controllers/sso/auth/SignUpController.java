@@ -286,6 +286,10 @@ public class SignUpController {
                 ExpiredTokenException | IllegalTokenException ex) {
             return createResult(userDto, context, validation, "captchaCode");
         }
+        // Check username is available.
+        if (!userService.isUsernameAvailable(userDto.getUsername())) {
+            return createResult(userDto, context, validation, "usernameDuplicate");
+        }
         // Check with existing username.
         User existingUserWithUsername = userService.getByUsername(userDto.getUsername());
         if (existingUserWithUsername != null) {
