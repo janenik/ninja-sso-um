@@ -427,6 +427,7 @@ public class SignUpController {
             data.put("lang", locale);
             data.put("verificationCode", verificationCode);
             data.put("confirmUrl", urlBuilderProvider.get().getEmailConfirmationUrl(emailTokenAsString));
+            data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
             // Translate subject and build template.
             String subject = messages.get("confirmationSubject", Optional.<String>of(locale)).get();
             String localizedTemplate = String.format("signUpConfirmation.%s.ftl.html", locale);

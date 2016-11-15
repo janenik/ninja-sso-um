@@ -240,6 +240,17 @@ public class UrlBuilder {
     }
 
     /**
+     * Constructs application index URL.
+     * URL is absolute.
+     *
+     * @return Absolute URL to application index.
+     */
+    public String getAbsoluteIndexUrl() {
+        String reverseRoute = router.getReverseRoute(ApplicationController.class, "index");
+        return newAbsoluteUrlBuilder(context, reverseRoute.replaceAll("\\.\\*", "")).toString();
+    }
+
+    /**
      * Returns current URL.
      *
      * @return Current URL of the application.

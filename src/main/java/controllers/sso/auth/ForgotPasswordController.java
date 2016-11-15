@@ -229,6 +229,7 @@ public class ForgotPasswordController {
             // Build email template data.
             Map<String, Object> data = Maps.newHashMap();
             data.put("forgotUrl", urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString));
+            data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
             String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
             String localizedTemplate = String.format("forgotPassword.%s.ftl.html", locale);
             // Send the email.

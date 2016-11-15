@@ -172,11 +172,10 @@ public class SignUpVerificationController {
      * Verifies user email: this action is invoked when the user clicks link in email.
      *
      * @param tokenAsString Code (encrypted user id).
-     * @param context Context.
      * @return Result.
      */
     @Transactional
-    public Result verifyEmail(@Param("token") String tokenAsString, Context context) {
+    public Result verifyEmail(@Param("token") String tokenAsString) {
         try {
             ExpirableToken emailConfirmationToken = expirableTokenEncryptor.decrypt(tokenAsString);
             if (!ExpirableTokenType.EMAIL_VERIFICATION.equals(emailConfirmationToken.getType())) {
@@ -188,7 +187,8 @@ public class SignUpVerificationController {
                 user.confirm();
                 userService.update(user);
             }
-            return Results.redirect(urlBuilderProvider.get().getContinueUrlParameter());
+            return Results.redirect(urlBuilderProvider.get()
+                    .getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED));
         } catch (NumberFormatException | ExpiredTokenException | IllegalTokenException ex) {
             logger.warn("Unable to confirm user by email token: " + tokenAsString, ex);
         }
