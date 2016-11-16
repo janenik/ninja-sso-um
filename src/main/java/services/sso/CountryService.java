@@ -45,9 +45,9 @@ public class CountryService {
      * @return Sorted list of countries.
      */
     @SuppressWarnings("unchecked")
-    public List<Country> getAllSortedByNiceName() {
+    public List<Country> getAllSortedByNativeName() {
         return (List<Country>) entityManagerProvider.get().
-                createNamedQuery("Countries.getAllSortedByNiceName").getResultList();
+                createNamedQuery("Countries.getAllSortedByNativeName").getResultList();
     }
 
     /**

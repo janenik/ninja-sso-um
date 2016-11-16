@@ -16,11 +16,11 @@ import java.io.Serializable;
 @Entity
 @Table(name = "countries", indexes = {
         @Index(name = "iso3_idx", columnList = "iso3", unique = true),
-        @Index(name = "niceName_idx", columnList = "niceName", unique = false),
+        @Index(name = "nativeName_idx", columnList = "nativeName", unique = false),
 })
 @NamedQueries({
-        @NamedQuery(name = "Countries.getAllSortedByNiceName",
-                query = "SELECT c FROM Country c ORDER BY c.niceName"),
+        @NamedQuery(name = "Countries.getAllSortedByNativeName",
+                query = "SELECT c FROM Country c ORDER BY c.nativeName"),
 })
 public class Country implements Serializable {
 
@@ -39,16 +39,10 @@ public class Country implements Serializable {
     String iso3;
 
     /**
-     * English name, uppercase.
+     * English name.
      */
     @Size(min = 1, max = 80)
     String name;
-
-    /**
-     * English name, nice.
-     */
-    @Size(min = 1, max = 80)
-    String niceName;
 
     /**
      * Name of the country in native language (wiki).
@@ -80,15 +74,14 @@ public class Country implements Serializable {
      * @param iso ISO code.
      * @param iso3 ISO-3 code.
      * @param name Name, uppercase.
-     * @param niceName Nice name.
+     * @param nativeName Nice name.
      * @param phoneCode Phone code.
      */
-    public Country(String iso, String iso3, String name, String niceName, int phoneCode) {
+    public Country(String iso, String iso3, String name, String nativeName, int phoneCode) {
         this.iso = iso.trim().toUpperCase();
         this.iso3 = iso3.trim().toUpperCase();
-        this.name = name.toUpperCase();
-        this.niceName = niceName.trim();
-        this.nativeName = this.niceName;
+        this.name = name;
+        this.nativeName = nativeName;
         this.phoneCode = phoneCode;
     }
 
@@ -147,34 +140,16 @@ public class Country implements Serializable {
     }
 
     /**
-     * Nice name.
+     * Convenient method to return name if native name is null.
      *
-     * @return Nice name.
+     * @return Native name or name if it is null.
      */
-    public String getNiceName() {
-        return niceName;
+    public String getNativeOrName() {
+        return nativeName == null ? name : nativeName;
     }
 
     /**
-     * Sets nice country name. It is normalized by trimming.
-     *
-     * @param niceName Nice name.
-     */
-    public void setNiceName(String niceName) {
-        this.niceName = niceName.trim();
-    }
-
-    /**
-     * Convenient method that returns native name if it is present or nice name if not.
-     *
-     * @return Native or nice name.
-     */
-    public String getNativeOrNiceName() {
-        return nativeName != null ? nativeName : niceName;
-    }
-
-    /**
-     * Native name.
+     * Returns native name.
      *
      * @return Native name.
      */

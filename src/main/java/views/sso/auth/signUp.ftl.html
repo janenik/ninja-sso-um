@@ -197,13 +197,13 @@
                                     <#items as country>
                                         <li class="countryEntry" rel="${country.getIso()}"
                                             rel2="${country.getPhoneCode()}"
-                                            rel3="${country.getNativeOrNiceName()}">
+                                            rel3="${country.getNativeOrName()}">
                                             <a href="#">
                                             <span role="img"
-                                                  aria-label="${country.getNativeOrNiceName()}"
+                                                  aria-label="${country.getNativeOrName()}"
                                                   class="flag flag-${country.getIso()?lower_case}"></span>
                                             <span class="countryNameCode">
-                                                ${country.getNiceName()}
+                                                ${country.getNativeOrName()}
                                                 (+${country.getPhoneCode()})
                                             </span>
                                             </a>

@@ -219,7 +219,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
                 .render("errors", validation)
                 .render("user", user)
                 .render("userEntity", userEntity)
-                .render("countries", countryService.getAllSortedByNiceName())
+                .render("countries", countryService.getAllSortedByNativeName())
                 .render("roles", UserRole.values())
                 .render("signInStates", UserSignInState.values())
                 .render("confirmationStates", UserConfirmationState.values())

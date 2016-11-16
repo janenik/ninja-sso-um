@@ -379,7 +379,7 @@ public class SignUpController {
                 .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)
-                .render("countries", countryService.getAllSortedByNiceName())
+                .render("countries", countryService.getAllSortedByNativeName())
                 .render("continue", urlBuilderProvider.get().getContinueUrlParameter());
         if (Strings.isNullOrEmpty(user.getToken()) || validation.hasViolations()) {
             regenerateCaptchaTokenAndUrl(result, context);
