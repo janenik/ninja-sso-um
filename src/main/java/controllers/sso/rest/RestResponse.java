@@ -40,7 +40,7 @@ public class RestResponse<T> implements Serializable {
     /**
      * Constructs response with given data and 200/OK metadata.
      *
-     * @param data Respons data.
+     * @param data Response data.
      */
     public RestResponse(T data) {
         this.data = data;

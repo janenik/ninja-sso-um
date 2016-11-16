@@ -1,5 +1,6 @@
 package conf.sso;
 
+import controllers.sso.UserController;
 import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.EditContactDataController;
 import controllers.sso.admin.users.EditPasswordController;
@@ -34,6 +35,11 @@ public class SsoRoutes implements ApplicationRoutes {
     @Override
     public void init(Router router) {
         String subRoute = properties.getOrDie("application.sso.subRoute");
+
+        // User JSON controller.
+        router.GET().route(subRoute + "/user").with(UserController.class, "user");
+
+        // Captcha.
         router.GET().route(subRoute + "/captcha").with(CaptchaController.class, "captcha");
 
         // Sign up.

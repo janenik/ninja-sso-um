@@ -3,7 +3,7 @@ package dto.sso;
 import java.io.Serializable;
 
 /**
- * User data transfer object.
+ * User data transfer object. Public DTO.
  */
 public class UserDto implements Serializable {
 
@@ -16,11 +16,6 @@ public class UserDto implements Serializable {
      * Username.
      */
     String username;
-
-    /**
-     * Email.
-     */
-    String email;
 
     /**
      * First name.
@@ -38,11 +33,6 @@ public class UserDto implements Serializable {
     String lastName;
 
     /**
-     * Phone.
-     */
-    String phone;
-
-    /**
      * Country code.
      */
     String country;
@@ -53,24 +43,9 @@ public class UserDto implements Serializable {
     String role;
 
     /**
-     * Date of birth.
+     * Age.
      */
-    long dateOfBirth;
-
-    /**
-     * Created time.
-     */
-    long created;
-
-    /**
-     * Last update time.
-     */
-    long updated;
-
-    /**
-     * Version of the user.
-     */
-    int version;
+    long age;
 
     /**
      * Returns id.
@@ -108,23 +83,6 @@ public class UserDto implements Serializable {
         this.username = username;
     }
 
-    /**
-     * Returns email.
-     *
-     * @return Email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Sets Email.
-     *
-     * @param email Email.
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     /**
      * Returns first name.
@@ -181,24 +139,6 @@ public class UserDto implements Serializable {
     }
 
     /**
-     * Returns phone.
-     *
-     * @return Phone.
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * Sets phone.
-     *
-     * @param phone Phone.
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /**
      * Returns country.
      *
      * @return Country.
@@ -235,75 +175,21 @@ public class UserDto implements Serializable {
     }
 
     /**
-     * Returns date of birth.
+     * Returns age.
      *
-     * @return Date of birth.
+     * @return Age.
      */
-    public long getDateOfBirth() {
-        return dateOfBirth;
+    public long getAge() {
+        return age;
     }
 
     /**
-     * Sets date of birth.
+     * Sets age.
      *
-     * @param dateOfBirth DateOfBirth.
+     * @param age Age.
      */
-    public void setDateOfBirth(long dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    /**
-     * Returns creation time.
-     *
-     * @return Creation time.
-     */
-    public long getCreated() {
-        return created;
-    }
-
-    /**
-     * Sets creation time.
-     *
-     * @param created Creation time.
-     */
-    public void setCreated(long created) {
-        this.created = created;
-    }
-
-    /**
-     * Returns updated.
-     *
-     * @return Updated.
-     */
-    public long getUpdated() {
-        return updated;
-    }
-
-    /**
-     * Sets last update time.
-     *
-     * @param updated Last update time.
-     */
-    public void setUpdated(long updated) {
-        this.updated = updated;
-    }
-
-    /**
-     * Returns version.
-     *
-     * @return Version.
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Sets version.
-     *
-     * @param version Version.
-     */
-    public void setVersion(int version) {
-        this.version = version;
+    public void setAge(long age) {
+        this.age = age;
     }
 
     private static final long serialVersionUID = 1L;
