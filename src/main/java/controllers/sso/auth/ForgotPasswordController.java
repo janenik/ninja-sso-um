@@ -63,6 +63,11 @@ public class ForgotPasswordController {
     static final String TEMPLATE = "views/sso/auth/forgotPassword.ftl.html";
 
     /**
+     * Forgot password email template.
+     */
+    static final String FORGOT_PASSWORD_EMAIL_TEMPLATE = "forgotPassword.%s.ftl.html";
+
+    /**
      * Empty forgot password DTO.
      */
     static final ForgotPasswordDto EMPTY_FORGOT_PASSWORD = new ForgotPasswordDto();
@@ -175,6 +180,7 @@ public class ForgotPasswordController {
      * @param validation Validation.
      * @return Forgot password page.
      */
+    @Transactional
     public Result forgotGet(Context context, Validation validation) {
         return createResult(EMPTY_FORGOT_PASSWORD, context, validation);
     }
@@ -209,8 +215,10 @@ public class ForgotPasswordController {
         }
         // Send the email.
         sendRestorePasswordEmail(userEntity, context);
+        String signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT);
+        logger.warn("SENDING REDIRECT TO SIGN-IN URL: {}", signInUrl);
         // Redirect to sign in.
-        return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT));
+        return Results.redirect(signInUrl);
     }
 
     /**
@@ -231,7 +239,7 @@ public class ForgotPasswordController {
             data.put("forgotUrl", urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString));
             data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
             String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
-            String localizedTemplate = String.format("forgotPassword.%s.ftl.html", locale);
+            String localizedTemplate = String.format(FORGOT_PASSWORD_EMAIL_TEMPLATE, locale);
             // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
         } catch (MessagingException | TemplateException | ExpirableTokenEncryptorException ex) {

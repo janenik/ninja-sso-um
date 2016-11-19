@@ -34,6 +34,8 @@ import services.sso.limits.IPCounterService;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.time.Duration;
+import java.util.Optional;
 
 /**
  * Sign in controller.
@@ -153,6 +155,7 @@ public class SignInController {
 
     /**
      * Sign in (GET). Remembers continue URL and shows sign up page.
+     * Doesn't need transaction since doesn't query the database.
      *
      * @param context Context.
      * @return Sing up response object.
@@ -188,12 +191,26 @@ public class SignInController {
             }
         }
         User user = userService.getUserByEmailOrUsername(userSignInDto.getEmailOrUsername());
-        if (user == null || !userService.isValidPassword(user, userSignInDto.getPassword())) {
+        // Check if user exists.
+        if (user == null) {
             return createResult(userSignInDto, context, validation, "emailOrPassword");
         }
+        // Check password.
+        if (!userService.isValidPassword(user, userSignInDto.getPassword())) {
+            Optional<Duration> lastPasswordChangeDateTime =
+                    userEventService.getLastPasswordChangeDateTime(user, userSignInDto.getPassword());
+            // Check if the password was changed recently.
+            if (lastPasswordChangeDateTime.isPresent()) {
+                return createResult(userSignInDto, context, validation, "passwordChanged")
+                        .render("passwordChangeDuration", lastPasswordChangeDateTime.get());
+            }
+            return createResult(userSignInDto, context, validation, "emailOrPassword");
+        }
+        // Check if the user is confirmed.
         if (!user.isConfirmed()) {
             return createResult(userSignInDto, context, validation, "emailNotConfirmed");
         }
+        // Check if the sign-in is enabled.
         if (!user.isSignInEnabled()) {
             return createResult(userSignInDto, context, validation, "signInDisabled");
         }

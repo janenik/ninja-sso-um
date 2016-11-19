@@ -95,8 +95,10 @@ public class UsersController {
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
+
+        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         // Log access.
-        this.logSearchAccess(query, context);
+        this.logSearchAccess(query, loggedInUser, context);
         // Search.
         PaginationResult<User> results = userService.search(query, page, objectsPerPage);
         return htmlAdminSecureHeadersProvider.get()
@@ -106,6 +108,7 @@ public class UsersController {
                 .render("query", query)
                 .render("page", page)
                 .render("dateTimeFormatter", dateTimeFormatter)
+                .render("loggedInUser", loggedInUser)
                 .render("results", results);
     }
 
@@ -113,11 +116,11 @@ public class UsersController {
      * Logs user data access.
      *
      * @param query Search query.
+     * @param loggedInUser Logged-in user.
      * @param context Web context.
      */
-    void logSearchAccess(String query, Context context) {
+    void logSearchAccess(String query, User loggedInUser, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         userEventService.onUsersSearchAccess(loggedInUser, query, ip, context.getHeaders());
     }
 }

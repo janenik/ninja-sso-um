@@ -62,6 +62,12 @@
                            value="${(user.password)!}"
                            ${_enableHtml5Required}
                            class="form-control"/>
+                    <#if errors.hasBeanViolation('passwordChanged')>
+                        <p class="help-block ssoFieldErrorDescription">
+                            ${i18n("signInPasswordRecentlyChanged")}:
+                            ${passwordChangeDuration}
+                        </p>
+                    </#if>
                 </div>
                 <#if ipHitsExceeded>
                     <div class="row">

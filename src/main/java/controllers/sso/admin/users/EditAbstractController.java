@@ -1,7 +1,7 @@
 package controllers.sso.admin.users;
 
+import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
-import controllers.sso.filters.RequireAdminPrivelegesFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import converters.Converter;
@@ -140,7 +140,8 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
             return Results.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
-        this.logAccess(user, context);
+        User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
+        this.logAccess(user, loggedInUser, context);
         return createResult(converter.fromEntity(user), user, context, Controllers.noViolations());
     }
 
@@ -156,11 +157,12 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @return Result with redirect to the URL provided by {@link #getSuccessRedirectUrl(User, Context)} or redirection
      * to the list of users if the user was not found.
      */
-    protected final Result updateUserOrRedirectToList(long userId,
-                                                      DTO dto,
-                                                      Context context,
-                                                      FlashScope flashScope,
-                                                      Validation validation) {
+    protected final Result updateUserOrRedirectToList(
+            long userId,
+            DTO dto,
+            Context context,
+            FlashScope flashScope,
+            Validation validation) {
         // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
@@ -176,8 +178,9 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
         if (specificViolation != null) {
             return createResult(dto, user, context, validation, specificViolation);
         }
+        User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
         // Log update event. Must happen before actual data update to fetch data.
-        this.logUpdate(user, context);
+        this.logUpdate(user, loggedInUser, context);
         // Map edit DTO to user entity.
         converter.update(user, dto);
         // Update user.
@@ -192,15 +195,15 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * Creates response result with given user, validation and field that lead to error.
      *
      * @param dto User to use in response.
-     * @param userEntity Original user entity for read-only data.
+     * @param user Original user entity for read-only data.
      * @param ctx Context.
      * @param validation Validation.
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    private Result createResult(DTO dto, User userEntity, Context ctx, Validation validation, String field) {
+    private Result createResult(DTO dto, User user, Context ctx, Validation validation, String field) {
         validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
-        return createResult(dto, userEntity, ctx, validation);
+        return createResult(dto, user, ctx, validation);
     }
 
     /**
@@ -213,10 +216,12 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @return Sign up response object.
      */
     private Result createResult(DTO user, User userEntity, Context ctx, Validation validation) {
+        User loggedInUser = userService.get((long) ctx.getAttribute(AuthenticationFilter.USER_ID));
         return htmlAdminSecureHeadersProvider.get()
                 .render("context", ctx)
                 .render("config", properties)
                 .render("errors", validation)
+                .render("loggedInUser", loggedInUser)
                 .render("user", user)
                 .render("userEntity", userEntity)
                 .render("countries", countryService.getAllSortedByNativeName())
@@ -232,10 +237,10 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * Log access event.
      *
      * @param user User who's information is accessed.
+     * @param loggedInUser Logged-in user.
      * @param context Context.
      */
-    private void logAccess(User user, Context context) {
-        User loggedInUser = (User) context.getAttribute(RequireAdminPrivelegesFilter.LOGGED_IN_USER);
+    private void logAccess(User user, User loggedInUser, Context context) {
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         userEventService.onUserDataAccess(loggedInUser, user, currentUrl, remoteIp, context.getHeaders());
@@ -245,10 +250,10 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * Log update event.
      *
      * @param user User who's information is updated.
+     * @param loggedInUser Logged-in user.
      * @param context Context.
      */
-    private void logUpdate(User user, Context context) {
-        User loggedInUser = (User) context.getAttribute(RequireAdminPrivelegesFilter.LOGGED_IN_USER);
+    private void logUpdate(User user, User loggedInUser, Context context) {
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         userEventService.onUserDataUpdate(loggedInUser, user, currentUrl, remoteIp, context.getHeaders());

@@ -26,12 +26,15 @@ public class SignInTest extends WebDriverTest {
      */
     NinjaProperties properties;
 
+    String defaultRootPassword;
+
     @Before
     public void setUp() {
         Injector injector = this.getInjector();
 
         this.captchaTokenService = injector.getBinding(CaptchaTokenService.class).getProvider().get();
         this.properties = injector.getBinding(NinjaProperties.class).getProvider().get();
+        this.defaultRootPassword = properties.getWithDefault("application.root.defaultPassword", "+1 650-999-9999");
     }
 
     @Test
@@ -56,7 +59,7 @@ public class SignInTest extends WebDriverTest {
 
         // Apply existing user.
         getFormElement("emailOrUsername").sendKeys("root");
-        getFormElement("password").sendKeys("password");
+        getFormElement("password").sendKeys(defaultRootPassword);
 
         click("#signInSubmit");
 
@@ -82,7 +85,7 @@ public class SignInTest extends WebDriverTest {
 
         // Apply existing user.
         getFormElement("emailOrUsername").sendKeys("root");
-        getFormElement("password").sendKeys("password");
+        getFormElement("password").sendKeys(defaultRootPassword);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "captchaSecret393";

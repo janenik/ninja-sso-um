@@ -23,7 +23,6 @@
             <#assign languagesMap = context.getAttribute('languages') />
             <ul class="navbar-right nav navbar-nav">
                 <li>
-                    <#assign loggedInUser = context.getAttribute('loggedInUser') />
                     <a href="${contextPath}/auth/admin/user/${loggedInUser.getId()?url}/edit-personal?lang=${lang?url}&query=${query?url}&page=${page?url}">
                         ${loggedInUser.getFirstName()}
                         ${loggedInUser.getLastName()}

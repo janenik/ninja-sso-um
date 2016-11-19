@@ -68,9 +68,10 @@ public class CaptchaTokenService {
     public CaptchaTokenService(NinjaCache cache, NinjaProperties properties, ExpirableTokenEncryptor encryptor) {
         this.encryptor = encryptor;
         this.cache = cache;
-        this.alphabet = properties.getWithDefault("application.sso.captcha.aphabet",
+        this.alphabet = properties.getWithDefault(
+                "application.sso.captcha.aphabet",
                 "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ"); // No 0 and O.
-        this.length = properties.getIntegerWithDefault("application.sso.captcha.length", 8);
+        this.length = properties.getIntegerWithDefault("application.sso.captcha.length", 5);
         int ttlInSeconds = properties.getIntegerWithDefault("application.sso.captcha.ttl", 300);
         this.ttlAsString = ttlInSeconds + "s";
         this.ttlInMillis = ttlInSeconds * 1000L;

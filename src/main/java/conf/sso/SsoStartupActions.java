@@ -14,7 +14,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.time.LocalDate;
+import java.util.function.BiFunction;
 
 /**
  * Start up actions for SSO.
@@ -66,55 +68,88 @@ public class SsoStartupActions {
         }
 
         EntityManager em = entityManagerProvider.get();
-        em.getTransaction().begin();
+        EntityTransaction transaction = em.getTransaction();
 
-        Country country = em.find(Country.class, "US");
-        if (country == null) {
-            logger.info("Adding new countries... dev: {}, test: {}...", properties.isDev(), properties.isTest());
+        try {
+            transaction.begin();
 
-            countryService.createNew(country = new Country("US", "USA", "United States", "United States", 1));
-            countryService.createNew(new Country("GB", "GBR", "United Kingdom", "United Kingdom", 44));
-            countryService.createNew(new Country("CA", "CAN", "Canada", "Canada", 1));
+            // Make sure default country exists.
+            Country country = em.find(Country.class, "US");
+            if (country == null) {
+                country = countryService.createNew(new Country("US", "USA", "United States", "United States", 1));
+            }
+
+            // Check root.
+            User root = userService.getByUsername("root");
+            if (root == null) {
+                createNewRootUser(country);
+            }
+
+            // Create demo users if needed.
+            createDemoUsersForTestAndDev(country, root != null);
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
         }
+    }
 
-        User user = userService.getByUsername("root");
-        if (user == null) {
-            logger.info("Adding new root user...");
+    /***
+     * Creates new root user.
+     *
+     * @param country Country for root.
+     * @return Newly created root user.
+     */
+    private User createNewRootUser(Country country) {
+        logger.info("Adding new root user...");
 
-            user = new User("root", "root@example.org", "+1 650-999-9999");
-            user.setFirstName("James");
-            user.setLastName("Brown");
-            user.setDateOfBirth(LocalDate.of(1984, 11, 24));
-            user.setCountry(country);
-            user.setGender(UserGender.OTHER);
-            user.setLastUsedLocale("en");
-            user.confirm();
+        BiFunction<String, String, String> get = properties::getWithDefault;
 
-            userService.createNew(user, "password");
-        }
+        String rootEmail = get.apply("application.root.defaultEmail", "root@localhost");
+        String rootPhone = get.apply("application.root.defaultPhone", "+1 650-999-9999");
 
-        if (properties.isTest() || properties.isDev()) {
-            logger.info("Adding {} new test users...", 100);
+        User root = new User("root", rootEmail, rootPhone);
+        root.setFirstName(get.apply("application.root.defaultFirstName", "Alex"));
+        root.setLastName(get.apply("application.root.defaultLastName", "Brown"));
+        root.setDateOfBirth(LocalDate.of(1984, 11, 24));
+        root.setCountry(country);
+        root.setGender(UserGender.OTHER);
+        root.setLastUsedLocale("en");
+        root.confirm();
+
+        return userService.createNew(root, get.apply("application.root.defaultPassword", "+1 650-999-9999"));
+    }
+
+    /**
+     * Creates demo users for test and development environment.
+     *
+     * @param country Country.
+     * @param rootExisted Whether the root existed prior this application start.
+     */
+    private void createDemoUsersForTestAndDev(Country country, boolean rootExisted) {
+        if (properties.isTest() || properties.isDev() && !rootExisted) {
+            int numberOfDemoUsers = properties.getIntegerWithDefault("application.demo.users", 100);
+            logger.info("Adding {} new test users...", numberOfDemoUsers);
 
             String login;
-            for (int i = 1; i <= 100; i++) {
+            for (int i = 1; i <= numberOfDemoUsers; i++) {
                 login = "demouser" + i;
-                user = userService.getByUsername(login);
-                if (user == null) {
-                    user = new User(login, "demouser" + i + "@example.org", "+1 650-999-99" + i);
-                    user.setFirstName("Alexis" + i);
-                    user.setLastName("Brown" + i);
-                    user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));
-                    user.setCountry(country);
-                    user.setGender(UserGender.OTHER);
-                    user.setLastUsedLocale("en");
-                    user.confirm();
+                User user = userService.getByUsername(login);
 
-                    userService.createNew(user, "password");
+                if (user != null) {
+                    continue;
                 }
+                user = new User(login, "demouser" + i + "@example.org", "+1 650-999-99" + i);
+                user.setFirstName("Alex" + i);
+                user.setLastName("Brown" + i);
+                user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));
+                user.setCountry(country);
+                user.setGender(UserGender.OTHER);
+                user.setLastUsedLocale("en");
+                user.confirm();
+
+                userService.createNew(user, "demopassword" + i);
             }
         }
-
-        em.getTransaction().commit();
     }
 }

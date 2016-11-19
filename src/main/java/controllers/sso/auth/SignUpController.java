@@ -39,7 +39,6 @@ import org.dozer.Mapper;
 import org.slf4j.Logger;
 import services.sso.CaptchaTokenService;
 import services.sso.CountryService;
-import services.sso.PasswordService;
 import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.mail.EmailService;
@@ -119,11 +118,6 @@ public class SignUpController {
     final CaptchaTokenService captchaTokenService;
 
     /**
-     * Password service to generate salts and hashes for newly created user.
-     */
-    final PasswordService passwordService;
-
-    /**
      * URL builder provider for controller. Instance per request.
      */
     final Provider<UrlBuilder> urlBuilderProvider;
@@ -183,7 +177,6 @@ public class SignUpController {
      *
      * @param expirableTokenEncryptor Encryptor.
      * @param captchaTokenService Captcha token service.
-     * @param passwordService Password service.
      * @param userService User service.
      * @param userEventService User's event service.
      * @param countryService Country service.
@@ -198,7 +191,6 @@ public class SignUpController {
     @Inject
     public SignUpController(ExpirableTokenEncryptor expirableTokenEncryptor,
                             CaptchaTokenService captchaTokenService,
-                            PasswordService passwordService,
                             UserService userService,
                             UserEventService userEventService,
                             CountryService countryService,
@@ -212,7 +204,6 @@ public class SignUpController {
                             Messages messages) {
         this.captchaTokenService = captchaTokenService;
         this.expirableTokenEncryptor = expirableTokenEncryptor;
-        this.passwordService = passwordService;
         this.userService = userService;
         this.userEventService = userEventService;
         this.countryService = countryService;
@@ -241,6 +232,7 @@ public class SignUpController {
      * @param context Context.
      * @return Sing up response object.
      */
+    @Transactional
     public Result signUpGet(Context context) {
         return createResult(EMPTY_USER, context, Controllers.noViolations());
     }
@@ -286,8 +278,8 @@ public class SignUpController {
                 ExpiredTokenException | IllegalTokenException ex) {
             return createResult(userDto, context, validation, "captchaCode");
         }
-        // Check username is available.
-        if (!userService.isUsernameAvailable(userDto.getUsername())) {
+        // Check username is acceptable.
+        if (!userService.isUsernameAcceptable(userDto.getUsername())) {
             return createResult(userDto, context, validation, "usernameDuplicate");
         }
         // Check with existing username.

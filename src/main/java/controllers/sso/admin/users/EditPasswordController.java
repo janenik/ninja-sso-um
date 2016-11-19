@@ -178,10 +178,12 @@ public class EditPasswordController {
      * @return Forgot password response object.
      */
     Result createResult(User user, Context context, Validation validation) {
+        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         return htmlAdminSecureHeadersProvider.get()
                 .render("context", context)
                 .render("config", properties)
                 .render("errors", validation)
+                .render("loggedInUser", loggedInUser)
                 .render("userEntity", user)
                 .render("query", context.getParameter("query", ""))
                 .render("page", context.getParameterAs("page", int.class, 1))

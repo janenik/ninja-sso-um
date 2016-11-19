@@ -13,9 +13,15 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service for user's events.
@@ -32,6 +38,11 @@ public class UserEventService implements Paginatable<UserEvent> {
      * Entity manager provider.
      */
     final Provider<EntityManager> entityManagerProvider;
+
+    /**
+     * Password service.
+     */
+    final PasswordService passwordService;
 
     /**
      * Base encoding.
@@ -55,8 +66,13 @@ public class UserEventService implements Paginatable<UserEvent> {
      * @param logger Logger.
      */
     @Inject
-    public UserEventService(Provider<EntityManager> entityManagerProvider, ObjectMapper objectMapper, Logger logger) {
+    public UserEventService(
+            Provider<EntityManager> entityManagerProvider,
+            PasswordService passwordService,
+            ObjectMapper objectMapper,
+            Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
+        this.passwordService = passwordService;
         this.objectMapper = objectMapper;
         this.baseEncoding = BaseEncoding.base64Url().omitPadding();
         this.logger = logger;
@@ -93,6 +109,50 @@ public class UserEventService implements Paginatable<UserEvent> {
         UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, dataToSave);
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
+    }
+
+    /**
+     * Returns the hint duration of the last password change if the given password matches history.
+     *
+     * @param user User.
+     * @param password Old password to search for.
+     * @return Optional of the duration of the last password change.
+     */
+    @SuppressWarnings("unchecked")
+    public Optional<Duration> getLastPasswordChangeDateTime(User user, String password) {
+        Query query = entityManagerProvider.get().createNamedQuery("UserEvent.ownByUserAndType");
+        query.setParameter("userId", user.getId());
+        query.setParameter("type", UserEventType.PASSWORD_CHANGE);
+        query.setMaxResults(1);
+        List<UserEvent> events = (List<UserEvent>) query.getResultList();
+        for (UserEvent event : events) {
+            byte[] data = event.getData();
+            if (data != null && data.length > 0) {
+                try {
+                    Map<String, Object> dataMap = objectMapper.readValue(data, Map.class);
+                    Map<String, Object> eventData = (Map<String, Object>) dataMap.get(EVENT_DATA_NAMESPACE);
+                    byte[] oldSalt = baseEncoding.decode((String) eventData.get("password.old.salt"));
+                    byte[] oldHash = baseEncoding.decode((String) eventData.get("password.old.hash"));
+                    if (passwordService.isValidPassword(password, oldSalt, oldHash)) {
+                        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+                        Duration timeAgo = Duration.between(event.getTime(), now);
+                        if (timeAgo.toHours() < 24) {
+                            return Optional.of(Duration.ofHours(timeAgo.toHours()));
+                        }
+                        Duration inDays = Duration.ofDays(timeAgo.toDays());
+                        if (inDays.toDays() < 30) {
+                            return Optional.of(inDays);
+                        }
+                        break;
+                    }
+                } catch (Exception e) {
+                    String message = String.format(
+                            "Error parsing event data: %d / user: %d", event.getId(), user.getId());
+                    logger.warn(message, e);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     /**

@@ -121,14 +121,16 @@ public class ViewAccessLogController {
             return Results.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
+        User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
         // Log access.
-        logEventsAccess(target, context);
+        logEventsAccess(target, loggedInUser, context);
         // Search.
         PaginationResult<UserEvent> results = userEventService.searchByUser(target, query, page, objectsPerPage);
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
                 .render("config", properties)
+                .render("loggedInUser", loggedInUser)
                 .render("userEntity", target)
                 .render("query", Strings.nullToEmpty(context.getParameter("query")).trim())
                 .render("page", Math.max(1, context.getParameterAsInteger("page", 1)))
@@ -142,12 +144,12 @@ public class ViewAccessLogController {
      * Logs user data access.
      *
      * @param target Target user whose data is accessed.
+     * @param loggedInUser Logged-in user.
      * @param context Web context.
      */
-    void logEventsAccess(User target, Context context) {
+    void logEventsAccess(User target, User loggedInUser, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
-        User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         userEventService.onUserLogAccess(loggedInUser, target, currentUrl, ip, context.getHeaders());
     }
 }

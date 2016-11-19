@@ -172,12 +172,14 @@ public class SendEmailController {
      * @return Forgot password response object.
      */
     Result createResult(User user, Context context, Validation validation, String... emailData) {
+        User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("now", ZonedDateTime.now(ZoneId.of("UTC")))
                 .render("context", context)
                 .render("config", properties)
                 .render("errors", validation)
+                .render("loggedInUser", loggedInUser)
                 .render("userEntity", user)
                 .render("subject", emailData != null && emailData.length > 1 ? emailData[0] : "")
                 .render("body", emailData != null && emailData.length > 1 ? emailData[1] : "")

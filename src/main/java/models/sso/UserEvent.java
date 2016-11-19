@@ -29,6 +29,7 @@ import java.time.ZonedDateTime;
 @NamedQueries({
         @NamedQuery(name = "UserEvent.allByUser",
                 query = "SELECT ue FROM UserEvent ue WHERE ue.user.id = :userId ORDER BY ue.time DESC"),
+
         @NamedQuery(name = "UserEvent.countAllByUser",
                 query = "SELECT COUNT(*) FROM UserEvent ue WHERE ue.user.id = :userId"),
 
@@ -39,6 +40,7 @@ import java.time.ZonedDateTime;
                         "OR ue.url LIKE :query " +
                         "OR cast(ue.data as string) LIKE :query " +
                         ") ORDER BY ue.time DESC"),
+
         @NamedQuery(name = "UserEvent.countSearchByUser",
                 query = "SELECT COUNT(*) FROM UserEvent ue WHERE ue.user.id = :userId AND ( " +
                         "cast(ue.type as string) LIKE :query " +
@@ -46,6 +48,11 @@ import java.time.ZonedDateTime;
                         "OR ue.url LIKE :query " +
                         "OR cast(ue.data as string) LIKE :query " +
                         ")"),
+
+        @NamedQuery(name = "UserEvent.ownByUserAndType",
+                query = "SELECT ue FROM UserEvent ue " +
+                        "WHERE ue.user.id = :userId AND ue.type = :type AND ue.targetUser IS NULL " +
+                        "ORDER BY ue.time DESC"),
 
         @NamedQuery(name = "UserEvent.removeByUser",
                 query = "DELETE FROM UserEvent ue WHERE ue.user.id = :userId")

@@ -7,7 +7,6 @@ import ninja.Filter;
 import ninja.FilterChain;
 import ninja.Result;
 import ninja.Results;
-import services.sso.UserService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -19,16 +18,6 @@ import javax.inject.Provider;
 public class RequireAdminPrivelegesFilter implements Filter {
 
     /**
-     * Attribute name for current logged in user.
-     */
-    public static String LOGGED_IN_USER = "loggedInUser";
-
-    /**
-     * User service.
-     */
-    UserService userService;
-
-    /**
      * URL builder provider to get redirection URL.
      */
     final Provider<UrlBuilder> urlBuilderProvider;
@@ -36,12 +25,10 @@ public class RequireAdminPrivelegesFilter implements Filter {
     /**
      * Constructs filter.
      *
-     * @param userService User service.
      * @param urlBuilderProvider URL builder provider.
      */
     @Inject
-    public RequireAdminPrivelegesFilter(UserService userService, Provider<UrlBuilder> urlBuilderProvider) {
-        this.userService = userService;
+    public RequireAdminPrivelegesFilter(Provider<UrlBuilder> urlBuilderProvider) {
         this.urlBuilderProvider = urlBuilderProvider;
     }
 
@@ -56,8 +43,6 @@ public class RequireAdminPrivelegesFilter implements Filter {
         if (!UserRole.ADMIN.equals(role)) {
             return Results.redirect(urlBuilderProvider.get().getIndexUrl());
         }
-        long userId = (long) context.getAttribute(AuthenticationFilter.USER_ID);
-        context.setAttribute(LOGGED_IN_USER, userService.get(userId));
         return filterChain.next(context);
     }
 }

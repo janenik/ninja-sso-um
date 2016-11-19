@@ -58,7 +58,8 @@ public class UserService implements Paginatable<User> {
             Provider<EntityManager> entityManagerProvider,
             @ExclusionDictionary Set<String> usernameExclusionDictionary,
             @ExclusionSubstrings Set<String> usernameExclusionSubstrings,
-            PasswordService passwordService, Logger logger) {
+            PasswordService passwordService,
+            Logger logger) {
         this.entityManagerProvider = entityManagerProvider;
         this.usernameExclusionDictionary = usernameExclusionDictionary;
         this.usernameExclusionSubstrings = usernameExclusionSubstrings;
@@ -166,12 +167,12 @@ public class UserService implements Paginatable<User> {
     }
 
     /**
-     * Tests if the given username is avaiable.
+     * Tests if the given username is acceptable.
      *
      * @param username Username to test for availability.
      * @return Whether the given username is available.
      */
-    public boolean isUsernameAvailable(String username) {
+    public boolean isUsernameAcceptable(String username) {
         if (username == null) {
             return false;
         }

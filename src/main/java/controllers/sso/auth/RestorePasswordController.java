@@ -21,7 +21,6 @@ import ninja.Result;
 import ninja.Results;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
-import services.sso.PasswordService;
 import services.sso.UserEventService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
@@ -60,11 +59,6 @@ public class RestorePasswordController {
     final UserEventService userEventService;
 
     /**
-     * Password service.
-     */
-    final PasswordService passwordService;
-
-    /**
      * Expirable token encryptor.
      */
     final ExpirableTokenEncryptor expirableTokenEncryptor;
@@ -89,7 +83,6 @@ public class RestorePasswordController {
      *
      * @param userService User service.
      * @param userEventService User's event service.
-     * @param passwordService Password service.
      * @param expirableTokenEncryptor Expirable token encryptor.
      * @param urlBuilderProvider URL builder provider.
      * @param properties Application properties.
@@ -97,14 +90,12 @@ public class RestorePasswordController {
     @Inject
     public RestorePasswordController(UserService userService,
                                      UserEventService userEventService,
-                                     PasswordService passwordService,
                                      ExpirableTokenEncryptor expirableTokenEncryptor,
                                      Provider<UrlBuilder> urlBuilderProvider,
                                      @SecureHtmlHeaders Provider<Result> htmlWithSecureHeadersProvider,
                                      NinjaProperties properties) {
         this.userService = userService;
         this.userEventService = userEventService;
-        this.passwordService = passwordService;
         this.expirableTokenEncryptor = expirableTokenEncryptor;
         this.urlBuilderProvider = urlBuilderProvider;
         this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
@@ -118,6 +109,7 @@ public class RestorePasswordController {
      * @param restoreToken Restore token from email sent to user by {@link ForgotPasswordController}.
      * @return Result with data for restore password form.
      */
+    @Transactional
     public Result restorePasswordGet(Context context, @Param(value = "restoreToken") String restoreToken) {
         Result result = createResult(context, restoreToken);
         try {
