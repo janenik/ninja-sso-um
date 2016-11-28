@@ -19,6 +19,7 @@ package conf;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.servlet.RequestScoped;
+import com.google.inject.servlet.ServletModule;
 import conf.sso.SsoModule;
 import controllers.annotations.InjectedContext;
 import controllers.annotations.SecureHtmlHeaders;
@@ -29,7 +30,6 @@ import ninja.Results;
 import ninja.servlet.NinjaServletContext;
 import ninja.utils.NinjaProperties;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -39,16 +39,11 @@ import javax.servlet.http.HttpServletResponse;
 public class Module extends AbstractModule {
 
     /**
-     * Application properties.
-     */
-    @Inject
-    NinjaProperties properties;
-
-    /**
      * Configures application module.
      */
     protected void configure() {
         install(new SsoModule());
+        install(new ServletModule());
     }
 
     /**
@@ -92,7 +87,7 @@ public class Module extends AbstractModule {
         if (properties.isProd()) {
             result.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         }
-        return result.render("context");
+        return result;
     }
 
     /**
@@ -115,6 +110,6 @@ public class Module extends AbstractModule {
         if (properties.isProd()) {
             result.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         }
-        return result.render("context");
+        return result;
     }
 }

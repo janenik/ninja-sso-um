@@ -75,10 +75,7 @@ public class ApplicationController {
     public Result index(Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         Long userId = (Long) context.getAttribute(AuthenticationFilter.USER_ID);
-        User user = null;
-        if (userId != null) {
-            user = userService.get(userId);
-        }
+        User user = userId != null ? userService.get(userId) : null;
         return htmlWithSecureHeadersProvider.get()
                 .render("context", context)
                 .render("method", context.getMethod())

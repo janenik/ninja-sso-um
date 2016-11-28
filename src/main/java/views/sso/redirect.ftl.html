@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<#compress>
+    <#noescape>
+        <html>
+        <head>
+            <title>Redirecting...</title>
+            <meta http-equiv="refresh"
+                  content="0; url='${(url?html)?replace('=', '&#61;')}'"/>
+            <script language="javascript">
+                window.location.href = "${url?js_string?html}";
+            </script>
+        </head>
+        <body>
+        If you are not redirected automatically, follow the <a href="${url?html}">link</a>.
+        </body>
+        </html>
+    </#noescape>
+</#compress>

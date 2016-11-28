@@ -213,10 +213,11 @@ public class ForgotPasswordController {
         if (!userEntity.isSignInEnabled()) {
             return createResult(user, context, validation, "signInDisabled");
         }
+
         // Send the email.
         sendRestorePasswordEmail(userEntity, context);
         String signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT);
-        logger.warn("SENDING REDIRECT TO SIGN-IN URL: {}", signInUrl);
+
         // Redirect to sign in.
         return Results.redirect(signInUrl);
     }
@@ -234,18 +235,19 @@ public class ForgotPasswordController {
             // Create verification token.
             ExpirableToken restorePasswordToken = forgotEmailConfirmationToken(user);
             String restorePasswordTokenAsString = expirableTokenEncryptor.encrypt(restorePasswordToken);
+
             // Build email template data.
             Map<String, Object> data = Maps.newHashMap();
             data.put("forgotUrl", urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString));
             data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
             String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
             String localizedTemplate = String.format(FORGOT_PASSWORD_EMAIL_TEMPLATE, locale);
+
             // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
         } catch (MessagingException | TemplateException | ExpirableTokenEncryptorException ex) {
             String message = "Error while sending restore password email for user: " + user.getEmail();
             logger.error(message, ex);
-            throw new RuntimeException(message, ex);
         }
     }
 
@@ -256,8 +258,8 @@ public class ForgotPasswordController {
      * @return Restore password token.
      */
     ExpirableToken forgotEmailConfirmationToken(User user) {
-        return ExpirableToken.newTokenForUser(ExpirableTokenType.RESTORE_PASSWORD, user.getId(),
-                restorePasswordTokenTtl);
+        return ExpirableToken.newTokenForUser(
+                ExpirableTokenType.RESTORE_PASSWORD, user.getId(), restorePasswordTokenTtl);
     }
 
     /**

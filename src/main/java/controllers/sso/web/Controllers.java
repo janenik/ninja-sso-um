@@ -17,6 +17,11 @@ import java.util.List;
 public final class Controllers {
 
     /**
+     * Redirect HTML.
+     */
+    private static final String REDIRECT_HTML_TEMPLATE = "views/sso/redirect.ftl.html";
+
+    /**
      * No violation validation.
      */
     public static final Validation NO_VIOLATIONS = new NoViolations();
@@ -28,6 +33,22 @@ public final class Controllers {
      */
     public static Validation noViolations() {
         return NO_VIOLATIONS;
+    }
+
+    /**
+     * Returns result with 301 location header of the given redirect URL and appropriate HTML with
+     * HTML redirects.
+     *
+     * @param url URL to redirect to.
+     * @return Result with location header 301 and HTML redirect.
+     */
+    public static Result redirect(String url) {
+        return Results
+                .status(Result.SC_301_MOVED_PERMANENTLY)
+                .addHeader(Result.LOCATION, url)
+                .addHeader("X-Content-Type-Options", "nosniff")
+                .render("url", url)
+                .template(REDIRECT_HTML_TEMPLATE);
     }
 
     /**
