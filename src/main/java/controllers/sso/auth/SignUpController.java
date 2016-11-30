@@ -27,7 +27,6 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.i18n.Lang;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
@@ -312,7 +311,7 @@ public class SignUpController {
         // Perform post-sign up actions.
         String redirectURL = invokePostSignUpActions(userToSave, context);
         // Redirect.
-        return Results.redirect(redirectURL);
+        return Controllers.redirect(redirectURL);
     }
 
     /**
@@ -440,7 +439,7 @@ public class SignUpController {
      * @return Verification token.
      */
     ExpirableToken newEmailVerificationToken(User user, String verificationCode) {
-        return ExpirableToken.newTokenForUser(ExpirableTokenType.EMAIL_VERIFICATION, user.getId(),
+        return ExpirableToken.newUserToken(ExpirableTokenType.EMAIL_VERIFICATION, user.getId(),
                 "verificationCode", verificationCode, emailTokenTtl);
     }
 
@@ -452,7 +451,7 @@ public class SignUpController {
      * @return Sign up page verification token.
      */
     ExpirableToken newSignUpPageVerificationToken(User user, String verificationCode) {
-        return ExpirableToken.newTokenForUser(ExpirableTokenType.SIGNUP_VERIFICATION, user.getId(),
+        return ExpirableToken.newUserToken(ExpirableTokenType.SIGNUP_VERIFICATION, user.getId(),
                 "verificationCode", verificationCode, signUpVerificationTokenTtl);
     }
 }

@@ -9,6 +9,7 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireUnauthenticatedUserFilter;
+import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.common.Constants;
 import models.sso.User;
@@ -18,7 +19,6 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import services.sso.UserEventService;
@@ -160,7 +160,8 @@ public class RestorePasswordController {
                 byte[] oldHash = user.getPasswordHash();
                 userService.updatePasswordAndConfirm(user, password);
                 userEventService.onUserPasswordUpdate(user, oldSalt, oldHash, ip, context.getHeaders());
-                return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED));
+                String url = urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED);
+                return Controllers.redirect(url);
             } else {
                 result.render("restorePasswordError", "password");
             }

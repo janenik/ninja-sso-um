@@ -2,6 +2,7 @@ package controllers.sso.web;
 
 import controllers.sso.rest.RestResponse;
 import ninja.Context;
+import ninja.Cookie;
 import ninja.Result;
 import ninja.Results;
 import ninja.validation.ConstraintViolation;
@@ -40,13 +41,20 @@ public final class Controllers {
      * HTML redirects.
      *
      * @param url URL to redirect to.
+     * @param cookies Optional cookies.
      * @return Result with location header 301 and HTML redirect.
      */
-    public static Result redirect(String url) {
-        return Results
+    public static Result redirect(String url, Cookie... cookies) {
+        Result redirect = Results
                 .status(Result.SC_301_MOVED_PERMANENTLY)
                 .addHeader(Result.LOCATION, url)
-                .addHeader("X-Content-Type-Options", "nosniff")
+                .addHeader("X-Content-Type-Options", "nosniff");
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                redirect.addCookie(cookie);
+            }
+        }
+        return redirect
                 .render("url", url)
                 .template(REDIRECT_HTML_TEMPLATE);
     }

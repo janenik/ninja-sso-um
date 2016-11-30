@@ -8,6 +8,7 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireUnauthenticatedUserFilter;
+import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
 import models.sso.token.ExpirableToken;
@@ -17,7 +18,6 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
@@ -149,8 +149,8 @@ public class SignUpVerificationController {
                     }
                     userForVerification.confirm();
                     userService.save(userForVerification);
-                    return Results.redirect(urlBuilderProvider.get()
-                            .getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED));
+                    String url = urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED);
+                    return Controllers.redirect(url);
                 }
                 errorType = "wrongVerificationCode";
             }
@@ -160,12 +160,12 @@ public class SignUpVerificationController {
             errorType = "wrongToken";
         }
         return htmlWithSecureHeadersProvider.get()
-                .template(TEMPLATE)
                 .render(errorType, true)
                 .render("context", context)
                 .render("config", properties)
                 .render("token", tokenAsString)
-                .render("continue", continueUrl);
+                .render("continue", continueUrl)
+                .template(TEMPLATE);
     }
 
     /**
@@ -176,6 +176,7 @@ public class SignUpVerificationController {
      */
     @Transactional
     public Result verifyEmail(@Param("token") String tokenAsString) {
+        String signInUrl;
         try {
             ExpirableToken emailConfirmationToken = expirableTokenEncryptor.decrypt(tokenAsString);
             if (!ExpirableTokenType.EMAIL_VERIFICATION.equals(emailConfirmationToken.getType())) {
@@ -187,11 +188,12 @@ public class SignUpVerificationController {
                 user.confirm();
                 userService.update(user);
             }
-            return Results.redirect(urlBuilderProvider.get()
-                    .getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED));
+            signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED);
+            return Controllers.redirect(signInUrl);
         } catch (NumberFormatException | ExpiredTokenException | IllegalTokenException ex) {
             logger.warn("Unable to confirm user by email token: " + tokenAsString, ex);
         }
-        return Results.redirect(urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_FAILED));
+        signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_FAILED);
+        return Controllers.redirect(signInUrl);
     }
 }

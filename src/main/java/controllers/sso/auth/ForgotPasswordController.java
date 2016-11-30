@@ -10,6 +10,7 @@ import controllers.sso.filters.HitsPerIpCheckFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireUnauthenticatedUserFilter;
+import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.ForgotPasswordDto;
 import freemarker.template.TemplateException;
@@ -22,7 +23,6 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.Router;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
@@ -219,7 +219,7 @@ public class ForgotPasswordController {
         String signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT);
 
         // Redirect to sign in.
-        return Results.redirect(signInUrl);
+        return Controllers.redirect(signInUrl);
     }
 
     /**
@@ -258,7 +258,7 @@ public class ForgotPasswordController {
      * @return Restore password token.
      */
     ExpirableToken forgotEmailConfirmationToken(User user) {
-        return ExpirableToken.newTokenForUser(
+        return ExpirableToken.newUserToken(
                 ExpirableTokenType.RESTORE_PASSWORD, user.getId(), restorePasswordTokenTtl);
     }
 

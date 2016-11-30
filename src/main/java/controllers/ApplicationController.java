@@ -45,27 +45,43 @@ public class ApplicationController {
     /**
      * IP counter service.
      */
-    @Inject
     IPCounterService ipCounterService;
 
     /**
      * Captcha token service.
      */
-    @Inject
     CaptchaTokenService captchaTokenService;
 
     /**
      * User service.
      */
-    @Inject
     UserService userService;
 
     /**
      * Provider for HTML result with secure headers. Contains context as well.
      */
-    @Inject
-    @SecureHtmlHeaders
     Provider<Result> htmlWithSecureHeadersProvider;
+    
+    /**
+     * Constructs controller.
+     *
+     * @param ipCounterService IP counter service.
+     * @param captchaTokenService Captcha token service.
+     * @param userService User service.
+     * @param htmlWithSecureHeadersProvider HTML with secure headers provider.
+     */
+    @Inject
+    public ApplicationController(
+            IPCounterService ipCounterService,
+            CaptchaTokenService captchaTokenService,
+            UserService userService,
+            @SecureHtmlHeaders
+            Provider<Result> htmlWithSecureHeadersProvider) {
+        this.ipCounterService = ipCounterService;
+        this.captchaTokenService = captchaTokenService;
+        this.userService = userService;
+        this.htmlWithSecureHeadersProvider = htmlWithSecureHeadersProvider;
+    }
 
     /**
      * Renders index page.

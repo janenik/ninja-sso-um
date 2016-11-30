@@ -1,11 +1,11 @@
 package controllers.sso.filters;
 
+import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import ninja.Context;
 import ninja.Filter;
 import ninja.FilterChain;
 import ninja.Result;
-import ninja.Results;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -37,7 +37,7 @@ public class RequireUnauthenticatedUserFilter implements Filter {
         Object role = context.getAttribute(AuthenticationFilter.USER_ROLE);
         // Redirect to index page if user is logged in.
         if (role != null) {
-            return Results.redirect(urlBuilderProvider.get().getIndexUrl());
+            return Controllers.redirect(urlBuilderProvider.get().getIndexUrl());
         }
         return filterChain.next(context);
     }

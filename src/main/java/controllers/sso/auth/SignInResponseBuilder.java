@@ -8,6 +8,7 @@ import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import controllers.sso.auth.type.DeviceInputType;
 import controllers.sso.filters.DeviceTypeFilter;
+import controllers.sso.web.Controllers;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
@@ -18,7 +19,6 @@ import models.sso.token.ExpirableTokenType;
 import ninja.Context;
 import ninja.Cookie;
 import ninja.Result;
-import ninja.Results;
 import ninja.utils.NinjaProperties;
 import services.sso.token.ExpirableTokenEncryptor;
 import services.sso.token.PasswordBasedEncryptor;
@@ -140,8 +140,7 @@ public class SignInResponseBuilder {
                     .setDomain(properties.getOrDie("application.domain"))
                     .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
                     .build();
-            return Results.redirect(continueUrl)
-                    .addCookie(cookie);
+            return Controllers.redirect(continueUrl, cookie);
         }
 
         // Otherwise, append access token as a parameter to URL.
@@ -156,7 +155,7 @@ public class SignInResponseBuilder {
                 .append(Escapers.encodePercent(parameterName))
                 .append("=")
                 .append(Escapers.encodePercent(accessTokenAsString));
-        return Results.redirect(resultUrlBuilder.toString());
+        return Controllers.redirect(resultUrlBuilder.toString());
     }
 
     /**
@@ -180,7 +179,7 @@ public class SignInResponseBuilder {
                 .append(Escapers.encodePercent(parameterName))
                 .append("=")
                 .append(Escapers.encodePercent(accessTokenAsString));
-        return Results.redirect(resultUrlBuilder.toString());
+        return Controllers.redirect(resultUrlBuilder.toString());
     }
 
     /**
@@ -200,7 +199,7 @@ public class SignInResponseBuilder {
         long ttl = 1000L * properties.getIntegerOrDie("application.sso.accessToken.ttl");
         ExpirableToken token;
         if (user.isModeratorOrAdmin()) {
-            token = ExpirableToken.newTokenForUser(
+            token = ExpirableToken.newUserToken(
                     ExpirableTokenType.ACCESS,
                     user.getId(),
                     "role",
@@ -208,7 +207,7 @@ public class SignInResponseBuilder {
                     ttl
             );
         } else {
-            token = ExpirableToken.newTokenForUser(ExpirableTokenType.ACCESS, user.getId(), ttl);
+            token = ExpirableToken.newUserToken(ExpirableTokenType.ACCESS, user.getId(), ttl);
         }
         return encryptor.encrypt(token);
     }

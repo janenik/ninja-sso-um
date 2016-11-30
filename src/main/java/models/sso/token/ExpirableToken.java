@@ -158,7 +158,7 @@ public final class ExpirableToken implements Serializable {
      */
     public double getAttributeAsDouble(String name, double defaultValue) {
         Double v = getAttributeAsDouble(name);
-        return v == null ?defaultValue : v;
+        return v == null ? defaultValue : v;
     }
 
     /**
@@ -283,7 +283,7 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId, long timeToLive) {
+    public static ExpirableToken newUserToken(ExpirableTokenType type, long userId, long timeToLive) {
         return new Builder().
                 setType(type).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
@@ -301,8 +301,12 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId,
-                                                 String attrName, String attrValue, long timeToLive) {
+    public static ExpirableToken newUserToken(
+            ExpirableTokenType type,
+            long userId,
+            String attrName,
+            String attrValue,
+            long timeToLive) {
         return new Builder().
                 setType(type).
                 setExpires(Clock.systemUTC().millis() + timeToLive).
@@ -320,8 +324,11 @@ public final class ExpirableToken implements Serializable {
      * @param timeToLive Time to live, in milliseconds.
      * @return Expirable token.
      */
-    public static ExpirableToken newTokenForUser(ExpirableTokenType type, long userId,
-                                                 Map<String, String> data, long timeToLive) {
+    public static ExpirableToken newUserToken(
+            ExpirableTokenType type,
+            long userId,
+            Map<String, String> data,
+            long timeToLive) {
         return new Builder().
                 setType(type).
                 setExpires(Clock.systemUTC().millis() + timeToLive).

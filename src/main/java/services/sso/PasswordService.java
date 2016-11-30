@@ -5,7 +5,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import models.sso.User;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -40,7 +39,6 @@ public class PasswordService {
     /**
      * Constructs service.
      */
-    @Inject
     public PasswordService() {
         this.random = new SecureRandom();
         this.hashFunction = Hashing.sha512();

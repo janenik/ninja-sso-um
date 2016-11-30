@@ -136,7 +136,7 @@ public class AuthenticationFilter implements Filter {
 
                 context.setAttribute(TOKEN, expirableToken);
                 ExpirableToken xsrfToken =
-                        ExpirableToken.newTokenForUser(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
+                        ExpirableToken.newUserToken(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
 
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
