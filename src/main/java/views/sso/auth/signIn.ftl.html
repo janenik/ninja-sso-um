@@ -48,7 +48,7 @@
                            placeholder="${i18n('signInEmailOrUsernamePlaceHolder')}"
                            value="${(user.emailOrUsername)!}"
                            ${_enableHtml5Required}
-                           class="form-control "/>
+                           class="form-control"/>
                 </div>
                 <div class="form-group
                      <#if errors.hasBeanViolation('emailOrPassword') || errors.hasBeanViolation('password')>
@@ -64,8 +64,8 @@
                            class="form-control"/>
                     <#if errors.hasBeanViolation('passwordChanged')>
                         <p class="help-block ssoFieldErrorDescription">
-                            ${i18n("signInPasswordRecentlyChanged")}:
-                            ${passwordChangeDuration}
+                            ${i18n("signInPasswordChangedAgo")}
+                            ${prettyTime(passwordChangeDate)}.
                         </p>
                     </#if>
                 </div>
@@ -89,8 +89,7 @@
                             <img src="${captchaUrl}"
                                  class="ssoCaptchaImage" id="captchaImage"
                                  alt="${i18n('signUpCaptchaCodeHelp')}"
-                                 title="${i18n('signUpCaptchaCodeHelp')}"
-                            />
+                                 title="${i18n('signUpCaptchaCodeHelp')}" />
                             <#if errors.hasBeanViolation('captchaCode')>
                                 <p class="help-block">${i18n("signInCaptchaCodeHelp")}</p>
                             </#if>

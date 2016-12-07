@@ -34,7 +34,7 @@ import services.sso.limits.IPCounterService;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.time.Duration;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -197,12 +197,12 @@ public class SignInController {
         }
         // Check password.
         if (!userService.isValidPassword(user, userSignInDto.getPassword())) {
-            Optional<Duration> lastPasswordChangeDateTime =
-                    userEventService.getLastPasswordChangeDateTime(user, userSignInDto.getPassword());
+            Optional<Date> lastPasswordChangeDate =
+                    userEventService.getLastPasswordChangeDate(user, userSignInDto.getPassword());
             // Check if the password was changed recently.
-            if (lastPasswordChangeDateTime.isPresent()) {
+            if (lastPasswordChangeDate.isPresent()) {
                 return createResult(userSignInDto, context, validation, "passwordChanged")
-                        .render("passwordChangeDuration", lastPasswordChangeDateTime.get());
+                        .render("passwordChangeDate", lastPasswordChangeDate.get());
             }
             return createResult(userSignInDto, context, validation, "emailOrPassword");
         }

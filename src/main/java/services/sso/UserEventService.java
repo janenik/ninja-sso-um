@@ -14,10 +14,9 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,44 +111,35 @@ public class UserEventService implements Paginatable<UserEvent> {
     }
 
     /**
-     * Returns the hint duration of the last password change if the given password matches history.
+     * Returns a hint duration of the last password change if the given password matches previous
+     * password.
      *
      * @param user User.
      * @param password Old password to search for.
      * @return Optional of the duration of the last password change.
      */
     @SuppressWarnings("unchecked")
-    public Optional<Duration> getLastPasswordChangeDateTime(User user, String password) {
+    public Optional<Date> getLastPasswordChangeDate(User user, String password) {
         Query query = entityManagerProvider.get().createNamedQuery("UserEvent.ownByUserAndType");
         query.setParameter("userId", user.getId());
         query.setParameter("type", UserEventType.PASSWORD_CHANGE);
         query.setMaxResults(1);
         List<UserEvent> events = (List<UserEvent>) query.getResultList();
         for (UserEvent event : events) {
-            byte[] data = event.getData();
-            if (data != null && data.length > 0) {
-                try {
-                    Map<String, Object> dataMap = objectMapper.readValue(data, Map.class);
-                    Map<String, Object> eventData = (Map<String, Object>) dataMap.get(EVENT_DATA_NAMESPACE);
-                    byte[] oldSalt = baseEncoding.decode((String) eventData.get("password.old.salt"));
-                    byte[] oldHash = baseEncoding.decode((String) eventData.get("password.old.hash"));
-                    if (passwordService.isValidPassword(password, oldSalt, oldHash)) {
-                        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-                        Duration timeAgo = Duration.between(event.getTime(), now);
-                        if (timeAgo.toHours() < 24) {
-                            return Optional.of(Duration.ofHours(timeAgo.toHours()));
-                        }
-                        Duration inDays = Duration.ofDays(timeAgo.toDays());
-                        if (inDays.toDays() < 30) {
-                            return Optional.of(inDays);
-                        }
-                        break;
-                    }
-                } catch (Exception e) {
-                    String message = String.format(
-                            "Error parsing event data: %d / user: %d", event.getId(), user.getId());
-                    logger.warn(message, e);
+            if (event.getData() == null || event.getData().length == 0) {
+                continue;
+            }
+            try {
+                Map<String, Object> dataMap = objectMapper.readValue(event.getData(), Map.class);
+                byte[] oldSalt = baseEncoding.decode((String) dataMap.get("password.old.salt"));
+                byte[] oldHash = baseEncoding.decode((String) dataMap.get("password.old.hash"));
+                if (passwordService.isValidPassword(password, oldSalt, oldHash)) {
+                    return Optional.of(new Date(event.getTime().toEpochSecond() * 1000L));
                 }
+            } catch (IOException e) {
+                String message = String.format(
+                        "Error parsing event data: %d / user: %d", event.getId(), user.getId());
+                logger.warn(message, e);
             }
         }
         return Optional.empty();

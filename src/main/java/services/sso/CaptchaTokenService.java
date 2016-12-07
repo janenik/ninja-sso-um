@@ -70,7 +70,7 @@ public class CaptchaTokenService {
         this.cache = cache;
         this.alphabet = properties.getWithDefault(
                 "application.sso.captcha.aphabet",
-                "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ"); // No 0 and O.
+                "123456789ABCDEFGHJKLMNPQRSTUVWXYZ"); // No I, 0 and O.
         this.length = properties.getIntegerWithDefault("application.sso.captcha.length", 5);
         int ttlInSeconds = properties.getIntegerWithDefault("application.sso.captcha.ttl", 300);
         this.ttlAsString = ttlInSeconds + "s";
