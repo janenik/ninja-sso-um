@@ -133,6 +133,11 @@ public class ForgotPasswordController {
     final long restorePasswordTokenTtl;
 
     /**
+     * Whether to produce fake "email sent" response to non-existing user.
+     */
+    final boolean produceFakeResponseForNonExistingUser;
+
+    /**
      * Constructs the forgot password controller.
      *
      * @param userService User service.
@@ -170,6 +175,8 @@ public class ForgotPasswordController {
         this.logger = logger;
         this.restorePasswordTokenTtl =
                 properties.getIntegerWithDefault("application.sso.restorePasswordToken.ttl", 3600) * 1000L;
+        this.produceFakeResponseForNonExistingUser =
+                properties.getBooleanWithDefault("application.sso.restorePasswordToken.fakeForNonExisting", true);
     }
 
 
@@ -207,17 +214,18 @@ public class ForgotPasswordController {
         }
         // Check existing user.
         User userEntity = userService.getUserByEmailOrUsername(user.getEmailOrUsername());
-        if (userEntity == null) {
+        if (userEntity == null && !produceFakeResponseForNonExistingUser) {
             return createResult(user, context, validation, "emailOrUsernameNotFound");
         }
-        if (!userEntity.isSignInEnabled()) {
+        if (userEntity != null && !userEntity.isSignInEnabled()) {
             return createResult(user, context, validation, "signInDisabled");
         }
+        if (userEntity != null) {
+            // Send the email for existing user.
+            sendRestorePasswordEmail(userEntity, context);
+        }
 
-        // Send the email.
-        sendRestorePasswordEmail(userEntity, context);
         String signInUrl = urlBuilderProvider.get().getSignInUrl(SignInState.FORGOT_EMAIL_SENT);
-
         // Redirect to sign in.
         return Controllers.redirect(signInUrl);
     }
