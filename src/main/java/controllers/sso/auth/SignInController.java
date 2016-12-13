@@ -180,6 +180,7 @@ public class SignInController {
         if (validation.hasViolations()) {
             return createResult(userSignInDto, context, validation);
         }
+
         // Check IP hits exceeded and if exceeded check the entered captcha code.
         boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
         if (ipHitsExceeded) {
@@ -190,11 +191,13 @@ public class SignInController {
                 return createResult(userSignInDto, context, validation, "captchaCode");
             }
         }
+
         User user = userService.getUserByEmailOrUsername(userSignInDto.getEmailOrUsername());
         // Check if user exists.
         if (user == null) {
             return createResult(userSignInDto, context, validation, "emailOrPassword");
         }
+
         // Check password.
         if (!userService.isValidPassword(user, userSignInDto.getPassword())) {
             Optional<Date> lastPasswordChangeDate =
@@ -206,19 +209,24 @@ public class SignInController {
             }
             return createResult(userSignInDto, context, validation, "emailOrPassword");
         }
+
         // Check if the user is confirmed.
         if (!user.isConfirmed()) {
             return createResult(userSignInDto, context, validation, "emailNotConfirmed");
         }
+
         // Check if the sign-in is enabled.
         if (!user.isSignInEnabled()) {
             return createResult(userSignInDto, context, validation, "signInDisabled");
         }
+
         // Remember last used locale.
         user.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
         userService.update(user);
+
         // Remote IP.
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+
         // Remember sign in event.
         userEventService.onSignIn(user, ip, context.getHeaders());
         return signInResponseSupplierProvider.get().getSignInResponse(user);

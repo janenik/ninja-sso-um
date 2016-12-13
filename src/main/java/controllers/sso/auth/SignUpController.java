@@ -2,9 +2,9 @@ package controllers.sso.auth;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.inject.persist.Transactional;
 import controllers.annotations.SecureHtmlHeaders;
+import controllers.sso.auth.state.SignInState;
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.DeviceTypeFilter;
 import controllers.sso.filters.HitsPerIpCheckFilter;
@@ -49,6 +49,7 @@ import javax.inject.Singleton;
 import javax.mail.MessagingException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -70,6 +71,16 @@ public class SignUpController {
      * Template to render sign up page.
      */
     static final String TEMPLATE = "views/sso/auth/signUp.ftl.html";
+
+    /**
+     * Verification email template pattern.
+     */
+    static final String EMAIL_VERIFICATION_TEMPLATE = "signUpConfirmation.%s.ftl.html";
+
+    /**
+     * Welcome email template pattern.
+     */
+    static final String EMAIL_WELCOME_TEMPLATE = "signUpWelcome.%s.ftl.html";
 
     /**
      * Empty user DTO for get request. Effectively immutable.
@@ -147,6 +158,11 @@ public class SignUpController {
     final String baseUrl;
 
     /**
+     * Minimum registration age.
+     */
+    final int minimumRegistrationAge;
+
+    /**
      * Access token time to live, in millis.
      */
     final long accessTokenTtl;
@@ -157,14 +173,14 @@ public class SignUpController {
     final long emailTokenTtl;
 
     /**
-     * Minimum registration age.
-     */
-    final int minimumRegistrationAge;
-
-    /**
      * Sign up verification token time to live, in millis.
      */
     final long signUpVerificationTokenTtl;
+
+    /**
+     * Email notification type.
+     */
+    final EmailNotificationType emailNotificationType;
 
     /**
      * Logger.
@@ -222,7 +238,11 @@ public class SignUpController {
         this.signUpVerificationTokenTtl = 1000L * properties.
                 getIntegerWithDefault("application.sso.signUpVerificationToken.ttl", 30 * 60);
         this.minimumRegistrationAge = properties
-                .getIntegerWithDefault("application.minimumRegistrationAge", 13);
+                .getIntegerWithDefault("application.sso.minimumRegistrationAge", 13);
+        this.emailNotificationType =
+                EmailNotificationType.fromString(
+                        properties.getWithDefault("application.sso.signUpEmailNotificationType",
+                                EmailNotificationType.CONFIRMATION.toString()));
     }
 
     /**
@@ -249,27 +269,33 @@ public class SignUpController {
         if (userDto == null) {
             return signUpGet(context);
         }
+
         // Validate all fields.
         if (validation.hasViolations()) {
             return createResult(userDto, context, validation);
         }
+
         // Gender.
         if (!UserGender.hasConstant(userDto.getGender())) {
             return createResult(userDto, context, validation, "gender");
         }
+
         // Compare 2 passwords.
         if (!userDto.getPassword().equals(userDto.getPasswordRepeat())) {
             return createResult(userDto, context, validation, "passwordRepeat");
         }
+
         // Check agreement.
         if (!"agree".equals(userDto.getAgreement())) {
             return createResult(userDto, context, validation, "agreement");
         }
+
         // Check if the user is old enough.
         LocalDate birthDate = LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay());
         if (birthDate.plusYears(minimumRegistrationAge).isAfter(LocalDate.now())) {
             return createResult(userDto, context, validation, "age");
         }
+
         // Check if user has correct token/captcha.
         try {
             captchaTokenService.verifyCaptchaToken(userDto.getToken(), userDto.getCaptchaCode());
@@ -277,25 +303,30 @@ public class SignUpController {
                 ExpiredTokenException | IllegalTokenException ex) {
             return createResult(userDto, context, validation, "captchaCode");
         }
+
         // Check username is acceptable.
         if (!userService.isUsernameAcceptable(userDto.getUsername())) {
             return createResult(userDto, context, validation, "usernameDuplicate");
         }
+
         // Check with existing username.
         User existingUserWithUsername = userService.getByUsername(userDto.getUsername());
         if (existingUserWithUsername != null) {
             return createResult(userDto, context, validation, "usernameDuplicate");
         }
+
         // Check with existing email.
         User existingUserWithEmail = userService.getByEmail(userDto.getEmail());
         if (existingUserWithEmail != null) {
             return createResult(userDto, context, validation, "emailDuplicate");
         }
+
         // Fetch country.
         Country country = countryService.get(userDto.getCountryId());
         if (country == null) {
             return createResult(userDto, context, validation, "country");
         }
+
         // User to save.
         User userToSave = dtoMapper.map(userDto, User.class);
         userToSave.setCountry(country);
@@ -303,13 +334,22 @@ public class SignUpController {
         userToSave.setDateOfBirth(birthDate);
         userToSave.setRole(UserRole.USER);
         userToSave.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
+
+        // Make user confirmed in case of welcome or no email.
+        if (!EmailNotificationType.CONFIRMATION.equals(this.emailNotificationType)) {
+            userToSave.confirm();
+        }
+
         // Save the user.
         userService.createNew(userToSave, userDto.getPassword());
+
         // Remote IP.
         String remoteIp = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         userEventService.onUserSignUp(userToSave, remoteIp, context.getHeaders());
+
         // Perform post-sign up actions.
         String redirectURL = invokePostSignUpActions(userToSave, context);
+
         // Redirect.
         return Controllers.redirect(redirectURL);
     }
@@ -325,21 +365,23 @@ public class SignUpController {
      * @return URL to redirect.
      */
     String invokePostSignUpActions(User createdUser, Context context) {
+        // Make user confirmed in case of no email.
+        if (EmailNotificationType.NONE.equals(this.emailNotificationType)) {
+            return urlBuilderProvider.get().getSignInUrl(SignInState.SUCCESSFUL_SIGN_UP);
+        }
         try {
-            String verificationCode = newVerificationCode();
-            // Send verification email with code.
-            sendConfirmationEmail(createdUser, verificationCode, context);
-            // Create new verification token.
-            ExpirableToken signUpVerificationPageToken = newSignUpPageVerificationToken(createdUser, verificationCode);
-            String verificationTokenAsString = expirableTokenEncryptor.encrypt(signUpVerificationPageToken);
-            // Redirect to verification page.
-            return urlBuilderProvider.get().getSignUpVerificationPage(verificationTokenAsString);
+            if (EmailNotificationType.WELCOME.equals(this.emailNotificationType)) {
+                sendSignUpNotification(createdUser, context, Optional.absent());
+                return urlBuilderProvider.get().getSignInUrl(SignInState.SUCCESSFUL_SIGN_UP);
+            }
+            return sendConfirmationEmailAndBuildVerificationPageUrl(createdUser, context);
         } catch (ExpirableTokenEncryptorException e) {
             throw new RuntimeException("Unexpected problem with encryption.", e);
         } catch (MessagingException e) {
             throw new RuntimeException("Problem while sending an email.", e);
         }
     }
+
 
     /**
      * Creates response result with given user, validation and field that lead to error.
@@ -400,28 +442,65 @@ public class SignUpController {
     }
 
     /**
-     * Sends confirmation email to given user with given language.
+     * Sends confirmation  email and constructs URL to verification page.
+     *
+     * @param createdUser Created user.
+     * @param context Web application context.
+     * @return Verification page URL for redirection.
+     * @throws MessagingException In case of email exception.
+     * @throws ExpirableTokenEncryptorException Encryption exception.
+     */
+    private String sendConfirmationEmailAndBuildVerificationPageUrl(User createdUser, Context context)
+            throws MessagingException, ExpirableTokenEncryptorException {
+        String verificationCode = newVerificationCode();
+
+        // Send verification or welcome email with code.
+        sendSignUpNotification(createdUser, context, Optional.of(verificationCode));
+
+        // Create new verification token.
+        ExpirableToken signUpVerificationPageToken = newSignUpPageVerificationToken(createdUser, verificationCode);
+        String verificationTokenAsString = expirableTokenEncryptor.encrypt(signUpVerificationPageToken);
+
+        // Redirect to verification page.
+        return urlBuilderProvider.get().getSignUpVerificationPage(verificationTokenAsString);
+    }
+
+    /**
+     * Sends sign up notification email to given user with given language. If the verification code is given
+     * then confirmation email is sent. Otherwise welcome email is sent.
      *
      * @param user Newly registered user.
-     * @param verificationCode Verification code.
      * @param context Web application context.
+     * @param verificationCode Optional verification code for confirmation email.
      * @throws MessagingException In case when error happens while creating or sending the email.
      */
-    void sendConfirmationEmail(User user, String verificationCode, Context context) throws MessagingException {
+    void sendSignUpNotification(User user, Context context, Optional<String> verificationCode)
+            throws MessagingException {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         try {
-            // Create verification token.
-            ExpirableToken emailConfirmationToken = newEmailVerificationToken(user, verificationCode);
-            String emailTokenAsString = expirableTokenEncryptor.encrypt(emailConfirmationToken);
             // Build email template data.
-            Map<String, Object> data = Maps.newHashMap();
+            Map<String, Object> data = new HashMap<>();
             data.put("lang", locale);
-            data.put("verificationCode", verificationCode);
-            data.put("confirmUrl", urlBuilderProvider.get().getEmailConfirmationUrl(emailTokenAsString));
+            data.put("user", user);
+            data.put("verificationCode", verificationCode.get());
             data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
+            data.put("signInUrl", urlBuilderProvider.get().getAbsoluteSignInUrl());
+
             // Translate subject and build template.
-            String subject = messages.get("confirmationSubject", Optional.<String>of(locale)).get();
-            String localizedTemplate = String.format("signUpConfirmation.%s.ftl.html", locale);
+            String subject;
+            String localizedTemplate;
+            if (verificationCode.isPresent()) {
+                // Create verification token.
+                ExpirableToken emailConfirmationToken = newEmailVerificationToken(user, verificationCode.get());
+                String emailTokenAsString = expirableTokenEncryptor.encrypt(emailConfirmationToken);
+                data.put("confirmUrl", urlBuilderProvider.get().getEmailConfirmationUrl(emailTokenAsString));
+                subject = messages.get("signUpEmailConfirmationSubject", Optional.<String>of(locale)).get();
+                localizedTemplate = String.format(EMAIL_VERIFICATION_TEMPLATE, locale);
+            } else {
+                subject = messages.get("signUpEmailWelcomeSubject", Optional.<String>of(locale)).get();
+                localizedTemplate = String.format(EMAIL_WELCOME_TEMPLATE, locale);
+            }
+
             // Send the email.
             emailService.send(user.getEmail(), subject, localizedTemplate, data);
         } catch (MessagingException | TemplateException | ExpirableTokenEncryptorException ex) {
@@ -453,5 +532,40 @@ public class SignUpController {
     ExpirableToken newSignUpPageVerificationToken(User user, String verificationCode) {
         return ExpirableToken.newUserToken(ExpirableTokenType.SIGNUP_VERIFICATION, user.getId(),
                 "verificationCode", verificationCode, signUpVerificationTokenTtl);
+    }
+
+    /**
+     * Email notification type for sign up completion.
+     */
+    enum EmailNotificationType {
+
+        /**
+         * Email confirmation is required.
+         */
+        CONFIRMATION,
+
+        /**
+         * Simple welcome email is sent.
+         */
+        WELCOME,
+
+        /**
+         * No emails are sent.
+         */
+        NONE;
+
+        /**
+         * Returns email notification type from string. {@link EmailNotificationType#CONFIRMATION} by default.
+         *
+         * @param typeAsString Notification type as string.
+         * @return Notification type from string.
+         */
+        public static EmailNotificationType fromString(String typeAsString) {
+            try {
+                return valueOf(typeAsString.toUpperCase());
+            } catch (Exception e) {
+                return CONFIRMATION;
+            }
+        }
     }
 }

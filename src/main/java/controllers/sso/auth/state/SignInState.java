@@ -19,9 +19,14 @@ public enum SignInState {
     EMAIL_VERIFICATION_EMAIL_CHANGED(true),
 
     /**
-     * Email verfication failed.
+     * Email verification failed.
      */
     EMAIL_VERIFICATION_FAILED(false),
+
+    /**
+     * Successful sign up state.
+     */
+    SUCCESSFUL_SIGN_UP(true),
 
     /**
      * Password was changed successfully.
@@ -34,7 +39,7 @@ public enum SignInState {
     FORGOT_EMAIL_SENT(true);
 
     /**
-     * Whether the currect state is successful.
+     * Whether the current state is successful.
      */
     final boolean successful;
 
@@ -62,7 +67,7 @@ public enum SignInState {
     /**
      * Whether the state is successful state.
      *
-     * @return
+     * @return Whether the current state is successful.
      */
     public boolean isSuccessful() {
         return successful;

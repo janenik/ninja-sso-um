@@ -1,5 +1,11 @@
 <#escape x as x?html>
-    <h3>Welcome to ${config.get('application.titleCommon')}.</h3>
+    <p>
+        <b>Hello, ${user.getFirstName()} ${user.getLastName()}.</b>
+    </p>
+
+    <p>
+        Welcome to ${config.get('application.titleCommon')}.
+    </p>
 
     <p>
         Please confirm your email address by following this link in your browser:<br/><br/>

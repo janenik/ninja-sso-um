@@ -1,5 +1,11 @@
 <#escape x as x?html>
-    <h3>Добро пожаловать в ${config.get('application.titleCommon')}.</h3>
+    <p>
+        <b>Здравствуйте, ${user.getFirstName()} ${user.getLastName()}.</b>
+    </p>
+
+    <p>
+        Добро пожаловать в ${config.get('application.titleCommon')}.
+    </p>
 
     <p>
         Пожалуйста, подтвердите Ваш E-mail адрес с помощью этой ссылки:<br/><br/>

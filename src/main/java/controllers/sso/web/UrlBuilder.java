@@ -195,6 +195,21 @@ public class UrlBuilder {
     }
 
     /**
+     * Returns URL to Sign In page.
+     * URL is absolute.
+     *
+     * @return Absolute Sign In URL.
+     */
+    public String getAbsoluteSignInUrl() {
+        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
+        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        return urlBuilder
+                .append("&continue=")
+                .append(Escapers.encodePercent(getContinueUrlParameter()))
+                .toString();
+    }
+
+    /**
      * Returns URL to Sign In page with current URL as continue URL.
      * URL is relative.
      *

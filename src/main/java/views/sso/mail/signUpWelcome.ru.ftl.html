@@ -1,0 +1,18 @@
+<#escape x as x?html>
+    <p>
+        <b>Здравствуйте, ${user.getFirstName()} ${user.getLastName()}.</b>
+    </p>
+
+    <p>
+        Добро пожаловать в ${config.get('application.titleCommon')}.
+    </p>
+
+    <p>
+        Пожалуйста, используйте ссылку <a href="${signInUrl}">для входа</a>.
+    </p>
+
+    <p>
+        Спасибо.<br/>
+        <a href="${indexUrl}">${config.get('application.titleCommon')}</a>
+    </p>
+</#escape>
