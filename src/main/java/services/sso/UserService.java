@@ -143,7 +143,7 @@ public class UserService implements Paginatable<User> {
     }
 
     /**
-     * Saves user into the database.
+     * Saves existing user into a database (update) and returns attached entity.
      *
      * @param user User to save.
      * @return Saved user.
@@ -154,7 +154,7 @@ public class UserService implements Paginatable<User> {
     }
 
     /**
-     * Saves user into the database and returns attached entity.
+     * Creates new user in a database and returns attached entity (create).
      *
      * @param user User to save.
      * @return Created user (as as argument, attached instance).

@@ -176,7 +176,8 @@ public class ForgotPasswordController {
         this.restorePasswordTokenTtl =
                 properties.getIntegerWithDefault("application.sso.restorePasswordToken.ttl", 3600) * 1000L;
         this.produceFakeResponseForNonExistingUser =
-                properties.getBooleanWithDefault("application.sso.restorePasswordToken.fakeForNonExisting", true);
+                properties.getBooleanWithDefault(
+                        "application.sso.restorePassword.fakeResponseForNonExistingUser", true);
     }
 
 
