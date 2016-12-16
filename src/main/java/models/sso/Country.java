@@ -20,7 +20,7 @@ import java.io.Serializable;
 })
 @NamedQueries({
         @NamedQuery(name = "Countries.getAllSortedByNativeName",
-                query = "SELECT c FROM Country c ORDER BY c.nativeName"),
+                query = "SELECT c FROM Country c ORDER BY c.nativeName, c.name"),
         @NamedQuery(name = "Countries.getAllSortedByName",
                 query = "SELECT c FROM Country c ORDER BY c.name")
 })

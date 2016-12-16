@@ -203,9 +203,10 @@
                                                   aria-label="${country.getNativeOrName()}"
                                                   class="flag flag-${country.getFlagCode()?lower_case}"></span>
                                             <span class="countryNameCode">
-                                                <span>${country.getName()}</span>
-                                                <#if lang != "en" && country.getName() != country.getNativeOrName()>
-                                                  <span>(${country.getNativeOrName()})</span>
+                                                <#if lang == "en">
+                                                    <span>${country.getName()}</span>
+                                                <#else>
+                                                  <span>${country.getNativeOrName()}</span>
                                                 </#if>
                                                 <span>&nbsp;+${country.getPhoneCode()}</span>
                                             </span>
