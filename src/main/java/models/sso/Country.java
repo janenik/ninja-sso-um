@@ -21,6 +21,8 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name = "Countries.getAllSortedByNativeName",
                 query = "SELECT c FROM Country c ORDER BY c.nativeName"),
+        @NamedQuery(name = "Countries.getAllSortedByName",
+                query = "SELECT c FROM Country c ORDER BY c.name")
 })
 public class Country implements Serializable {
 
@@ -119,6 +121,18 @@ public class Country implements Serializable {
      */
     public void setIso3(String iso3) {
         this.iso3 = iso3.trim().toUpperCase();
+    }
+
+
+    public String getFlagCode() {
+        switch (iso) {
+            case "IO":
+                return "GB";
+            case "WF":
+            case "GF":
+                return "FR";
+        }
+        return iso;
     }
 
     /**

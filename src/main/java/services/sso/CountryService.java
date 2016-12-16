@@ -40,7 +40,7 @@ public class CountryService {
     }
 
     /**
-     * Returns sorted list of countries, by nice name.
+     * Returns sorted list of countries, by native name.
      *
      * @return Sorted list of countries.
      */
@@ -48,6 +48,17 @@ public class CountryService {
     public List<Country> getAllSortedByNativeName() {
         return (List<Country>) entityManagerProvider.get().
                 createNamedQuery("Countries.getAllSortedByNativeName").getResultList();
+    }
+
+    /**
+     * Returns sorted list of countries, by english name.
+     *
+     * @return Sorted list of countries.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Country> getAllSortedByName() {
+        return (List<Country>) entityManagerProvider.get().
+                createNamedQuery("Countries.getAllSortedByName").getResultList();
     }
 
     /**

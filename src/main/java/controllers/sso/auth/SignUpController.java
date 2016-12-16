@@ -50,6 +50,7 @@ import javax.mail.MessagingException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -406,13 +407,16 @@ public class SignUpController {
      * @return Sign up response object.
      */
     Result createResult(UserSignUpDto user, Context context, Validation validation) {
+        String locale = (String) context.getAttribute(LanguageFilter.LANG);
+        List<Country> countries = "en".equals(locale) ?
+                countryService.getAllSortedByName() : countryService.getAllSortedByNativeName();
         Result result = htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
                 .render("user", user)
                 .render("config", properties)
                 .render("errors", validation)
-                .render("countries", countryService.getAllSortedByNativeName())
+                .render("countries", countries)
                 .render("continue", urlBuilderProvider.get().getContinueUrlParameter());
         if (Strings.isNullOrEmpty(user.getToken()) || validation.hasViolations()) {
             regenerateCaptchaTokenAndUrl(result, context);

@@ -201,10 +201,13 @@
                                             <a href="#">
                                             <span role="img"
                                                   aria-label="${country.getNativeOrName()}"
-                                                  class="flag flag-${country.getIso()?lower_case}"></span>
+                                                  class="flag flag-${country.getFlagCode()?lower_case}"></span>
                                             <span class="countryNameCode">
-                                                ${country.getNativeOrName()}
-                                                (+${country.getPhoneCode()})
+                                                <span>${country.getName()}</span>
+                                                <#if lang != "en" && country.getName() != country.getNativeOrName()>
+                                                  <span>(${country.getNativeOrName()})</span>
+                                                </#if>
+                                                <span>&nbsp;+${country.getPhoneCode()}</span>
                                             </span>
                                             </a>
                                         </li>

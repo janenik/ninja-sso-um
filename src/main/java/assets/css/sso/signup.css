@@ -43,6 +43,16 @@
   }
 }
 
+#countryIdDropdown {
+  max-height: 350px;
+  min-width: 450px;
+  overflow-y: scroll;
+}
+
+#countryIdDropdown > li > a {
+  min-width: 430px;
+}
+
 .flag {
   display: inline-block;
   width: 32px;

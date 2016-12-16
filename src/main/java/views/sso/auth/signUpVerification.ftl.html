@@ -35,9 +35,10 @@
                 </div>
 
                 <p class="ssoSignupConfirmationBig">
-                    <#noescape><a href="${continue}"></#noescape>
-                    ${i18n("signUpWelcomeProceedToProject")}
-                    ${config.get('application.titleCommon')}</a>
+                    <a href="${continue}">
+                        ${i18n("signUpWelcomeProceedToProject")}
+                        ${config.get('application.titleCommon')}
+                    </a>
                 </p>
             </div>
             <div class="clearfix visible-xs-block"></div>
@@ -63,7 +64,7 @@
                 </#if>
 
                 <form id="signUpVerifyForm" method="POST"
-                      action="${contextPath}/auth/signup/verify?lang=${lang}&token=${token?url}&continue=${continue?url}">
+                      action="${contextPath}/auth/signup/verify?lang=${lang}&amp;token=${token?url}&amp;continue=${continue?url}">
                     <div class="form-group">
                         <label for="verificationCode">${i18n("signUpVerificationCode")}</label>
                         <input type="text" id="verificationCode" name="verificationCode"
