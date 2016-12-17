@@ -1,134 +1,151 @@
 <#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout />
-    <@layout.adminLayout i18n("adminEditUserContactData") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
+<@layout.adminLayout i18n("adminEditUserContactData") + ': ' + userEntity.getId() + ' / ' + userEntity.getUsername()>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-body">
 
-                    <#assign editMode = "contact" />
-                    <#include 'edit-submenu.ftl.html' />
+                <#assign editMode = "contact" />
+                <#include 'edit-submenu.ftl.html' />
 
-                    <#if errors.hasBeanViolations()>
-                        <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
-                    </#if>
+                <#if errors.hasBeanViolations()>
+                    <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
+                </#if>
 
-                    <form id="editContactForm" method="POST" class="form-horizontal"
-                          action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-contact?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                <form id="editContactForm" method="POST" class="form-horizontal"
+                      action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-contact?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
-                        <div class="form-group <#if errors.hasBeanViolation('countryId')>has-error</#if>">
-                            <label class="control-label col-sm-3" for="countryIdButton">${i18n("signUpCountry")}</label>
-                            <div class="col-sm-9">
-                                <div class="dropdown">
-                                    <button class="btn btn-default dropdown-toggle" type="button" id="countryIdButton"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span id="countryIdTitle">${i18n("signUpCountry")}</span>
-                                        <span class="caret"></span>
-                                    </button>
-                                    <#list countries>
-                                        <ul class="dropdown-menu" aria-labelledby="countryIdButton"
-                                            id="countryIdDropdown">
-                                            <#items as country>
-                                                <li class="countryEntry" rel="${country.getIso()}"
-                                                    rel2="${country.getPhoneCode()}"
-                                                    rel3="${country.getNativeOrName()}">
-                                                    <a href="#">
+                    <div class="form-group <#if errors.hasBeanViolation('countryId')>has-error</#if>">
+                        <label class="control-label col-sm-3" for="countryIdButton">${i18n("signUpCountry")}</label>
+                        <div class="col-sm-9">
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="countryIdButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span id="countryIdTitle">${i18n("signUpCountry")}</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <#list countries>
+                                    <ul class="dropdown-menu" aria-labelledby="countryIdButton"
+                                        id="countryIdDropdown">
+                                        <#items as country>
+                                            <li class="countryEntry" rel="${country.getIso()}"
+                                                rel2="${country.getPhoneCode()}"
+                                                rel3="${country.getNativeOrName()}">
+                                                <a href="#">
                                             <span role="img"
                                                   aria-label="${country.getNativeOrName()}"
                                                   class="flag flag-${country.getIso()?lower_case}"></span>
                                             <span class="countryNameCode">
-                                                ${country.getNativeOrName()}
-                                                (+${country.getPhoneCode()})
+                                                <#if lang == "en">
+                                                    <span>${country.getName()}</span>
+                                                    <#else>
+                                                  <span>${country.getNativeOrName()}
+                                                    <#if country.getNativeOrName() != country.getName()>
+                                                        (${country.getName()})
+                                                    </#if>
+                                                  </span>
+                                                </#if>
+                                                <span>&nbsp;+${country.getPhoneCode()}</span>
                                             </span>
-                                                    </a>
-                                                </li>
-                                            </#items>
-                                        </ul>
-                                    </#list>
-                                    <input type="hidden" id="countryId" name="countryId"
-                                           value="${(user.getCountryId())!}"/>
+                                                </a>
+                                            </li>
+                                        </#items>
+                                    </ul>
+                                </#list>
+                                <input type="hidden" id="countryId" name="countryId"
+                                       value="${(user.getCountryId())!}"/>
+                            </div>
+                            <#if errors.hasBeanViolation('countryId')>
+                                <p class="help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpCountryRequired")}
+                                </p>
+                            </#if>
+                        </div>
+                    </div>
+
+                    <div class="form-group <#if errors.hasBeanViolation('phone')>has-error</#if>">
+                        <label class="control-label  col-sm-3" for="phone">${i18n("signUpPhone")}</label>
+                        <div class="col-sm-9">
+                            <input type="tel" id="phone" name="phone"
+                                   placeholder="${i18n('signUpPhonePlaceHolder')}"
+                                   value="${(user.getPhone())!}"
+                                   ${_enableHtml5Required}
+                                   class="form-control"/>
+                            <#if errors.hasBeanViolation('phone')>
+                                <div class="input-group">
+                                    <p class="help-block ssoFieldErrorDescription">
+                                        ${i18n("signUpPhoneRequired")}
+                                    </p>
                                 </div>
-                                <#if errors.hasBeanViolation('countryId')>
-                                    <p class="help-block ssoFieldErrorDescription">
-                                        ${i18n("signUpCountryRequired")}
-                                    </p>
-                                </#if>
-                            </div>
+                            </#if>
                         </div>
+                    </div>
 
-                        <div class="form-group <#if errors.hasBeanViolation('phone')>has-error</#if>">
-                            <label class="control-label  col-sm-3" for="phone">${i18n("signUpPhone")}</label>
-                            <div class="col-sm-9">
-                                <input type="tel" id="phone" name="phone"
-                                       placeholder="${i18n('signUpPhonePlaceHolder')}"
-                                       value="${(user.getPhone())!}"
-                                       ${_enableHtml5Required}
-                                       class="form-control"/>
-                                <#if errors.hasBeanViolation('phone')>
-                                    <div class="input-group">
-                                        <p class="help-block ssoFieldErrorDescription">
-                                            ${i18n("signUpPhoneRequired")}
-                                        </p>
-                                    </div>
-                                </#if>
-                            </div>
-                        </div>
-
-                        <div class="form-group <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
+                    <div class="form-group <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
                             has-error</#if>">
-                            <label class="control-label col-sm-3" for="email">${i18n("signUpEmailAddress")}</label>
-                            <div class="col-sm-9">
-                                <input type="text" id="email" name="email"
-                                       placeholder="${i18n('signUpEmailPlaceHolder')}"
-                                       value="${(user.getEmail())!}"
-                                       ${_enableHtml5Required}
-                                       class="form-control"
-                                />
-                                <#if errors.hasBeanViolation('email')>
-                                    <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailRequired")}</p>
-                                </#if>
-                                <#if errors.hasBeanViolation('emailDuplicate')>
-                                    <p class="help-block ssoFieldErrorDescription">
-                                        ${i18n("signUpEmailUsed")} <br/>
-                                        ${i18n("signUpEmailUsedDescription")}:
-                                        <a href="${contextPath}/signin/forgot?lang=${lang}&amp;continue=${continue?url}">
-                                            ${i18n("signUpEmailUsedLinkTitle")}
-                                        </a>
-                                    </p>
-                                </#if>
-                            </div>
+                        <label class="control-label col-sm-3" for="email">${i18n("signUpEmailAddress")}</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="email" name="email"
+                                   placeholder="${i18n('signUpEmailPlaceHolder')}"
+                                   value="${(user.getEmail())!}"
+                                   ${_enableHtml5Required}
+                                   class="form-control"
+                            />
+                            <#if errors.hasBeanViolation('email')>
+                                <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailRequired")}</p>
+                            </#if>
+                            <#if errors.hasBeanViolation('emailDuplicate')>
+                                <p class="help-block ssoFieldErrorDescription">
+                                    ${i18n("signUpEmailUsed")} <br/>
+                                    ${i18n("signUpEmailUsedDescription")}:
+                                    <a href="${contextPath}/signin/forgot?lang=${lang}&amp;continue=${continue?url}">
+                                        ${i18n("signUpEmailUsedLinkTitle")}
+                                    </a>
+                                </p>
+                            </#if>
                         </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary" id="editContactSubmit">
-                            ${i18n("commonSave")}
-                        </button>
-                        <a class="btn btn-danger"
-                           href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
-                            ${i18n("commonCancel")}
-                        </a>
+                    <button type="submit" class="btn btn-primary" id="editContactSubmit">
+                        ${i18n("commonSave")}
+                    </button>
+                    <a class="btn btn-danger"
+                       href="${contextPath}/auth/admin/users?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
+                        ${i18n("commonCancel")}
+                    </a>
 
-                        <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
-                    </form>
-                </div>
+                    <input type="hidden" name="xsrfToken" value="${context.getAttribute('xsrfToken')}"/>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!--<#-- CSS below is the template that uses ${contextPath}  variable-->-->
-    <style type="text/css">
-        <#include "/assets/css/sso/flags.css" />
-    </style>
+<!--<#-- CSS below is the template that uses ${contextPath}  variable-->-->
+<style type="text/css">
+    <#include "/assets/css/sso/flags.css" />
+</style>
 
-    <script>
+<script>
         <#include "/assets/js/sso/edit-contact.js" />
-    </script>
+</script>
 
 
-    <style>
-        .vertical-separator-for-xs {
-            margin: 5px;
-        }
-    </style>
+<style>
+    .vertical-separator-for-xs {
+    margin: 5px;
+    }
+    #countryIdDropdown {
+    max-height: 350px;
+    min-width: 500px;
+    overflow-y: scroll;
+    }
+
+    #countryIdDropdown > li > a {
+    min-width: 490px;
+    }
+</style>
 
 </@layout.adminLayout>

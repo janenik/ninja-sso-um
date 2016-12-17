@@ -1,6 +1,13 @@
 <#import "/views/layout/defaultLayout.ftl.html" as layout />
 <@layout.defaultLayout i18n("signUpTitle")>
 
+<!--<#-- CSS below is the template that uses ${contextPath}  variable-->-->
+<style type="text/css">
+    <#include "/assets/css/sso/signup.css" />
+    <#include "/assets/css/sso/password.css" />
+    <#include "/assets/css/sso/flags.css" />
+</style>
+
 <div class="row">
     <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
 
@@ -206,7 +213,11 @@
                                                 <#if lang == "en">
                                                     <span>${country.getName()}</span>
                                                 <#else>
-                                                  <span>${country.getNativeOrName()}</span>
+                                                  <span>${country.getNativeOrName()}
+                                                    <#if country.getNativeOrName() != country.getName()>
+                                                        (${country.getName()})
+                                                    </#if>
+                                                  </span>
                                                 </#if>
                                                 <span>&nbsp;+${country.getPhoneCode()}</span>
                                             </span>
@@ -247,8 +258,8 @@
             <div class="row">
                 <div class="col-xs-6 col-md-6">
                     <div class="form-group has-feedback <#if errors.hasBeanViolation('password')>has-error</#if>">
-                        <label class="control-label password-meter-container" for="password">
-                            ${i18n("signUpPassword")}
+                        <label class="control-label" for="password">
+                            <span id="password-label-text">${i18n("signUpPassword")}</span>
                             <span id="password-meter"></span>
                         </label>
                         <input type="password" id="password" name="password"
@@ -256,8 +267,7 @@
                                value="${(user.getPassword())!}"
                                ${_enableHtml5Required}
                                autocomplete="off"
-                               class="form-control"
-                        />
+                               class="form-control" />
                         <i id="password-feedback"
                            class="glyphicon glyphicon-ok-circle form-control-feedback"></i>
                         <#if errors.hasBeanViolation('passwordRepeat')>
@@ -341,13 +351,6 @@
         <#include "forgotPasswordLink.ftl.html" />
     </div>
 </div>
-
-<!--<#-- CSS below is the template that uses ${contextPath}  variable-->-->
-<style type="text/css">
-    <#include "/assets/css/sso/signup.css" />
-    <#include "/assets/css/sso/password.css" />
-    <#include "/assets/css/sso/flags.css" />
-</style>
 
 <script>
     <#include "/assets/js/sso/signup.js" />

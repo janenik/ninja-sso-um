@@ -160,6 +160,7 @@ public class SignInController {
      * @param context Context.
      * @return Sing up response object.
      */
+    @Transactional
     public Result signInGet(Context context) {
         return createResult(EMPTY_USER, context, Controllers.noViolations());
     }

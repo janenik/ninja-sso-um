@@ -245,9 +245,13 @@ public class ForgotPasswordController {
             ExpirableToken restorePasswordToken = forgotEmailConfirmationToken(user);
             String restorePasswordTokenAsString = expirableTokenEncryptor.encrypt(restorePasswordToken);
 
+            // Build restore URL password.
+            String restorePasswordUrl = urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString);
+            logger.info("Sending forgot password url: {}", restorePasswordUrl);
+
             // Build email template data.
             Map<String, Object> data = Maps.newHashMap();
-            data.put("forgotUrl", urlBuilderProvider.get().getRestorePasswordUrl(restorePasswordTokenAsString));
+            data.put("forgotUrl", restorePasswordUrl);
             data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
             String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
             String localizedTemplate = String.format(FORGOT_PASSWORD_EMAIL_TEMPLATE, locale);

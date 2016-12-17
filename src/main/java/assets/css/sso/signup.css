@@ -45,12 +45,12 @@
 
 #countryIdDropdown {
   max-height: 350px;
-  min-width: 450px;
+  min-width: 500px;
   overflow-y: scroll;
 }
 
 #countryIdDropdown > li > a {
-  min-width: 430px;
+  min-width: 490px;
 }
 
 .flag {

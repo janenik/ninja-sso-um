@@ -358,7 +358,7 @@ public class UrlBuilder {
                 router.getReverseRoute(controllerClass, methodName, "userId", userId) :
                 router.getReverseRoute(controllerClass, methodName);
         StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
-        if (query != null && query.length > 0 && !Strings.isNullOrEmpty(query[0].toString())) {
+        if (query != null && query.length > 0 && query[0] != null && !query[0].toString().isEmpty()) {
             builder.append("&query=");
             builder.append(Escapers.encodePercent(query[0].toString()));
         }
