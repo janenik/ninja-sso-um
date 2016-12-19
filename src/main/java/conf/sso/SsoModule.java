@@ -7,13 +7,13 @@ import com.google.inject.Provides;
 import controllers.annotations.AllowedContinueUrls;
 import controllers.annotations.ApplicationPolicy;
 import controllers.annotations.BrowserPolicy;
-import services.sso.annotations.ExclusionDictionary;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
 import ninja.utils.NinjaProperties;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
+import services.sso.annotations.ExclusionDictionary;
 import services.sso.annotations.ExclusionSubstrings;
 import services.sso.token.AesPasswordBasedEncryptor;
 import services.sso.token.ExpirableTokenEncryptor;
@@ -21,16 +21,26 @@ import services.sso.token.PasswordBasedEncryptor;
 
 import javax.inject.Singleton;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * SSO module.
@@ -210,13 +220,11 @@ public class SsoModule extends AbstractModule {
     @ExclusionDictionary
     @Singleton
     Set<String> provideExclusionDictionary(Logger logger) throws IOException {
-        List<String> files = getResourceLines(EXCLUSION_DICTIONARIES_DIRECTORY);
+        List<String> files = getResourcesWithSubpath(EXCLUSION_DICTIONARIES_DIRECTORY, logger);
         logger.info("Found {} dictionary resources.", files);
         Set<String> result = new HashSet<>();
         for (String file : files) {
-            String dictionaryResource = EXCLUSION_DICTIONARIES_DIRECTORY + "/" + file;
-            logger.info("Reading dictionary resource: {}", dictionaryResource);
-            result.addAll(getResourceLines(dictionaryResource));
+            result.addAll(getResourceLines(file, logger));
         }
         logger.info("Exclusion dictionary contains {} keywords.", result.size());
         return Collections.unmodifiableSet(result);
@@ -227,18 +235,97 @@ public class SsoModule extends AbstractModule {
      * Excludes lines that start with '#' character.
      *
      * @param resource Resource to read.
+     * @param logger Logger.
      * @return List of lines from resource.
-     * @throws IOException In case of read exception.
      */
-    private static List<String> getResourceLines(String resource) throws IOException {
-        InputStream is = SsoModule.class.getResourceAsStream(resource);
-        if (is == null) {
+    private static List<String> getResourceLines(String resource, Logger logger) {
+        InputStream is = null;
+        try {
+            Path existingFile = Paths.get(resource);
+            if (Files.isRegularFile(existingFile)) {
+                logger.info("Reading file {}", existingFile);
+                return Files.readAllLines(existingFile);
+            }
+            is = SsoModule.class.getResourceAsStream(resource);
+            if (is == null) {
+                is = ClassLoader.getSystemResourceAsStream(resource);
+                if (is == null) {
+                    logger.info("Resource {} not found.", resource);
+                    return Collections.emptyList();
+                }
+            }
+            logger.info("Reading resource {}", resource);
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(is));
+            return buffer.lines()
+                    .filter(s -> s != null && !s.isEmpty() && !s.startsWith("#"))
+                    .collect(Collectors.toList());
+        } catch (Exception ioe) {
+            logger.error("Error while reading resource {}.", resource, ioe);
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (Exception e) {
+                // Ignore closing exception.
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Reads resources which contain sub path.
+     *
+     * @param subPath Resource sub path to search for.
+     * @param logger Logger.
+     * @return Resources with given sub path..
+     */
+    private static List<String> getResourcesWithSubpath(String subPath, Logger logger) {
+        return getModuleResources(path -> path.contains(subPath), logger);
+    }
+
+    /**
+     * Reads resources for current module.
+     *
+     * @param predicate Predicate for entries' tests.
+     * @param logger Logger.
+     * @return List of module resources.
+     */
+    private static List<String> getModuleResources(Predicate<String> predicate, Logger logger) {
+        CodeSource cs = SsoModule.class.getProtectionDomain().getCodeSource();
+        if (cs == null) {
+            logger.info("Code source for {} not found.", SsoModule.class.getName());
             return Collections.emptyList();
         }
-        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
-            return buffer.lines()
-                    .filter(s -> !s.isEmpty() && !s.startsWith("#"))
-                    .collect(Collectors.toList());
+        String packagePath = SsoModule.class.getPackage().getName().replaceAll("\\.", File.separator);
+        try {
+            URL codeSourceLocation = cs.getLocation();
+            if (codeSourceLocation.getFile().endsWith(".jar")) {
+                logger.info("Reading jar: {}.", codeSourceLocation.getFile());
+                ZipInputStream zip = new ZipInputStream(codeSourceLocation.openStream());
+                List<String> zipFileEntries = new ArrayList<>();
+                while (true) {
+                    ZipEntry entry = zip.getNextEntry();
+                    if (entry == null) {
+                        break;
+                    }
+                    String zipFilePath = entry.getName();
+                    if (zipFilePath.startsWith(packagePath) && predicate.test(zipFilePath)) {
+                        zipFileEntries.add(zipFilePath);
+                    }
+                }
+                return zipFileEntries;
+            } else {
+                Path root = Paths.get(codeSourceLocation.getFile(), packagePath);
+                logger.info("Reading directory: {}.", root);
+                return Files.walk(root)
+                        .map(Object::toString)
+                        .filter(predicate)
+                        .collect(Collectors.toList());
+            }
+        } catch (IOException ioe) {
+            logger.error("Error reading resource {}.", SsoModule.class.getProtectionDomain().getCodeSource(), ioe);
+            return Collections.emptyList();
         }
     }
 }
