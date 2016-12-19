@@ -27,7 +27,7 @@
     <logger name="ninja.utils.SwissKnife" level="OFF"/>
 
     <root level="info">
-        <appender-ref ref="STDOUT"/>
-        <!--<appender-ref ref="ROLLING"/>-->
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="ROLLING"/>
     </root>
 </configuration>
