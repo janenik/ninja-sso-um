@@ -55,7 +55,7 @@ public class SignOutController {
      * @return Result.
      */
     public Result signOut() {
-        Cookie resetCookie = Cookie.builder(cookieName, "-")
+        Cookie resetCookie = Cookie.builder(cookieName, "")
                 .setSecure(properties.isProd())
                 .setDomain(properties.getOrDie("application.domain"))
                 .setPath("/")
