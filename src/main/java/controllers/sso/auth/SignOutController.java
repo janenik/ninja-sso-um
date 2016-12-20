@@ -1,11 +1,11 @@
 package controllers.sso.auth;
 
 import controllers.sso.filters.LanguageFilter;
-import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import ninja.Cookie;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.Results;
 import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
@@ -58,6 +58,7 @@ public class SignOutController {
         Cookie resetCookie = Cookie.builder(cookieName, "-")
                 .setMaxAge(0)
                 .build();
-        return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), resetCookie);
+        return Results.redirect(urlBuilderProvider.get().getSignInUrl()).addCookie(resetCookie);
+        //return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), resetCookie);
     }
 }
