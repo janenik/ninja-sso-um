@@ -37,11 +37,6 @@ public class SignOutController {
     final String cookieName;
 
     /**
-     * Expired cookie for sign out.
-     */
-    final Cookie expiredCookieForSignOut;
-
-    /**
      * Controller constructor.
      *
      * @param urlBuilderProvider URL builder provider.
@@ -51,10 +46,7 @@ public class SignOutController {
     public SignOutController(Provider<UrlBuilder> urlBuilderProvider, NinjaProperties properties) {
         this.urlBuilderProvider = urlBuilderProvider;
         this.properties = properties;
-        this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
-        this.expiredCookieForSignOut = Cookie.builder(cookieName, "")
-                .setMaxAge(0)
-                .build();
+        this.cookieName =  properties.getOrDie("application.sso.device.auth.policy.append.cookie");
     }
 
     /**
@@ -63,6 +55,9 @@ public class SignOutController {
      * @return Result.
      */
     public Result signOut() {
-        return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), expiredCookieForSignOut);
+        Cookie resetCookie = Cookie.builder(cookieName, "")
+                .setMaxAge(0)
+                .build();
+        return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), resetCookie);
     }
 }
