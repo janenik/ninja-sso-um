@@ -134,11 +134,11 @@ public class SignInResponseBuilder {
             // Remember access token in secure, HTTP only cookie. HTTP proxy servers are expected to pass it to
             // upstream, ignoring or disabling secure parameter.
             Cookie cookie = Cookie.builder(cookieName, accessTokenAsString)
+                    .setDomain(properties.getOrDie("application.domain"))
+                    .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
                     .setSecure(properties.isProd())
                     .setHttpOnly(true)
                     .setPath("/")
-                    .setDomain(properties.getOrDie("application.domain"))
-                    .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
                     .build();
             return Controllers.redirect(continueUrl, cookie);
         }
