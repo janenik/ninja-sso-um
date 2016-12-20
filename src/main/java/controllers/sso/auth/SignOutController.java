@@ -55,7 +55,7 @@ public class SignOutController {
      * @return Result.
      */
     public Result signOut() {
-        Cookie resetCookie = Cookie.builder(cookieName, "")
+        Cookie resetCookie = Cookie.builder(cookieName, null)
                 .setMaxAge(0)
                 .build();
         return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), resetCookie);
