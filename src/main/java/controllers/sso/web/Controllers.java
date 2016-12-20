@@ -46,15 +46,15 @@ public final class Controllers {
      */
     public static Result redirect(String url, Cookie... cookies) {
         Result redirect = Results
-                .status(Result.SC_301_MOVED_PERMANENTLY)
-                .addHeader(Result.LOCATION, url)
-                .addHeader("X-Content-Type-Options", "nosniff");
+                .status(Result.SC_301_MOVED_PERMANENTLY);
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 redirect.addCookie(cookie);
             }
         }
         return redirect
+                .addHeader(Result.LOCATION, url)
+                .addHeader("X-Content-Type-Options", "nosniff")
                 .render("url", url)
                 .template(REDIRECT_HTML_TEMPLATE);
     }
