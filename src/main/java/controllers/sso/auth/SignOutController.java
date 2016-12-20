@@ -46,7 +46,7 @@ public class SignOutController {
     public SignOutController(Provider<UrlBuilder> urlBuilderProvider, NinjaProperties properties) {
         this.urlBuilderProvider = urlBuilderProvider;
         this.properties = properties;
-        this.cookieName =  properties.getOrDie("application.sso.device.auth.policy.append.cookie");
+        this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
     }
 
     /**
@@ -56,7 +56,6 @@ public class SignOutController {
      */
     public Result signOut() {
         Cookie resetCookie = Cookie.builder(cookieName, "-")
-                .setMaxAge(0)
                 .build();
         return Results.redirect(urlBuilderProvider.get().getSignInUrl()).addCookie(resetCookie);
         //return Controllers.redirect(urlBuilderProvider.get().getSignInUrl(), resetCookie);
