@@ -32,7 +32,7 @@
                                         <#items as country>
                                             <li class="countryEntry" rel="${country.getIso()}"
                                                 rel2="${country.getPhoneCode()}"
-                                                rel3="${country.getNativeOrName()}">
+                                                rel3="<#if lang == 'en'>${country.getName()}<#else>${country.getNativeOrName()}</#if>">
                                                 <a href="#">
                                             <span role="img"
                                                   aria-label="${country.getNativeOrName()}"
@@ -129,7 +129,7 @@
 </style>
 
 <script>
-        <#include "/assets/js/sso/edit-contact.js" />
+    <#include "/assets/js/sso/edit-contact.js" />
 </script>
 
 
