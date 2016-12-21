@@ -67,6 +67,11 @@ public class SignInResponseBuilder {
     final NinjaProperties properties;
 
     /**
+     * Authentication cookie name.
+     */
+    final String authCookieName;
+
+    /**
      * Constructs response provider.
      *
      * @param deviceAuthPolicy Device authentication policy.
@@ -89,6 +94,7 @@ public class SignInResponseBuilder {
         this.encryptor = encryptor;
         this.urlBuilder = urlBuilder;
         this.properties = properties;
+        this.authCookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
     }
 
     /**
@@ -119,7 +125,23 @@ public class SignInResponseBuilder {
     }
 
     /**
-     * Supplies browser related authentication with appropriate auth policy.
+     * Builds sign out response with authentication cookie reset.
+     *
+     * @return Sign out response.
+     */
+    public Result getSignOutResponse() {
+        Cookie resetCookie = Cookie.builder(authCookieName, "")
+                .setSecure(properties.isProd())
+                .setDomain(properties.getOrDie("application.domain"))
+                .setPath("/")
+                .setHttpOnly(true)
+                .setMaxAge(1)
+                .build();
+        return Controllers.redirect(urlBuilder.getSignInUrl(), resetCookie);
+    }
+
+    /**
+     * Builds browser related authentication with appropriate auth policy.
      *
      * @param user User to use for access token.
      * @return Browser authentication response.
@@ -130,10 +152,9 @@ public class SignInResponseBuilder {
         String accessTokenAsString = buildNewUserToken(user);
 
         if (AppendAuthTokenPolicy.COOKIE.equals(browserAppendTokenPolicy)) {
-            String cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
             // Remember access token in secure, HTTP only cookie. HTTP proxy servers are expected to pass it to
             // upstream, ignoring or disabling secure parameter.
-            Cookie cookie = Cookie.builder(cookieName, accessTokenAsString)
+            Cookie cookie = Cookie.builder(authCookieName, accessTokenAsString)
                     .setDomain(properties.getOrDie("application.domain"))
                     .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
                     .setSecure(properties.isProd())
@@ -159,7 +180,7 @@ public class SignInResponseBuilder {
     }
 
     /**
-     * Supplies application related authentication with appropriate auth policy.
+     * Builds application related authentication with appropriate auth policy.
      *
      * @param user User to use for access token.
      * @return Application authentication response.
@@ -189,7 +210,7 @@ public class SignInResponseBuilder {
      * @return New access token as encrypted string.
      * @throws PasswordBasedEncryptor.EncryptionException If there was an error related to encryption of the token.
      * @throws IllegalStateException When user's sign-in state is not {@link UserSignInState#ENABLED_AS_USER} or
-     *     {@link UserSignInState#ENABLED}.
+     * {@link UserSignInState#ENABLED}.
      */
     private String buildNewUserToken(User user) throws ExpirableTokenEncryptorException {
         if (!user.isSignInEnabled()) {
