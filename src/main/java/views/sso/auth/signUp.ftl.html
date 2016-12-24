@@ -27,7 +27,7 @@
             <div class="alert alert-danger">${i18n("signUpAgeRestriction")}</div>
         </#if>
 
-        <form id="signUpForm" method="POST"
+        <form id="signUpForm" method="POST" autocomplete="off"
               action="${contextPath}/auth/signup?lang=${lang?url}&amp;continue=${continue?url}">
 
             <div class="row">
