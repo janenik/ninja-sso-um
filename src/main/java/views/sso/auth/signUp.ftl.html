@@ -328,8 +328,7 @@
             <div class="checkbox">
                 <label>
                     <input type="checkbox" id="agreement" name="agreement" value="agree" ${_enableHtml5Required}
-                        <#if 'agree' == (user.getAgreement())!> checked </#if>
-                        />
+                        <#if 'agree' == (user.getAgreement())!> checked </#if> />
                     ${i18n("signUpTerm1")} <b>${i18n("signUpButtonTitle")}</b> ${i18n("signUpTerm2")}
                     <a href="${config.get('application.baseUrl')}/terms_of_service${_underscopeLang}.html"
                        target="_blank">${i18n("signUpTermsOfUse")}</a>
