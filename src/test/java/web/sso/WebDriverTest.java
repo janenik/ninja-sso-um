@@ -1,6 +1,5 @@
 package web.sso;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import controllers.sso.auth.ForgotPasswordController;
@@ -19,6 +18,7 @@ import org.slf4j.Logger;
 import javax.persistence.EntityManager;
 import java.net.URI;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -171,7 +171,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
             return Collections.emptyMap();
         }
         String[] pairs = query.replaceAll("&amp;", "&").split("&");
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(pairs.length);
+        Map<String, String> params = new LinkedHashMap<>(pairs.length);
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
             if (keyValue.length > 1) {
