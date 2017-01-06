@@ -60,13 +60,6 @@
   min-width: 490px;
 }
 
-.flag {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background:url(${contextPath}/assets/i/flags.png) no-repeat
-}
-
 .countryEntry a {
   height: 32px;
   width: 220px;
@@ -81,4 +74,8 @@
   position: absolute;
   top: 10px;
   left: 67px;
+}
+
+.preload {
+    display:none;
 }
