@@ -2,9 +2,11 @@ package controllers.sso.admin.users;
 
 import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
+import controllers.sso.filters.LanguageFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import converters.Converter;
+import models.sso.Country;
 import models.sso.User;
 import models.sso.UserConfirmationState;
 import models.sso.UserRole;
@@ -22,6 +24,7 @@ import services.sso.UserEventService;
 import services.sso.UserService;
 
 import javax.inject.Provider;
+import java.util.List;
 
 /**
  * Edit user data abstract controller with common method and services.
@@ -217,6 +220,9 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      */
     private Result createResult(DTO user, User userEntity, Context ctx, Validation validation) {
         User loggedInUser = userService.get((long) ctx.getAttribute(AuthenticationFilter.USER_ID));
+        String locale = (String) ctx.getAttribute(LanguageFilter.LANG);
+        List<Country> countries = "en".equals(locale) ?
+                countryService.getAllSortedByName() : countryService.getAllSortedByNativeName();
         return htmlAdminSecureHeadersProvider.get()
                 .render("context", ctx)
                 .render("config", properties)
@@ -224,7 +230,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
                 .render("loggedInUser", loggedInUser)
                 .render("user", user)
                 .render("userEntity", userEntity)
-                .render("countries", countryService.getAllSortedByNativeName())
+                .render("countries", countries)
                 .render("roles", UserRole.values())
                 .render("signInStates", UserSignInState.values())
                 .render("confirmationStates", UserConfirmationState.values())

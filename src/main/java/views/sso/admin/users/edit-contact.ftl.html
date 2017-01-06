@@ -30,13 +30,14 @@
                                     <ul class="dropdown-menu" aria-labelledby="countryIdButton"
                                         id="countryIdDropdown">
                                         <#items as country>
-                                            <li class="countryEntry" rel="${country.getIso()}"
-                                                rel2="${country.getPhoneCode()}"
-                                                rel3="<#if lang == 'en'>${country.getName()}<#else>${country.getNativeOrName()}</#if>">
+                                            <li class="countryEntry"
+                                                rel="${country.getIso()}"
+                                                data-phoneCode="${country.getPhoneCode()}"
+                                                data-countryName="<#if lang == 'en'>${country.getName()}<#else>${country.getNativeOrName()}</#if>">
                                                 <a href="#">
                                             <span role="img"
                                                   aria-label="${country.getNativeOrName()}"
-                                                  class="flag flag-${country.getIso()?lower_case}"></span>
+                                                  class="flag flag-${country.getFlagCode()?lower_case}"></span>
                                             <span class="countryNameCode">
                                                 <#if lang == "en">
                                                     <span>${country.getName()}</span>

@@ -38,7 +38,10 @@ sso.htmlHelpers.setUpDropdown = function(fieldId, opt_callback) {
     var preloadValue = field.val();
     if (!isSelect && preloadValue) {
         var li = $('#' + fieldId + 'Dropdown li[rel=' + preloadValue + ']');
-        var fieldTitle = opt_callback ? opt_callback(li) : li.find('a').html();
-        $('#' + fieldId + 'Title').html(fieldTitle);
+        var isoCode = li.attr('rel');
+        var phoneCode = li.attr('data-phoneCode');
+        var countryName = li.attr('data-countryName');
+        var title = opt_callback ? opt_callback(isoCode, phoneCode, countryName) : li.find('a').html();
+        $('#' + fieldId + 'Title').html(title);
     }
 };
