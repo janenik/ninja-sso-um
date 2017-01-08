@@ -18,7 +18,6 @@ import services.sso.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 
@@ -220,8 +219,7 @@ public class ForgotPasswordTest extends WebDriverTest {
         }
         int endOfRefIndex = html.indexOf('"', indexOfFirstRefIndex + 6);
         String restoreUrl = html.substring(indexOfFirstRefIndex + 6, endOfRefIndex);
-        URI restoreURI = new URI(restoreUrl);
-        String token = extractParameters(restoreURI).get("restoreToken");
+        String token = extractParameters(restoreUrl).get("restoreToken");
         if (token == null || token.isEmpty()) {
             throw new IllegalStateException("restoreToken parameter is expected: " + restoreUrl);
         }

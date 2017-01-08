@@ -117,7 +117,8 @@ public class SsoStartupActions {
         root.setLastUsedLocale("en");
         root.confirm();
 
-        return userService.createNew(root, get.apply("application.root.defaultPassword", "+1 650-999-9999"));
+        String defaultPassword = get.apply("application.root.defaultPassword", "+1 650-999-9999");
+        return userService.createNew(root,defaultPassword);
     }
 
     /**
@@ -128,8 +129,8 @@ public class SsoStartupActions {
      */
     private void createDemoUsersForTestAndDev(Country country, boolean rootExisted) {
         if (properties.isTest() || properties.isDev() && !rootExisted) {
-            int numberOfDemoUsers = properties.getIntegerWithDefault("application.demo.users", 100);
-            logger.info("Adding {} new test users...", numberOfDemoUsers);
+            int numberOfDemoUsers = properties.getIntegerWithDefault("application.demo.users", 25);
+            logger.info("Adding {} new demo users...", numberOfDemoUsers);
 
             String login;
             for (int i = 1; i <= numberOfDemoUsers; i++) {
@@ -139,7 +140,7 @@ public class SsoStartupActions {
                 if (user != null) {
                     continue;
                 }
-                user = new User(login, "demouser" + i + "@example.org", "+1 650-999-99" + i);
+                user = new User(login, "demouser" + i + "@example.org", "+1 650-999-" + i);
                 user.setFirstName("Alex" + i);
                 user.setLastName("Brown" + i);
                 user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));

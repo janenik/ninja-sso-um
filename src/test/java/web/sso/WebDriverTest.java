@@ -2,6 +2,7 @@ package web.sso;
 
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -127,7 +129,6 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
         return sb.toString();
     }
 
-
     /**
      * Constructs Forgot Password URL with optional continue URL.
      *
@@ -160,6 +161,28 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
     }
 
     /**
+     * Returns administrator users page,
+     *
+     * @return Admin users list URL.
+     */
+    protected String getAdminUsersUrl() {
+        return new StringBuilder(getServerAddress())
+                .append(router.getReverseRoute(UsersController.class, "users"))
+                .toString();
+    }
+
+    /**
+     * Extracts parameters from given URL.
+     *
+     * @param url URL to extract parameters from.
+     * @return Map of parameters.
+     * @throws URISyntaxException In case of bad URL.
+     */
+    protected static Map<String, String> extractParameters(String url) throws URISyntaxException {
+        return extractParameters(new URI(url));
+    }
+
+    /**
      * Returns parameters from given URI.
      *
      * @param uri URI to parse.
@@ -178,6 +201,6 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
                 params.put(Escapers.decodePercent(keyValue[0]), Escapers.decodePercent(keyValue[1]));
             }
         }
-        return params;
+        return Collections.unmodifiableMap(params);
     }
 }
