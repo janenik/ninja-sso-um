@@ -1,29 +1,29 @@
 <#escape x as x?html>
     <p>
-        <b>Hello, ${user.getFirstName()} ${user.getLastName()}.</b>
+        <b>Hallo, ${user.getFirstName()} ${user.getLastName()}.</b>
     </p>
 
     <p>
-        Welcome to ${config.get('application.titleCommon')}.
+        Willkommen zu ${config.get('application.titleCommon')}.
     </p>
 
     <p>
-        Please confirm your email address by following this link in your browser:<br/><br/>
+        Bitte bestätigen Sie Ihre E-Mail-Adresse, indem Sie diesem Link in Ihrem Browser folgen:<br/><br/>
         <a href="${confirmUrl}">confirm your email</a>.
     </p>
 
     <p>
-        You may also confirm your email by entering the following code on the confirmation page:<br />
+        Sie können auch Ihre E-Mail bestätigen, indem Sie auf der Bestätigungsseite den folgenden Code eingeben:<br />
         <b>${verificationCode}</b>
     </p>
 
     <p>
-        Once your e-mail address has been confirmed, you will be allowed to login into
+        Sobald Ihre E-Mail-Adresse bestätigt wurde, können Sie sich anmelden
         ${config.get('application.titleCommon')}.
     </p>
 
     <p>
-        Thank you.<br/>
+        Vielen Dank.<br/>
         <a href="${indexUrl}">${config.get('application.titleCommon')}</a>
     </p>
 </#escape>
