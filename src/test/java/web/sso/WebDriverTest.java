@@ -104,7 +104,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Sign In URL.
      */
     protected String getSignInUrl() {
-        return getSignInUrl(null, null);
+        return getSignInUrl(null);
     }
 
     /**
@@ -114,7 +114,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @param state State of the sign in. Optional.
      * @return Continue URL.
      */
-    protected String getSignInUrl(String continueUrl, String state) {
+    protected String getSignInUrl(String continueUrl, String... state) {
         StringBuilder sb = new StringBuilder(getServerAddress())
                 .append(router.getReverseRoute(SignInController.class, "signInGet"))
                 .append("?");
@@ -122,9 +122,9 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
             sb.append("&continue=");
             sb.append(Escapers.encodePercent(continueUrl));
         }
-        if (state != null) {
+        if (state != null && state.length > 0 && state[0] != null) {
             sb.append("&state=");
-            sb.append(Escapers.encodePercent(state));
+            sb.append(Escapers.encodePercent(state[0]));
         }
         return sb.toString();
     }

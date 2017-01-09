@@ -479,6 +479,15 @@ public class User implements Serializable {
     }
 
     /**
+     * Checks if the user is a regular user and sign in is enabled.
+     *
+     * @return Whether the user is moderator and sign in is enabled.
+     */
+    public boolean isUser() {
+        return UserSignInState.ENABLED.equals(this.signInState) && UserRole.USER.equals(this.role);
+    }
+
+    /**
      * Password hash code.
      *
      * @return Password hash code.

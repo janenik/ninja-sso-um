@@ -132,7 +132,7 @@ public class SignUpTest extends WebDriverTest {
         verifyFormValuesPreserved();
 
         // Continue to fill the form.
-        // Set captcha word and token that are known to test.
+        // Set captcha word and token values that are known to test.
         String captchaWord = "12345";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
         assertEquals(captchaWord, captchaTokenService.extractCaptchaText(captchaToken));

@@ -130,17 +130,18 @@ public class SsoStartupActions {
     private void createDemoUsersForTestAndDev(Country country, boolean rootExisted) {
         if (properties.isTest() || properties.isDev() && !rootExisted) {
             int numberOfDemoUsers = properties.getIntegerWithDefault("application.demo.users", 25);
+            String demoUsernamePrefix = properties.getWithDefault("application.demo.usernameprefix", "demouser");
             logger.info("Adding {} new demo users...", numberOfDemoUsers);
 
             String login;
             for (int i = 1; i <= numberOfDemoUsers; i++) {
-                login = "demouser" + i;
+                login = demoUsernamePrefix + i;
                 User user = userService.getByUsername(login);
 
                 if (user != null) {
                     continue;
                 }
-                user = new User(login, "demouser" + i + "@example.org", "+1 650-999-" + i);
+                user = new User(login, demoUsernamePrefix + i + "@example.org", "+1 650-999-" + i);
                 user.setFirstName("Alex" + i);
                 user.setLastName("Brown" + i);
                 user.setDateOfBirth(LocalDate.of(1984 + i / 100, 1 + i % 12, 1 + i % 30));
@@ -149,7 +150,7 @@ public class SsoStartupActions {
                 user.setLastUsedLocale("en");
                 user.confirm();
 
-                userService.createNew(user, "demopassword" + i);
+                userService.createNew(user, demoUsernamePrefix + "password" + i);
             }
         }
     }
