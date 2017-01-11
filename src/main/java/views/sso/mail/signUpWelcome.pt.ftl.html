@@ -1,18 +1,18 @@
 <#escape x as x?html>
     <p>
-        <b>Hello, ${user.getFirstName()} ${user.getLastName()}.</b>
+        <b>Olá, ${user.getFirstName()} ${user.getLastName()}.</b>
     </p>
 
     <p>
-        Welcome to ${config.get('application.titleCommon')}.
+        Bem vindo ao ${config.get('application.titleCommon')}.
     </p>
 
     <p>
-        Please use this url to <a href="${signInUrl}">sign in</a>.
+        Utilize este URL para <a href="${signInUrl}">iniciar sessão</a>.
     </p>
 
     <p>
-        Thank you.<br/>
+        Obrigado.<br/>
         <a href="${indexUrl}">${config.get('application.titleCommon')}</a>
     </p>
 </#escape>
