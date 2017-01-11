@@ -1,12 +1,12 @@
 package controllers.sso.rest;
 
-import com.google.common.collect.Maps;
 import ninja.Result;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.FieldViolation;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -198,7 +198,7 @@ public class RestResponse<T> implements Serializable {
      */
     public static RestResponse<Map<String, String>> badRequestWithViolations(List<FieldViolation> violations,
                                                                              String message) {
-        Map<String, String> mapped = Maps.newHashMapWithExpectedSize(violations.size() + 1);
+        Map<String, String> mapped = new HashMap<>(violations.size() + 1);
         mapped.put("invalidValues", "true");
         for (FieldViolation fv : violations) {
             mapped.put(fv.field, fv.constraintViolation.getMessageKey());
