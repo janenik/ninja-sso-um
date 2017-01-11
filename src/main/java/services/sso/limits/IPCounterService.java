@@ -9,7 +9,8 @@ import javax.inject.Singleton;
 /**
  * IP counter service. Counts number of requests from given IP.
  * <p>
- * Expects "counters.ip.entryTimeToLiveSeconds" and "counters.ip.numberOfSafeRequests" to be defined in project properties.
+ * Expects "counters.ip.entryTimeToLiveSeconds" and "counters.ip.numberOfSafeRequests" to be defined in project
+ * properties.
  */
 @Singleton
 public final class IPCounterService extends CounterService {
