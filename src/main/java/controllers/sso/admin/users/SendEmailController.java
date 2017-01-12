@@ -14,7 +14,6 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -125,7 +124,7 @@ public class SendEmailController {
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
         User target = userService.get(userId);
         if (target == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
+            return Controllers.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
         }
         return createResult(target, context, Controllers.noViolations());
     }
@@ -148,7 +147,7 @@ public class SendEmailController {
         String page = context.getParameter("page");
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
+            return Controllers.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
         }
 
         String subject = context.getParameter("subject", "").trim();
@@ -161,7 +160,7 @@ public class SendEmailController {
         }
         emailService.send(user.getEmail(), subject, body);
         flashScope.success(EMAIL_SENT_MESSAGE);
-        return Results.redirect(urlBuilderProvider.get().getAdminSendEmailUrl(userId, query, page));
+        return Controllers.redirect(urlBuilderProvider.get().getAdminSendEmailUrl(userId, query, page));
     }
 
     /**

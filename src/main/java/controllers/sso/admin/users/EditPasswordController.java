@@ -14,7 +14,6 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -110,7 +109,7 @@ public class EditPasswordController {
     public Result get(@PathParam("userId") long userId, Context context) {
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get()
+            return Controllers.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         return createResult(user, context, Controllers.noViolations());
@@ -134,7 +133,7 @@ public class EditPasswordController {
 
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
+            return Controllers.redirect(urlBuilderProvider.get().getAdminUsersUrl(query, page));
         }
         String newPassword = context.getParameter("password", "");
         String newPasswordRepeat = context.getParameter("confirmPassword", "");
@@ -153,7 +152,7 @@ public class EditPasswordController {
         userEventService.onUserPasswordUpdate(admin, user, oldSalt, oldHash, ip, context.getHeaders());
 
         flashScope.success(PASSWORD_CHANGED_MESSAGE);
-        return Results.redirect(urlBuilderProvider.get().getAdminEditPasswordUrl(userId, query, page));
+        return Controllers.redirect(urlBuilderProvider.get().getAdminEditPasswordUrl(userId, query, page));
     }
 
 

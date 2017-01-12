@@ -13,7 +13,6 @@ import models.sso.UserRole;
 import models.sso.UserSignInState;
 import ninja.Context;
 import ninja.Result;
-import ninja.Results;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
@@ -140,7 +139,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
     protected final Result renderUserOrRedirectToList(long userId, Context context) {
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get()
+            return Controllers.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
@@ -169,7 +168,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
         // Check existing user.
         User user = userService.get(userId);
         if (user == null) {
-            return Results.redirect(urlBuilderProvider.get()
+            return Controllers.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         // Validate all fields.
@@ -191,7 +190,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
         // Set message.
         flashScope.success(USER_DATA_SAVED_MESSAGE);
         // Redirect to same form.
-        return Results.redirect(getSuccessRedirectUrl(user, context));
+        return Controllers.redirect(getSuccessRedirectUrl(user, context));
     }
 
     /**

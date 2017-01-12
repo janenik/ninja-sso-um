@@ -7,6 +7,7 @@ import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
+import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.PaginationResult;
 import models.sso.User;
@@ -14,7 +15,6 @@ import models.sso.UserEvent;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.PathParam;
 import ninja.utils.NinjaProperties;
 import services.sso.UserEventService;
@@ -118,7 +118,7 @@ public class ViewAccessLogController {
         // Fetch target user.
         User target = userService.get(userId);
         if (target == null) {
-            return Results.redirect(urlBuilderProvider.get()
+            return Controllers.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
         User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
