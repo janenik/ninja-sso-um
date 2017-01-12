@@ -15,8 +15,8 @@ import javax.inject.Singleton;
 import java.io.IOException;
 
 /**
- * Expirable token encryptor. Serializes given token into JSON, applies AES password encryption to it and encodes the
- * result with web-safe base 64 encoding. Decodes and decrypts tokens from strings. Thread safe.
+ * Expirable token encryptor/decryptor. Serializes given token into JSON, applies AES password encryption to it and
+ * encodes the result with web-safe base 64 encoding. Decodes and decrypts tokens from strings. Thread safe.
  */
 @Singleton
 public final class ExpirableTokenEncryptor {

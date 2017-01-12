@@ -117,7 +117,7 @@ public class AuthenticationFilter implements Filter {
         this.properties = properties;
         this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
         this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
-        this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1000L;
+        this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1800L;
     }
 
     @Override
@@ -130,6 +130,8 @@ public class AuthenticationFilter implements Filter {
                 if (userId == null) {
                     throw new IllegalStateException("Access token is expected to contain user id: " + token);
                 }
+
+                // Populate user information.
                 context.setAttribute(USER_ROLE, UserRole.fromString(expirableToken.getAttributeValue("role")));
                 context.setAttribute(USER_ID, userId);
                 context.setAttribute(USER_AUTHENTICATED, true);
@@ -138,6 +140,7 @@ public class AuthenticationFilter implements Filter {
                 ExpirableToken xsrfToken =
                         ExpirableToken.newUserToken(ExpirableTokenType.XSRF, userId, xsrfTokenTimeToLive);
 
+                // Populate XSRF token data.
                 context.setAttribute(XSRF_TOKEN, encryptor.encrypt(xsrfToken));
                 context.setAttribute(XSRF_TOKEN_TTL, xsrfTokenTimeToLive);
             } else {

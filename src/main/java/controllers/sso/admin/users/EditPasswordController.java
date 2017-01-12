@@ -6,6 +6,7 @@ import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
+import controllers.sso.filters.XsrfTokenFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.common.Constants;
@@ -35,44 +36,45 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,
-        RequireAdminPrivelegesFilter.class
+        RequireAdminPrivelegesFilter.class,
+        XsrfTokenFilter.class
 })
 public class EditPasswordController {
 
     /**
      * Edit password template.
      */
-    private static final String TEMPLATE = "views/sso/admin/users/edit-password.ftl.html";
+    static final String TEMPLATE = "views/sso/admin/users/edit-password.ftl.html";
 
     /**
      * Message id for changed password.
      */
-    private static final String PASSWORD_CHANGED_MESSAGE = "adminPasswordChanged";
+    static final String PASSWORD_CHANGED_MESSAGE = "adminPasswordChanged";
 
     /**
      * User service.
      */
-    private final UserService userService;
+    final UserService userService;
 
     /**
      * User event service.
      */
-    private final UserEventService userEventService;
+    final UserEventService userEventService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    private final Provider<UrlBuilder> urlBuilderProvider;
+    final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    private final Provider<Result> htmlAdminSecureHeadersProvider;
+    final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    private final NinjaProperties properties;
+    final NinjaProperties properties;
 
     /**
      * Constructs the controller.

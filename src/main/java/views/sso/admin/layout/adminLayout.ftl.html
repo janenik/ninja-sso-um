@@ -60,6 +60,12 @@
                 </div>
             </#if>
 
+            <#if (context)?? && (context.getAttribute('invalidXsrfToken'))??>
+                <div class="alert alert-danger">
+                    ${i18n("commonInvalidXsrfTokenError")}
+                </div>
+            </#if>
+
             <#if (flash.success)??>
                 <div class="alert alert-success">
                     ${flash.success}

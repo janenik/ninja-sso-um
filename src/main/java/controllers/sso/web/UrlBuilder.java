@@ -22,7 +22,9 @@ import ninja.utils.NinjaProperties;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * URL builder for application. Constructs URLs for captcha, emails, continue URLs, etc.
@@ -268,13 +270,27 @@ public class UrlBuilder {
     /**
      * Returns current URL.
      *
+     * @param urlParameterKeyValuePairs Additional URL parameters key value pairs.
      * @return Current URL of the application.
      */
-    public String getCurrentUrl() {
+    public String getCurrentUrl(String... urlParameterKeyValuePairs) {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(servletRequest.getRequestURL());
         urlBuilder.append('?');
-        urlBuilder.append(servletRequest.getQueryString());
+        if (urlParameterKeyValuePairs != null && urlParameterKeyValuePairs.length > 0) {
+            Map<String, String> existingParameters = extractParametersAsMutableMap(servletRequest.getQueryString());
+            String key = null;
+            for (int i = 0; i < urlParameterKeyValuePairs.length; i++) {
+                if (i % 2 == 0) {
+                    key = urlParameterKeyValuePairs[i];
+                    continue;
+                }
+                existingParameters.put(key, urlParameterKeyValuePairs[i]);
+            }
+            toQueryString(existingParameters, urlBuilder);
+        } else {
+            urlBuilder.append(servletRequest.getQueryString());
+        }
         return urlBuilder.toString();
     }
 
@@ -407,5 +423,57 @@ public class UrlBuilder {
      */
     private StringBuilder newRelativeUrlBuilder(Context context, String route) {
         return newAbsoluteUrlBuilder(context, "", route);
+    }
+
+    /**
+     * Returns parameters from given query string.
+     *
+     * @param query Query part of the URL.
+     * @return Mutable map of parameters.
+     */
+    public static Map<String, String> extractParametersAsMutableMap(String query) {
+        if (query == null || query.isEmpty()) {
+            return new LinkedHashMap<>();
+        }
+        String[] pairs = query.replaceAll("&amp;", "&").split("&");
+        Map<String, String> parameters = new LinkedHashMap<>(pairs.length);
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            if (keyValue.length > 1) {
+                parameters.put(Escapers.decodePercent(keyValue[0]), Escapers.decodePercent(keyValue[1]));
+            }
+        }
+        return parameters;
+    }
+
+    /**
+     * Constructs query string. Returns string builder with results.
+     *
+     * @param parameters URL parameters to concatenate.
+     * @return String builder with result.
+     */
+    public static StringBuilder toQueryString(Map<String, String> parameters) {
+        return toQueryString(parameters, new StringBuilder());
+    }
+
+    /**
+     * Appends given URL parameters as in URL query and appends everything to given string builder.
+     *
+     * @param parameters Parameters to concatenate.
+     * @param queryBuilder String builder to append to.
+     * @return Given query builder for chaining.
+     */
+    public static StringBuilder toQueryString(Map<String, String> parameters, StringBuilder queryBuilder) {
+        int i = parameters.size() - 1;
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            queryBuilder.append(Escapers.encodePercent(entry.getKey()));
+            queryBuilder.append('=');
+            queryBuilder.append(Escapers.encodePercent(entry.getValue()));
+            if (i != 0) {
+                queryBuilder.append('&');
+            }
+            i--;
+        }
+        return queryBuilder;
     }
 }

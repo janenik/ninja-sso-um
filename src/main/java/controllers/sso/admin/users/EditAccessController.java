@@ -6,6 +6,7 @@ import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
+import controllers.sso.filters.XsrfTokenFilter;
 import controllers.sso.web.UrlBuilder;
 import converters.sso.admin.users.EditAccessConverter;
 import dto.sso.admin.users.EditAccessDto;
@@ -35,9 +36,15 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,
-        RequireAdminPrivelegesFilter.class
+        RequireAdminPrivelegesFilter.class,
+        XsrfTokenFilter.class
 })
 public class EditAccessController extends EditAbstractController<EditAccessConverter, EditAccessDto> {
+
+    /**
+     * Template.
+     */
+    static final String TEMPLATE = "views/sso/admin/users/edit-access.ftl.html";
 
     /**
      * Constructs controller.
@@ -113,6 +120,6 @@ public class EditAccessController extends EditAbstractController<EditAccessConve
 
     @Override
     protected String getTemplate() {
-        return "views/sso/admin/users/edit-access.ftl.html";
+        return TEMPLATE;
     }
 }

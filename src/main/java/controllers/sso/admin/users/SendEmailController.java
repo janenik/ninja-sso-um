@@ -7,6 +7,7 @@ import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
+import controllers.sso.filters.XsrfTokenFilter;
 import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import models.sso.User;
@@ -40,7 +41,8 @@ import java.time.format.DateTimeFormatter;
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,
-        RequireAdminPrivelegesFilter.class
+        RequireAdminPrivelegesFilter.class,
+        XsrfTokenFilter.class
 })
 public class SendEmailController {
 

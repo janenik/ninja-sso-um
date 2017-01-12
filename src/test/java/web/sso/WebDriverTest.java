@@ -8,6 +8,7 @@ import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpController;
 import controllers.sso.web.Escapers;
+import controllers.sso.web.UrlBuilder;
 import ninja.NinjaFluentLeniumTest;
 import ninja.Router;
 import ninja.utils.NinjaProperties;
@@ -20,7 +21,6 @@ import javax.persistence.EntityManager;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -189,18 +189,6 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Map of parameters.
      */
     protected static Map<String, String> extractParameters(URI uri) {
-        String query = uri.getRawQuery();
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        String[] pairs = query.replaceAll("&amp;", "&").split("&");
-        Map<String, String> params = new LinkedHashMap<>(pairs.length);
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            if (keyValue.length > 1) {
-                params.put(Escapers.decodePercent(keyValue[0]), Escapers.decodePercent(keyValue[1]));
-            }
-        }
-        return Collections.unmodifiableMap(params);
+        return Collections.unmodifiableMap(UrlBuilder.extractParametersAsMutableMap(uri.getRawQuery()));
     }
 }

@@ -1,6 +1,5 @@
 package controllers.sso.admin.users;
 
-import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
 import controllers.annotations.SecureHtmlHeadersForAdmin;
 import controllers.sso.filters.AuthenticationFilter;
@@ -86,14 +85,14 @@ public class UsersController {
         this.userService = userService;
         this.userEventService = userEventService;
         this.htmlAdminSecureHeadersProvider = htmlAdminSecureHeadersProvider;
-        this.properties = properties;
         this.dateTimeFormatter = dateTimeFormatter;
+        this.properties = properties;
         this.objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
     }
 
     @Transactional
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
-        String query = Strings.nullToEmpty(context.getParameter("query")).trim();
+        String query = context.getParameter("query", "").trim();
         int page = Math.max(1, context.getParameterAsInteger("page", 1));
 
         User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));

@@ -6,6 +6,7 @@ import controllers.sso.filters.AuthenticationFilter;
 import controllers.sso.filters.IpAddressFilter;
 import controllers.sso.filters.LanguageFilter;
 import controllers.sso.filters.RequireAdminPrivelegesFilter;
+import controllers.sso.filters.XsrfTokenFilter;
 import controllers.sso.web.UrlBuilder;
 import converters.sso.admin.users.EditContactDataConverter;
 import dto.sso.admin.users.EditContactDataDto;
@@ -35,10 +36,16 @@ import javax.inject.Singleton;
         LanguageFilter.class,
         IpAddressFilter.class,
         AuthenticationFilter.class,
-        RequireAdminPrivelegesFilter.class
+        RequireAdminPrivelegesFilter.class,
+        XsrfTokenFilter.class
 })
 public class EditContactDataController extends
         EditAbstractController<EditContactDataConverter, EditContactDataDto> {
+
+    /**
+     * Template.
+     */
+    static final String TEMPLATE = "views/sso/admin/users/edit-contact.ftl.html";
 
     /**
      * Constructs controller.
@@ -119,6 +126,6 @@ public class EditContactDataController extends
 
     @Override
     protected String getTemplate() {
-        return "views/sso/admin/users/edit-contact.ftl.html";
+        return TEMPLATE;
     }
 }
