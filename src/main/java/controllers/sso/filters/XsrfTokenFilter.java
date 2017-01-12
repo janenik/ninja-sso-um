@@ -90,6 +90,5 @@ public class XsrfTokenFilter implements Filter {
         String sameUrl = urlBuilderProvider.get()
                 .getCurrentUrl(INVALID_XSRF_TOKEN_PARAMETER_NAME, Boolean.TRUE.toString());
         return Controllers.redirect(sameUrl);
-
     }
 }
