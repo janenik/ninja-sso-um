@@ -4,6 +4,7 @@
         key: 'signIn.rememberMe',
         button: '#signInSubmit',
         input: '#emailOrUsername',
+        password: '#password',
         checkbox: '#rememberMe'
     };
 
@@ -30,6 +31,9 @@
                 $(this.input).val(value);
             }
             $(this.checkbox).prop('checked', true);
+            $(this.password).focus();
+        } else {
+            $(this.input).focus();
         }
     }
 
