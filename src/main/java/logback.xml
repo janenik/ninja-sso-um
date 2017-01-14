@@ -19,12 +19,21 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%d{YYYY-MM-dd'T'HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{YYYY-MM-dd'T'HH:mm:ss} [%thread] %-5level %logger{72} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <!-- This ignores validation exceptions from Ninja's SwissKnife which can be safely ignored. -->
     <logger name="ninja.utils.SwissKnife" level="OFF"/>
+
+    <logger name="org.hibernate" level="DEBUG" />
+    <logger name="org.hibernate.type" level="DEBUG" />
+    <logger name="org.hibernate.hql" level="ERROR" />
+    <logger name="org.hibernate.persister" level="ERROR" />
+    <logger name="org.hibernate.loader" level="WARN" />
+    <logger name="org.hibernate.engine.internal.TwoPhaseLoad" level="WARN" />
+
+    <logger name="org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction" level="DEBUG"/>
 
     <root level="info">
         <!--<appender-ref ref="STDOUT"/>-->

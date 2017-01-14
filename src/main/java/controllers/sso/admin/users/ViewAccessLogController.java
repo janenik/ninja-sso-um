@@ -113,7 +113,7 @@ public class ViewAccessLogController {
      */
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
-        String query = Strings.nullToEmpty(context.getParameter("eventsQuery")).trim();
+        String query = context.getParameter("eventsQuery", "").trim();
         int page = Math.max(1, context.getParameterAsInteger("eventsPage", 1));
         // Fetch target user.
         User target = userService.get(userId);
