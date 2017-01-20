@@ -146,8 +146,8 @@ public interface Paginatable<E> {
                 .setMaxResults(entitiesPerPage);
 
         // Fetch the results and populate pagination result.
-        List<E> users = (List<E>) namedQuery.getResultList();
-        return new PaginationResult<>(users, totalObjects, currentPage, entitiesPerPage);
+        List<E> entities = (List<E>) namedQuery.getResultList();
+        return new PaginationResult<>(entities, totalObjects, currentPage, entitiesPerPage);
     }
 }
 

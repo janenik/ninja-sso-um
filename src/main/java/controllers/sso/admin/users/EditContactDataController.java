@@ -43,7 +43,7 @@ public class EditContactDataController extends
         EditAbstractController<EditContactDataConverter, EditContactDataDto> {
 
     /**
-     * Template.
+     * Template for contact data.
      */
     static final String TEMPLATE = "views/sso/admin/users/edit-contact.ftl.html";
 

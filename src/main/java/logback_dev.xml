@@ -11,7 +11,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{YYYY-MM-dd'T'HH:mm:ss} [%thread] %-5level %logger{36}: %msg%n</pattern>
+            <pattern>%d{YYYY-MM-dd'T'HH:mm:ss} [%thread] %-5level %logger{72}: %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -27,6 +27,7 @@
     <!-- This ignores validation exceptions from Ninja's SwissKnife which can be safely ignored. -->
     <logger name="ninja.utils.SwissKnife" level="OFF"/>
 
+    <logger name="com.google.inject.persist" level="DEBUG" />
     <logger name="org.hibernate" level="DEBUG" />
     <logger name="org.hibernate.type" level="DEBUG" />
     <logger name="org.hibernate.hql" level="ERROR" />
@@ -37,7 +38,7 @@
     <logger name="org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction" level="DEBUG"/>
 
     <root level="info">
-        <!--<appender-ref ref="STDOUT"/>-->
-        <appender-ref ref="ROLLING"/>
+        <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="ROLLING"/>-->
     </root>
 </configuration>
