@@ -27,14 +27,14 @@
     <!-- This ignores validation exceptions from Ninja's SwissKnife which can be safely ignored. -->
     <logger name="ninja.utils.SwissKnife" level="OFF"/>
 
-    <logger name="org.hibernate" level="DEBUG" />
-    <logger name="org.hibernate.type" level="DEBUG" />
-    <logger name="org.hibernate.hql" level="ERROR" />
-    <logger name="org.hibernate.persister" level="ERROR" />
+    <logger name="org.hibernate" level="WARN" />
+    <logger name="org.hibernate.type" level="WARN" />
+    <logger name="org.hibernate.hql" level="WARN" />
+    <logger name="org.hibernate.persister" level="WARN" />
     <logger name="org.hibernate.loader" level="WARN" />
     <logger name="org.hibernate.engine.internal.TwoPhaseLoad" level="WARN" />
 
-    <logger name="org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction" level="DEBUG"/>
+    <logger name="org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction" level="WARN"/>
 
     <root level="info">
         <!--<appender-ref ref="STDOUT"/>-->
