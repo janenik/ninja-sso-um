@@ -157,7 +157,7 @@ public class SignInResponseBuilder {
             Cookie cookie = Cookie.builder(authCookieName, accessTokenAsString)
                     .setDomain(properties.getOrDie("application.domain"))
                     .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
-                    .setSecure(properties.isProd())
+                    .setSecure(false)
                     .setHttpOnly(true)
                     .setPath("/")
                     .build();

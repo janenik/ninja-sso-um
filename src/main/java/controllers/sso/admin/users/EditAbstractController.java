@@ -234,7 +234,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
                 .render("signInStates", UserSignInState.values())
                 .render("confirmationStates", UserConfirmationState.values())
                 .render("query", ctx.getParameter("query", ""))
-                .render("page", ctx.getParameterAs("page", int.class, 1))
+                .render("page", ctx.getParameterAsInteger("page", 1))
                 .template(getTemplate());
     }
 

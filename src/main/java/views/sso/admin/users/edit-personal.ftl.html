@@ -150,11 +150,8 @@
                                        class="form-control"
                                 />
                                 <#if errors.hasBeanViolation('usernameDuplicate')>
-                                    <p class="help-block ssoFieldErrorDescription">${i18n("signUpUsernameUsed")} <br/>
-                                        ${i18n("signUpUsernameUsedDescription")}:
-                                        <a href="${contextPath}/signin/forgot?lang=${lang}&continue=${continue?url}">
-                                            ${i18n("signUpUsernameUsedLinkTitle")}
-                                        </a>
+                                    <p class="help-block ssoFieldErrorDescription">
+                                        ${i18n("signUpUsernameUsed")}
                                     </p>
                                 </#if>
                                 <#if errors.hasBeanViolation('username')>
