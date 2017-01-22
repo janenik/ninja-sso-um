@@ -222,8 +222,7 @@ public class SignInController {
         }
 
         // Remember last used locale.
-        user.setLastUsedLocale((String) context.getAttribute(LanguageFilter.LANG));
-        userService.update(user);
+        userService.updateLastUsedLocale(user, (String) context.getAttribute(LanguageFilter.LANG));
 
         // Remote IP.
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);

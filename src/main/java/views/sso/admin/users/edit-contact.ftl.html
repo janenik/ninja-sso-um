@@ -99,11 +99,7 @@
                             </#if>
                             <#if errors.hasBeanViolation('emailDuplicate')>
                                 <p class="help-block ssoFieldErrorDescription">
-                                    ${i18n("signUpEmailUsed")} <br/>
-                                    ${i18n("signUpEmailUsedDescription")}:
-                                    <a href="${contextPath}/signin/forgot?lang=${lang}&amp;continue=${continue?url}">
-                                        ${i18n("signUpEmailUsedLinkTitle")}
-                                    </a>
+                                    ${i18n("signUpEmailUsed")}
                                 </p>
                             </#if>
                         </div>

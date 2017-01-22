@@ -105,10 +105,12 @@ public class EditContactDataController extends
 
     @Override
     protected String validate(User user, EditContactDataDto dto) {
-        // Check for existing email.
-        User existingUserWithEmail = userService.getByEmail(dto.getEmail());
-        if (existingUserWithEmail != null && !existingUserWithEmail.equals(user)) {
-            return "emailDuplicate";
+        if (!user.getEmail().equals(dto.getEmail())) {
+            // Check for existing email if email is about to change.
+            User existingUserWithEmail = userService.getByEmail(dto.getEmail());
+            if (existingUserWithEmail != null && !existingUserWithEmail.equals(user)) {
+                return "emailDuplicate";
+            }
         }
         // Fetch country.
         Country country = countryService.get(dto.getCountryId());

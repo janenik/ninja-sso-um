@@ -240,6 +240,19 @@ public class UserService implements Paginatable<User> {
     }
 
     /**
+     * Updates existing user with last used locale. Uses simple update query to avoid whole user update.
+     *
+     * @param user User to update.
+     * @param lastUsedLocale Last used locale.
+     */
+    public void updateLastUsedLocale(User user, String lastUsedLocale) {
+        entityManagerProvider.get().createNamedQuery("User.updateLastUsedLocale")
+                .setParameter("userId", user.getId())
+                .setParameter("lastUsedLocale", lastUsedLocale)
+                .executeUpdate();
+    }
+
+    /**
      * Removes user events.
      *
      * @param user User who's events to remove.

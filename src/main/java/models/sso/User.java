@@ -52,7 +52,10 @@ import java.util.Objects;
                 "u.lastName LIKE :query"),
 
         @NamedQuery(name = "User.all", query = "SELECT u FROM User u ORDER BY u.lastName, u.firstName"),
-        @NamedQuery(name = "User.countAll", query = "SELECT COUNT(*) FROM User u")
+        @NamedQuery(name = "User.countAll", query = "SELECT COUNT(*) FROM User u"),
+
+        @NamedQuery(name = "User.updateLastUsedLocale",
+                query = "UPDATE User u SET u.lastUsedLocale = :lastUsedLocale WHERE u.id = :userId")
 })
 public class User implements Serializable {
 

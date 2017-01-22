@@ -67,9 +67,19 @@ public class SignInResponseBuilder {
     final NinjaProperties properties;
 
     /**
+     * Application domain.
+     */
+    final String domain;
+
+    /**
      * Authentication cookie name.
      */
     final String authCookieName;
+
+    /**
+     * Whether to force insecure cookie for authentication token in case of browser response.
+     */
+    final boolean forceInsecureCookie;
 
     /**
      * Constructs response provider.
@@ -94,7 +104,10 @@ public class SignInResponseBuilder {
         this.encryptor = encryptor;
         this.urlBuilder = urlBuilder;
         this.properties = properties;
+        this.domain = properties.getOrDie("application.domain");
         this.authCookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
+        this.forceInsecureCookie =
+                properties.getBooleanWithDefault("application.sso.accessToken.forceInsecureCookie", false);
     }
 
     /**
@@ -130,9 +143,10 @@ public class SignInResponseBuilder {
      * @return Sign out response.
      */
     public Result getSignOutResponse() {
+
         Cookie resetCookie = Cookie.builder(authCookieName, "")
-                .setSecure(properties.isProd())
-                .setDomain(properties.getOrDie("application.domain"))
+                .setDomain(domain)
+                .setSecure(properties.isProd() && !forceInsecureCookie)
                 .setPath("/")
                 .setHttpOnly(true)
                 .setMaxAge(1)
@@ -152,12 +166,12 @@ public class SignInResponseBuilder {
         String accessTokenAsString = buildNewUserToken(user);
 
         if (AppendAuthTokenPolicy.COOKIE.equals(browserAppendTokenPolicy)) {
-            // Remember access token in secure, HTTP only cookie. HTTP proxy servers are expected to pass it to
+            // Remember access token is a secure, HTTP only cookie. HTTP proxy servers are expected to pass it to
             // upstream, ignoring or disabling secure parameter.
             Cookie cookie = Cookie.builder(authCookieName, accessTokenAsString)
-                    .setDomain(properties.getOrDie("application.domain"))
+                    .setDomain(domain)
                     .setMaxAge(properties.getIntegerOrDie("application.sso.accessToken.ttl"))
-                    .setSecure(false)
+                    .setSecure(properties.isProd() && !forceInsecureCookie)
                     .setHttpOnly(true)
                     .setPath("/")
                     .build();

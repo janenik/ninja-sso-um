@@ -86,10 +86,12 @@ public class EditPersonalDataController extends
 
     @Override
     protected String validate(User user, EditPersonalDataDto dto) {
-        // Check for existing username.
-        User existingUserWithUsername = userService.getByUsername(dto.getUsername());
-        if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
-            return "usernameDuplicate";
+        if (!user.getUsername().equals(dto.getUsername())) {
+            // Check for existing username if username is about to change.
+            User existingUserWithUsername = userService.getByUsername(dto.getUsername());
+            if (existingUserWithUsername != null && !existingUserWithUsername.equals(user)) {
+                return "usernameDuplicate";
+            }
         }
         return null;
     }
