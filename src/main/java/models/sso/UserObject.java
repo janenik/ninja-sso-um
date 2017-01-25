@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Objects;
@@ -17,8 +16,7 @@ import java.util.Objects;
 /**
  * User object entity. Allows to save user defined objects (blobs) up to 64K per object.
  * user + scope (string) is a primary key.
- * userId is index as well (foreign key constraint).
- * Versioned.
+ * userId is an index as well (foreign key constraint).
  */
 @Entity
 @Table(name = "userObjects", indexes = {
@@ -42,12 +40,6 @@ public class UserObject implements Serializable {
      */
     @Column(length = 64 * 1024)
     byte[] data;
-
-    /**
-     * Version of the data.
-     */
-    @Version
-    int version;
 
     /**
      * Returns primary key.
@@ -77,15 +69,6 @@ public class UserObject implements Serializable {
     }
 
     /**
-     * Returns data as UTF-8 string.
-     *
-     * @return Data as UTF-8 string.
-     */
-    public String getDataAsUtfString() {
-        return new String(getData(), UTF8);
-    }
-
-    /**
      * Sets data.
      *
      * @param data Data bytes.
@@ -95,30 +78,21 @@ public class UserObject implements Serializable {
     }
 
     /**
+     * Returns data as UTF-8 string.
+     *
+     * @return Data as UTF-8 string.
+     */
+    public String getDataAsUtf8String() {
+        return new String(getData(), UTF8);
+    }
+
+    /**
      * Sets data as UTF-8 string.
      *
      * @param data Data as UTF-8 string.
      */
     public void setDataAsUtf8String(String data) {
         setData(data.getBytes(UTF8));
-    }
-
-    /**
-     * Returns version.
-     *
-     * @return Version.
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Sets version.
-     *
-     * @param version Version.
-     */
-    public void setVersion(int version) {
-        this.version = version;
     }
 
     @Override

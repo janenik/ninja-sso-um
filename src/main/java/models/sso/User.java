@@ -15,7 +15,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -177,12 +176,6 @@ public class User implements Serializable {
      */
     @Column(nullable = true, length = 5)
     String lastUsedLocale;
-
-    /**
-     * Version.
-     */
-    @Version
-    int version;
 
     /**
      * Default constructor.
@@ -630,24 +623,6 @@ public class User implements Serializable {
     public boolean isSignInEnabled() {
         return UserSignInState.ENABLED.equals(this.signInState)
                 || UserSignInState.ENABLED_AS_USER.equals(this.signInState);
-    }
-
-    /**
-     * Version of the object.
-     *
-     * @return Version.
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Sets object version.
-     *
-     * @param version Version.
-     */
-    public void setVersion(int version) {
-        this.version = version;
     }
 
     /**

@@ -171,20 +171,52 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
             return Controllers.redirect(urlBuilderProvider.get()
                     .getAdminUsersUrl(context.getParameter("query"), context.getParameter("page")));
         }
+
         // Validate all fields.
         if (validation.hasViolations()) {
             return createResult(dto, user, context, validation);
         }
+
         // Validate DTO specifics.
         String specificViolation = validate(user, dto);
         if (specificViolation != null) {
             return createResult(dto, user, context, validation, specificViolation);
         }
+
+        // Remote IP.
+        String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
+        // Logged in user.
         User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
         // Log update event. Must happen before actual data update to fetch data.
         this.logUpdate(user, loggedInUser, context);
+
+        // Remember old states and roles.
+        UserRole oldRole = user.getRole();
+        UserSignInState oldSignInState = user.getSignInState();
+        UserConfirmationState oldConfirmationState = user.getConfirmationState();
+
         // Map edit DTO to user entity.
         converter.update(user, dto);
+
+        // Produce change events.
+        UserRole newRole = user.getRole();
+        UserSignInState newSignInState = user.getSignInState();
+        UserConfirmationState newConfirmationState = user.getConfirmationState();
+        if (!oldRole.equals(newRole)) {
+            userEventService.onRoleChange(user, oldRole, ip, context.getHeaders());
+        }
+        if (!oldSignInState.equals(newSignInState)) {
+            if (UserSignInState.ENABLED.equals(newSignInState)) {
+                userEventService.onSignInEnable(user, ip, context.getHeaders());
+            } else {
+                userEventService.onSignInEnable(user, ip, context.getHeaders());
+            }
+        }
+        if (!oldConfirmationState.equals(newConfirmationState)
+                && UserConfirmationState.CONFIRMED.equals(newConfirmationState)) {
+            userEventService.onConfirmation(user, ip, context.getHeaders());
+        }
+
         // Update user.
         userService.update(user);
         // Set message.

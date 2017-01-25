@@ -7,6 +7,7 @@ import models.sso.PaginationResult;
 import models.sso.User;
 import models.sso.UserEvent;
 import models.sso.UserEventType;
+import models.sso.UserRole;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -93,23 +94,6 @@ public class UserEventService implements Paginatable<UserEvent> {
         return userEvent;
     }
 
-
-    /**
-     * Remembers user sign in time and remote IP as a new event.
-     *
-     * @param user User.
-     * @param ip Remote IP.
-     * @param data Additional data for event.
-     * @return User event with {@link UserEventType#SIGN_IN}.
-     */
-    public UserEvent onSignIn(User user, String ip, Map<String, ?> data) {
-        Map<String, Object> dataToSave = new HashMap<>();
-        dataToSave.put(EVENT_DATA_NAMESPACE, data);
-        UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, dataToSave);
-        entityManagerProvider.get().persist(userEvent);
-        return userEvent;
-    }
-
     /**
      * Returns a hint duration of the last password change if the given password matches previous
      * password.
@@ -143,6 +127,89 @@ public class UserEventService implements Paginatable<UserEvent> {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Remembers user sign in time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#SIGN_IN}.
+     */
+    public UserEvent onSignIn(User user, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.SIGN_IN, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
+    }
+
+    /**
+     * Remembers user confirmation time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#CONFIRMATION}.
+     */
+    public UserEvent onConfirmation(User user, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.CONFIRMATION, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
+    }
+
+    /**
+     * Remembers user role change time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param oldRole Old user role.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#ROLE_CHANGE}.
+     */
+    public UserEvent onRoleChange(User user, UserRole oldRole, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        dataToSave.put("user.old.role", oldRole);
+        dataToSave.put("user.new.role", user.getRole());
+        UserEvent userEvent = newEvent(user, UserEventType.ROLE_CHANGE, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
+    }
+
+    /**
+     * Remembers user sign-in disable time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#DISABLE_SIGN}.
+     */
+    public UserEvent onSignInDisable(User user, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.DISABLE_SIGN, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
+    }
+
+    /**
+     * Remembers user sign-in enable time and remote IP as a new event.
+     *
+     * @param user User.
+     * @param ip Remote IP.
+     * @param data Additional data for event.
+     * @return User event with {@link UserEventType#ENABLE_SIGN}.
+     */
+    public UserEvent onSignInEnable(User user, String ip, Map<String, ?> data) {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put(EVENT_DATA_NAMESPACE, data);
+        UserEvent userEvent = newEvent(user, UserEventType.ENABLE_SIGN, ip, dataToSave);
+        entityManagerProvider.get().persist(userEvent);
+        return userEvent;
     }
 
     /**
@@ -270,7 +337,8 @@ public class UserEventService implements Paginatable<UserEvent> {
         dataToSave.put("user.old.middleName", String.valueOf(target.getMiddleName()));
         dataToSave.put("user.old.birthDay", target.getDateOfBirth().toString());
 
-        dataToSave.put("user.old.version", target.getVersion());
+        dataToSave.put("user.old.created", target.getCreated().toString());
+        dataToSave.put("user.old.updated", target.getUpdated().toString());
         dataToSave.put("user.old.role", target.getRole().toString());
         dataToSave.put("user.old.confirmationState", target.getConfirmationState().toString());
 
