@@ -64,14 +64,14 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
     protected final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
-     * Application properties.
-     */
-    protected final NinjaProperties properties;
-
-    /**
      * Html result with secure headers.
      */
     private final Provider<Result> htmlAdminSecureHeadersProvider;
+
+    /**
+     * Application properties.
+     */
+    protected final NinjaProperties properties;
 
     /**
      * Constructs the controller.

@@ -74,7 +74,10 @@ public class UserService implements Paginatable<User> {
      * @return User or null when the user was not found.
      */
     public User get(Long id) {
-        return entityManagerProvider.get().find(User.class, id);
+        EntityManager em = entityManagerProvider.get();
+        logger.warn("USER_LOAD[%d]: EM: %s / US: %s", id,
+                System.identityHashCode(em), System.identityHashCode(this));
+        return em.find(User.class, id);
     }
 
     /**
@@ -140,17 +143,6 @@ public class UserService implements Paginatable<User> {
         } catch (NoResultException nre) {
             return null;
         }
-    }
-
-    /**
-     * Saves existing user into a database (update) and returns attached entity.
-     *
-     * @param user User to save.
-     * @return Saved user.
-     */
-    public User save(User user) {
-        entityManagerProvider.get().persist(user);
-        return user;
     }
 
     /**
@@ -236,7 +228,10 @@ public class UserService implements Paginatable<User> {
      * @param user User to update.
      */
     public void update(User user) {
-        entityManagerProvider.get().persist(user);
+        EntityManager em = entityManagerProvider.get();
+        logger.warn("USER_SAVE[%d]: EM: %s / US: %s", user.getId(),
+                System.identityHashCode(em), System.identityHashCode(this));
+        em.persist(user);
     }
 
     /**

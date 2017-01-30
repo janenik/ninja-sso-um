@@ -148,7 +148,7 @@ public class SignUpVerificationController {
                         throw new ExpiredTokenException();
                     }
                     userForVerification.confirm();
-                    userService.save(userForVerification);
+                    userService.update(userForVerification);
                     String url = urlBuilderProvider.get().getSignInUrl(SignInState.EMAIL_VERIFICATION_CONFIRMED);
                     return Controllers.redirect(url);
                 }
