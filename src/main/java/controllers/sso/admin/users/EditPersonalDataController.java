@@ -86,6 +86,9 @@ public class EditPersonalDataController extends
 
     @Override
     protected String validate(User user, EditPersonalDataDto dto) {
+        if (!dto.isValidBirthday()) {
+            return "birthDay";
+        }
         if (!user.getUsername().equals(dto.getUsername())) {
             // Check for existing username if username is about to change.
             User existingUserWithUsername = userService.getByUsername(dto.getUsername());

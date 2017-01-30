@@ -291,8 +291,13 @@ public class SignUpController {
             return createResult(userDto, context, validation, "agreement");
         }
 
+        // Check if the birthday is a valid date.
+        if (!userDto.isValidBirthday()) {
+            return createResult(userDto, context, validation, "birthDay");
+        }
+
         // Check if the user is old enough.
-        LocalDate birthDate = LocalDate.of(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay());
+        LocalDate birthDate = userDto.getLocalDateBirthday();
         if (birthDate.plusYears(minimumRegistrationAge).isAfter(LocalDate.now())) {
             return createResult(userDto, context, validation, "age");
         }

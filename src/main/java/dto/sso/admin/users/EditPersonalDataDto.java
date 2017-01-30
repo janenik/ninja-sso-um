@@ -1,6 +1,7 @@
 package dto.sso.admin.users;
 
 import dto.sso.common.Constants;
+import dto.sso.common.WithBirthDay;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
 /**
  * User edit personal data DTO.
  */
-public final class EditPersonalDataDto implements Serializable {
+public final class EditPersonalDataDto implements WithBirthDay, Serializable {
 
     /**
      * Username.
@@ -170,6 +171,7 @@ public final class EditPersonalDataDto implements Serializable {
      *
      * @return Birth month.
      */
+    @Override
     public Integer getBirthMonth() {
         return birthMonth;
     }
@@ -188,6 +190,7 @@ public final class EditPersonalDataDto implements Serializable {
      *
      * @return Birth day.
      */
+    @Override
     public Integer getBirthDay() {
         return birthDay;
     }
@@ -206,6 +209,7 @@ public final class EditPersonalDataDto implements Serializable {
      *
      * @return Birth year.
      */
+    @Override
     public Integer getBirthYear() {
         return birthYear;
     }

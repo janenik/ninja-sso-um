@@ -1,6 +1,7 @@
 package dto.sso;
 
 import dto.sso.common.Constants;
+import dto.sso.common.WithBirthDay;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
 /**
  * User sign up DTO.
  */
-public class UserSignUpDto implements Serializable {
+public class UserSignUpDto implements WithBirthDay, Serializable {
 
     /**
      * Email.
@@ -402,6 +403,7 @@ public class UserSignUpDto implements Serializable {
      *
      * @return Birth month.
      */
+    @Override
     public Integer getBirthMonth() {
         return birthMonth;
     }
@@ -416,18 +418,19 @@ public class UserSignUpDto implements Serializable {
     }
 
     /**
-     * Returns birth day.
+     * Returns birth's day of month.
      *
-     * @return Birth day.
+     * @return Birth's day of month.
      */
+    @Override
     public Integer getBirthDay() {
         return birthDay;
     }
 
     /**
-     * Sets birth day.
+     * Sets birth's day of month.
      *
-     * @param birthDay Birth day.
+     * @param birthDay Birth's day of month.
      */
     public void setBirthDay(Integer birthDay) {
         this.birthDay = birthDay;
@@ -438,6 +441,7 @@ public class UserSignUpDto implements Serializable {
      *
      * @return Birth year.
      */
+    @Override
     public Integer getBirthYear() {
         return birthYear;
     }
