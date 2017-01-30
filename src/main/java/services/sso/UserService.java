@@ -75,7 +75,7 @@ public class UserService implements Paginatable<User> {
      */
     public User get(Long id) {
         EntityManager em = entityManagerProvider.get();
-        logger.warn("USER_LOAD[%d]: EM: %s / US: %s", id,
+        logger.warn("USER_LOAD[{}]: EM: {} / US: {}", id,
                 System.identityHashCode(em), System.identityHashCode(this));
         return em.find(User.class, id);
     }
@@ -229,7 +229,7 @@ public class UserService implements Paginatable<User> {
      */
     public void update(User user) {
         EntityManager em = entityManagerProvider.get();
-        logger.warn("USER_SAVE[%d]: EM: %s / US: %s", user.getId(),
+        logger.warn("USER_SAVE[{}]: EM: {} / US: {}", user.getId(),
                 System.identityHashCode(em), System.identityHashCode(this));
         em.persist(user);
     }
