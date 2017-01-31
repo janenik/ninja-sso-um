@@ -1,8 +1,7 @@
 package services.sso;
 
-import services.sso.annotations.ExclusionDictionary;
 import models.sso.User;
-import org.slf4j.Logger;
+import services.sso.annotations.ExclusionDictionary;
 import services.sso.annotations.ExclusionSubstrings;
 
 import javax.inject.Inject;
@@ -41,30 +40,22 @@ public class UserService implements Paginatable<User> {
     final PasswordService passwordService;
 
     /**
-     * Logger.
-     */
-    final Logger logger;
-
-    /**
      * Constructs user service.
      *
      * @param entityManagerProvider Entity manager provider.
      * @param usernameExclusionDictionary Username exclusion dictionary.
      * @param passwordService Password service.
-     * @param logger Logger.
      */
     @Inject
     public UserService(
             Provider<EntityManager> entityManagerProvider,
             @ExclusionDictionary Set<String> usernameExclusionDictionary,
             @ExclusionSubstrings Set<String> usernameExclusionSubstrings,
-            PasswordService passwordService,
-            Logger logger) {
+            PasswordService passwordService) {
         this.entityManagerProvider = entityManagerProvider;
         this.usernameExclusionDictionary = usernameExclusionDictionary;
         this.usernameExclusionSubstrings = usernameExclusionSubstrings;
         this.passwordService = passwordService;
-        this.logger = logger;
     }
 
     /**
@@ -74,10 +65,7 @@ public class UserService implements Paginatable<User> {
      * @return User or null when the user was not found.
      */
     public User get(Long id) {
-        EntityManager em = entityManagerProvider.get();
-        logger.warn("USER_LOAD[{}]: EM: {} / US: {}", id,
-                System.identityHashCode(em), System.identityHashCode(this));
-        return em.find(User.class, id);
+        return entityManagerProvider.get().find(User.class, id);
     }
 
     /**
@@ -228,10 +216,7 @@ public class UserService implements Paginatable<User> {
      * @param user User to update.
      */
     public void update(User user) {
-        EntityManager em = entityManagerProvider.get();
-        logger.warn("USER_SAVE[{}]: EM: {} / US: {}", user.getId(),
-                System.identityHashCode(em), System.identityHashCode(this));
-        em.persist(user);
+        entityManagerProvider.get().persist(user);
     }
 
     /**
@@ -241,7 +226,8 @@ public class UserService implements Paginatable<User> {
      * @param lastUsedLocale Last used locale.
      */
     public void updateLastUsedLocale(User user, String lastUsedLocale) {
-        entityManagerProvider.get().createNamedQuery("User.updateLastUsedLocale")
+        entityManagerProvider.get()
+                .createNamedQuery("User.updateLastUsedLocale")
                 .setParameter("userId", user.getId())
                 .setParameter("lastUsedLocale", lastUsedLocale)
                 .executeUpdate();
