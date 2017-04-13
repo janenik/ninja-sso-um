@@ -1,20 +1,6 @@
 package models.sso;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -148,18 +134,6 @@ public class User implements Serializable {
     UserRole role;
 
     /**
-     * Password salt.
-     */
-    @Column(nullable = false, length = 512)
-    byte[] passwordSalt;
-
-    /**
-     * Password hash.
-     */
-    @Column(nullable = false, length = 512)
-    byte[] passwordHash;
-
-    /**
      * Time of sign up, UTC.
      */
     @Column(nullable = false, updatable = false)
@@ -178,6 +152,12 @@ public class User implements Serializable {
     String lastUsedLocale;
 
     /**
+     * Version column.
+     */
+    @Version
+    int version;
+
+    /**
      * Default constructor.
      */
     public User() {
@@ -186,10 +166,10 @@ public class User implements Serializable {
     /**
      * Constructs user object by given parameters.
      *
-     * @param id User id.
+     * @param id       User id.
      * @param username Username.
-     * @param email User email.
-     * @param phone Phone.
+     * @param email    User email.
+     * @param phone    Phone.
      */
     public User(Long id, String username, String email, String phone) {
         username = username.trim().toLowerCase();
@@ -210,8 +190,8 @@ public class User implements Serializable {
      * Constructs user object by given parameters.
      *
      * @param username Username
-     * @param email User email.
-     * @param phone Phone.
+     * @param email    User email.
+     * @param phone    Phone.
      */
     public User(String username, String email, String phone) {
         this(null, username, email, phone);
@@ -484,43 +464,6 @@ public class User implements Serializable {
     }
 
     /**
-     * Password hash code.
-     *
-     * @return Password hash code.
-     */
-    public byte[] getPasswordHash() {
-        return passwordHash;
-    }
-
-    /**
-     * Sets password hash code.
-     *
-     * @param passwordHash Password hash code.
-     */
-    public void setPasswordHash(byte[] passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    /**
-     * Password salt.
-     *
-     * @return Password salt.
-     */
-    public byte[] getPasswordSalt() {
-        return passwordSalt;
-    }
-
-    /**
-     * Sets password salt.
-     *
-     * @param passwordSalt Password salt.
-     */
-    public void setPasswordSalt(byte[] passwordSalt) {
-        this.passwordSalt = passwordSalt;
-    }
-
-
-    /**
      * Returns creation time since 1970 in seconds.
      *
      * @return Creation time.
@@ -643,17 +586,35 @@ public class User implements Serializable {
         this.lastUsedLocale = lastUsedLocale;
     }
 
-    @Override
-    public int hashCode() {
-        return 67 * 7 + Objects.hashCode(this.id);
+    /**
+     * Returns current object version.
+     *
+     * @return Object version.
+     */
+    public int getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets object version.
+     *
+     * @param version Version.
+     */
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof User)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        return Objects.equals(this.id, ((User) obj).id);
+        return this.id == ((User) obj).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return 67 * 7 + Objects.hashCode(this.id);
     }
 
     /**

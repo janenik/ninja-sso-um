@@ -1,6 +1,7 @@
 package services.sso;
 
 import models.sso.User;
+import models.sso.UserCredentials;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -16,11 +17,11 @@ public class PasswordServiceTest {
     public void testShortPassword() {
         String password = "shortPassword!@#$%^&*()_+";
 
-        User user = new User();
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
+        UserCredentials credentials = new UserCredentials();
+        credentials.setPasswordSalt(passwordService.newSalt());
+        credentials.setPasswordHash(passwordService.passwordHash(password, credentials.getPasswordSalt()));
 
-        assertTrue("Correct password expected.", passwordService.isValidPassword(password, user));
+        assertTrue("Correct password expected.", passwordService.isValidPassword(password, credentials));
     }
 
     @Test
@@ -31,10 +32,10 @@ public class PasswordServiceTest {
         }
         String password = passwordBuilder.toString();
 
-        User user = new User();
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
+        UserCredentials credentials = new UserCredentials();
+        credentials.setPasswordSalt(passwordService.newSalt());
+        credentials.setPasswordHash(passwordService.passwordHash(password, credentials.getPasswordSalt()));
 
-        assertTrue("Correct password expected.", passwordService.isValidPassword(password, user));
+        assertTrue("Correct password expected.", passwordService.isValidPassword(password, credentials));
     }
 }

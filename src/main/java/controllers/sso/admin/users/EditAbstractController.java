@@ -198,12 +198,15 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
         // Map edit DTO to user entity.
         converter.update(user, dto);
 
+        // Update user.
+        userService.update(user);
+
         // Produce change events.
         UserRole newRole = user.getRole();
         UserSignInState newSignInState = user.getSignInState();
         UserConfirmationState newConfirmationState = user.getConfirmationState();
         if (!oldRole.equals(newRole)) {
-            userEventService.onRoleChange(user, oldRole, ip, context.getHeaders());
+            userEventService.onRoleChange(user, oldRole, loggedInUser, ip, context.getHeaders());
         }
         if (!oldSignInState.equals(newSignInState)) {
             if (UserSignInState.ENABLED.equals(newSignInState)) {
@@ -217,8 +220,6 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
             userEventService.onConfirmation(user, ip, context.getHeaders());
         }
 
-        // Update user.
-        userService.update(user);
         // Set message.
         flashScope.success(USER_DATA_SAVED_MESSAGE);
         // Redirect to same form.

@@ -13,6 +13,7 @@ import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.common.Constants;
 import models.sso.User;
+import models.sso.UserCredentials;
 import models.sso.token.ExpirableToken;
 import models.sso.token.ExpiredTokenException;
 import models.sso.token.IllegalTokenException;
@@ -156,8 +157,9 @@ public class RestorePasswordController {
             }
             if (isValidPassword(password, confirmPassword)) {
                 String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
-                byte[] oldSalt = user.getPasswordSalt();
-                byte[] oldHash = user.getPasswordHash();
+                UserCredentials credentials = userService.getCredentials(user);
+                byte[] oldSalt = credentials.getPasswordSalt();
+                byte[] oldHash = credentials.getPasswordHash();
                 userService.updatePasswordAndConfirm(user, password);
                 userEventService.onUserPasswordUpdate(user, oldSalt, oldHash, ip, context.getHeaders());
                 String url = urlBuilderProvider.get().getSignInUrl(SignInState.PASSWORD_CHANGED);

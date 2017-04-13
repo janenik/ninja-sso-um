@@ -166,16 +166,20 @@ public class UserEventService implements Paginatable<UserEvent> {
      *
      * @param user User.
      * @param oldRole Old user role.
+     * @raram targetUser User who performed the change.
      * @param ip Remote IP.
      * @param data Additional data for event.
      * @return User event with {@link UserEventType#ROLE_CHANGE}.
      */
-    public UserEvent onRoleChange(User user, UserRole oldRole, String ip, Map<String, ?> data) {
+    public UserEvent onRoleChange(User user, UserRole oldRole, User targetUser, String ip, Map<String, ?> data) {
         Map<String, Object> dataToSave = new HashMap<>();
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("user.old.role", oldRole);
         dataToSave.put("user.new.role", user.getRole());
         UserEvent userEvent = newEvent(user, UserEventType.ROLE_CHANGE, ip, dataToSave);
+        if (targetUser != null) {
+            userEvent.setTargetUser(targetUser);
+        }
         entityManagerProvider.get().persist(userEvent);
         return userEvent;
     }
@@ -289,6 +293,7 @@ public class UserEventService implements Paginatable<UserEvent> {
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
+        entityManagerProvider.get().flush();
     }
 
     /**
@@ -311,6 +316,7 @@ public class UserEventService implements Paginatable<UserEvent> {
         event.setTargetUser(target);
         event.setUrl(appUrl);
         entityManagerProvider.get().persist(event);
+        entityManagerProvider.get().flush();
     }
 
     /**

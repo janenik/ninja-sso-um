@@ -1,6 +1,8 @@
 package services.sso;
 
+import com.google.common.base.Preconditions;
 import models.sso.User;
+import models.sso.UserCredentials;
 import services.sso.annotations.ExclusionDictionary;
 import services.sso.annotations.ExclusionSubstrings;
 
@@ -42,9 +44,9 @@ public class UserService implements Paginatable<User> {
     /**
      * Constructs user service.
      *
-     * @param entityManagerProvider Entity manager provider.
+     * @param entityManagerProvider       Entity manager provider.
      * @param usernameExclusionDictionary Username exclusion dictionary.
-     * @param passwordService Password service.
+     * @param passwordService             Password service.
      */
     @Inject
     public UserService(
@@ -140,9 +142,19 @@ public class UserService implements Paginatable<User> {
      * @return Created user (as as argument, attached instance).
      */
     public User createNew(User user, String password) {
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
-        entityManagerProvider.get().persist(user);
+        byte[] salt = passwordService.newSalt();
+        UserCredentials credentials = new UserCredentials();
+        credentials.setPasswordSalt(salt);
+        credentials.setPasswordHash(passwordService.passwordHash(password, salt));
+
+        EntityManager em = entityManagerProvider.get();
+        em.persist(user);
+        em.flush();
+
+        credentials.setUserId(user.getId());
+        em.persist(credentials);
+        em.flush();
+
         return user;
     }
 
@@ -174,26 +186,36 @@ public class UserService implements Paginatable<User> {
     /**
      * Checks if the given user password is valid.
      *
-     * @param user User to check.
+     * @param user     User to check.
      * @param password Password to check.
      * @return Whether the given password is a valid user password.
      */
     public boolean isValidPassword(User user, String password) {
-        byte[] passwordHash = passwordService.passwordHash(password, user.getPasswordSalt());
-        return Arrays.equals(passwordHash, user.getPasswordHash());
+        UserCredentials credentials = getCredentials(user);
+        if (credentials == null) {
+            return false;
+        }
+        byte[] passwordHash = passwordService.passwordHash(password, credentials.getPasswordSalt());
+        return Arrays.equals(passwordHash, credentials.getPasswordHash());
     }
 
     /**
      * Updates user password.
      *
-     * @param user User.
+     * @param user     User.
      * @param password New password.
      * @return Updated user entity.
      */
     public User updatePassword(User user, String password) {
-        user.setPasswordSalt(passwordService.newSalt());
-        user.setPasswordHash(passwordService.passwordHash(password, user.getPasswordSalt()));
-        entityManagerProvider.get().persist(user);
+        UserCredentials credentials = getCredentials(user);
+        if (credentials == null) {
+            credentials = new UserCredentials();
+            credentials.setUserId(user.getId());
+        }
+        credentials.setPasswordSalt(passwordService.newSalt());
+        credentials.setPasswordHash(passwordService.passwordHash(password, credentials.getPasswordSalt()));
+        entityManagerProvider.get().persist(credentials);
+        entityManagerProvider.get().flush();
         return user;
     }
 
@@ -201,13 +223,14 @@ public class UserService implements Paginatable<User> {
      * Updates user password and changes user's status to confirmed.
      * Since the link to password restoration is sent via email, account becomes verified (confirmed).
      *
-     * @param user User.
+     * @param user     User.
      * @param password New password.
      * @return Updated user entity.
      */
     public User updatePasswordAndConfirm(User user, String password) {
+        updatePassword(user, password);
         user.confirm();
-        return updatePassword(user, password);
+        return update(user);
     }
 
     /**
@@ -215,14 +238,16 @@ public class UserService implements Paginatable<User> {
      *
      * @param user User to update.
      */
-    public void update(User user) {
+    public User update(User user) {
         entityManagerProvider.get().persist(user);
+        entityManagerProvider.get().flush();
+        return user;
     }
 
     /**
      * Updates existing user with last used locale. Uses simple update query to avoid whole user update.
      *
-     * @param user User to update.
+     * @param user           User to update.
      * @param lastUsedLocale Last used locale.
      */
     public void updateLastUsedLocale(User user, String lastUsedLocale) {
@@ -243,6 +268,27 @@ public class UserService implements Paginatable<User> {
         return entityManagerProvider.get().createNamedQuery("UserEvent.removeByUser")
                 .setParameter("userId", user.getId())
                 .executeUpdate();
+    }
+
+    /**
+     * Returns user credentials object for given user.
+     *
+     * @param user User.
+     * @return Credentials for given user.
+     */
+    public UserCredentials getCredentials(User user) {
+        return getCredentials(user.getId());
+    }
+
+
+    /**
+     * Returns user credentials object for given user id.
+     *
+     * @param userId User id.
+     * @return Credentials for given user.
+     */
+    public UserCredentials getCredentials(long userId) {
+        return entityManagerProvider.get().find(UserCredentials.class, userId);
     }
 
     @Override

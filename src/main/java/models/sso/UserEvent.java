@@ -20,7 +20,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
- * Auth event. Allows to log times of registration, access, updates, authentication, password changes, etc.
+ * User event. Allows to log times of registration, access, updates, authentication, password changes, etc.
  */
 @Entity
 @Table(name = "userEvents", indexes = {

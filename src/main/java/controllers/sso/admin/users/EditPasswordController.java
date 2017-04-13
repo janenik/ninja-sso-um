@@ -11,6 +11,7 @@ import controllers.sso.web.Controllers;
 import controllers.sso.web.UrlBuilder;
 import dto.sso.common.Constants;
 import models.sso.User;
+import models.sso.UserCredentials;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -146,8 +147,10 @@ public class EditPasswordController {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
 
         User admin = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
-        byte[] oldSalt = user.getPasswordSalt();
-        byte[] oldHash = user.getPasswordHash();
+        UserCredentials credentials = userService.getCredentials(user);
+
+        byte[] oldSalt = credentials.getPasswordSalt();
+        byte[] oldHash = credentials.getPasswordHash();
         userService.updatePassword(user, newPassword);
         userEventService.onUserPasswordUpdate(admin, user, oldSalt, oldHash, ip, context.getHeaders());
 

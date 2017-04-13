@@ -199,8 +199,10 @@ public class ForgotPasswordTest extends WebDriverTest {
         assertTrue("Redirected to Sign In with restored password state: " + url,
                 url.contains(SignInState.PASSWORD_CHANGED.toString().toLowerCase()));
 
-        // Re-read the user from database.
+        // Re-read the user and credentials from database.
         entityManagerProvider.get().detach(user);
+        entityManagerProvider.get().detach(userService.getCredentials(user));
+
         user = userService.getByEmail(EMAIL);
         assertTrue("New password is expected.",  userService.isValidPassword(user, RESTORED_PASSWORD));
     }

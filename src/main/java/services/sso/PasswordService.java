@@ -3,7 +3,7 @@ package services.sso;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-import models.sso.User;
+import models.sso.UserCredentials;
 
 import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
@@ -88,12 +88,12 @@ public class PasswordService {
      * Checks if the given password matches password of the given user.
      *
      * @param password Password.
-     * @param user User.
+     * @param userCredentials User.
      * @return Whether the given password matches password of the given user.
      */
-    public boolean isValidPassword(String password, User user) {
+    public boolean isValidPassword(String password, UserCredentials userCredentials) {
         return isValidPassword(password,
-                user.getPasswordSalt(),
-                user.getPasswordHash());
+                userCredentials.getPasswordSalt(),
+                userCredentials.getPasswordHash());
     }
 }
