@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
 
 /**
  * Authentication filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
@@ -99,6 +101,8 @@ public class AuthenticationFilter implements Filter {
      */
     final NinjaProperties properties;
 
+    final Provider<EntityManager> entityManagerProvider;
+
     /**
      * Constructs authorization filter.
      *
@@ -110,6 +114,7 @@ public class AuthenticationFilter implements Filter {
             ExpirableTokenEncryptor encryptor,
             DeviceAuthPolicy deviceAuthPolicy,
             NinjaProperties properties,
+            Provider<EntityManager> entityManagerProvider,
             Logger logger) {
         this.encryptor = encryptor;
         this.deviceAuthPolicy = deviceAuthPolicy;
@@ -118,6 +123,8 @@ public class AuthenticationFilter implements Filter {
         this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
         this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
         this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1800L;
+
+        this.entityManagerProvider = entityManagerProvider;
     }
 
     @Override
@@ -151,7 +158,11 @@ public class AuthenticationFilter implements Filter {
             context.setAttribute(USER_AUTHENTICATED, false);
         }
         context.setAttribute(PROPERTIES, properties);
-        return filterChain.next(context);
+        try {
+            return filterChain.next(context);
+        } finally {
+            this.entityManagerProvider.get().clear();
+        }
     }
 
     /**
