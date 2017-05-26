@@ -15,8 +15,8 @@
     <url>http://www.ninjaframework.org</url>
 
     <properties>
-        <ninja.version>5.8.0</ninja.version>
-        <jetty.version>9.2.18.v20160721</jetty.version>
+        <ninja.version>6.0.0</ninja.version>
+        <jetty.version>9.3.11.v20160721</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -28,6 +28,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-options,-path</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

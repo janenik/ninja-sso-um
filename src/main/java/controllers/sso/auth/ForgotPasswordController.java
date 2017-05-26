@@ -1,6 +1,5 @@
 package controllers.sso.auth;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import controllers.annotations.SecureHtmlHeaders;
 import controllers.sso.auth.state.SignInState;
@@ -43,6 +42,7 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Forgot password controller.
@@ -253,7 +253,7 @@ public class ForgotPasswordController {
             Map<String, Object> data = new HashMap<>();
             data.put("forgotUrl", restorePasswordUrl);
             data.put("indexUrl", urlBuilderProvider.get().getAbsoluteIndexUrl());
-            String subject = messages.get("forgotPasswordSubject", Optional.<String>of(locale)).get();
+            String subject = messages.get("forgotPasswordSubject", Optional.of(locale)).get();
             String localizedTemplate = String.format(FORGOT_PASSWORD_EMAIL_TEMPLATE, locale);
 
             // Send the email.

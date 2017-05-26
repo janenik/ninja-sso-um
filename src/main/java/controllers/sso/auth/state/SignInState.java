@@ -1,7 +1,8 @@
 package controllers.sso.auth.state;
 
-import com.google.common.base.Optional;
 import ninja.i18n.Messages;
+
+import java.util.Optional;
 
 /**
  * Sign in state.

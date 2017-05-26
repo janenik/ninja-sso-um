@@ -224,5 +224,20 @@ public final class Controllers {
         public List<FieldViolation> getBeanViolations(String s) {
             return null;
         }
+
+        @Override
+        public boolean hasViolation(String paramName) {
+            return false;
+        }
+
+        @Override
+        public List<ConstraintViolation> getViolations() {
+            return null;
+        }
+
+        @Override
+        public List<ConstraintViolation> getViolations(String paramName) {
+            return null;
+        }
     }
 }

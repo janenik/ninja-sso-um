@@ -1,6 +1,5 @@
 package controllers.sso.auth;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.inject.persist.Transactional;
 import controllers.annotations.SecureHtmlHeaders;
@@ -49,10 +48,7 @@ import javax.inject.Singleton;
 import javax.mail.MessagingException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Sign up controller.
@@ -377,7 +373,7 @@ public class SignUpController {
         }
         try {
             if (EmailNotificationType.WELCOME.equals(this.emailNotificationType)) {
-                sendSignUpNotification(createdUser, context, Optional.absent());
+                sendSignUpNotification(createdUser, context, Optional.empty());
                 return urlBuilderProvider.get().getSignInUrl(SignInState.SUCCESSFUL_SIGN_UP);
             }
             return sendConfirmationEmailAndBuildVerificationPageUrl(createdUser, context);
