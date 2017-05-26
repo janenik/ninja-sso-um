@@ -101,12 +101,10 @@ public class AuthenticationFilter implements Filter {
      */
     final NinjaProperties properties;
 
-    final Provider<EntityManager> entityManagerProvider;
-
     /**
      * Constructs authorization filter.
      *
-     * @param encryptor Encryptor.
+     * @param encryptor  Encryptor.
      * @param properties Properties.
      */
     @Inject
@@ -123,8 +121,6 @@ public class AuthenticationFilter implements Filter {
         this.parameterName = properties.getOrDie("application.sso.device.auth.policy.append.parameter");
         this.cookieName = properties.getOrDie("application.sso.device.auth.policy.append.cookie");
         this.xsrfTokenTimeToLive = properties.getIntegerOrDie("application.sso.xsrfToken.ttl") * 1800L;
-
-        this.entityManagerProvider = entityManagerProvider;
     }
 
     @Override
@@ -158,11 +154,8 @@ public class AuthenticationFilter implements Filter {
             context.setAttribute(USER_AUTHENTICATED, false);
         }
         context.setAttribute(PROPERTIES, properties);
-        try {
-            return filterChain.next(context);
-        } finally {
-            this.entityManagerProvider.get().clear();
-        }
+
+        return filterChain.next(context);
     }
 
     /**
