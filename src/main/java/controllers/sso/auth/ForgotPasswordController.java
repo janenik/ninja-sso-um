@@ -285,7 +285,7 @@ public class ForgotPasswordController {
      * @return Forgot password response object.
      */
     Result createResult(ForgotPasswordDto user, Context context, Validation validation, String field) {
-        validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
+        validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
 
