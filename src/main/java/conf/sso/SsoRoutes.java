@@ -37,73 +37,73 @@ public class SsoRoutes implements ApplicationRoutes {
         String subRoute = properties.getOrDie("application.sso.subRoute");
 
         // User JSON controller.
-        router.GET().route(subRoute + "/user").with(UserController.class, "user");
+        router.GET().route(subRoute + "/user").with(UserController::user);
 
         // Captcha.
-        router.GET().route(subRoute + "/captcha").with(CaptchaController.class, "captcha");
+        router.GET().route(subRoute + "/captcha").with(CaptchaController::captcha);
 
         // Sign up.
-        router.GET().route(subRoute +"/signup").with(SignUpController.class, "signUpGet");
-        router.POST().route(subRoute +"/signup").with(SignUpController.class, "signUp");
+        router.GET().route(subRoute +"/signup").with(SignUpController::signUpGet);
+        router.POST().route(subRoute +"/signup").with(SignUpController::signUp);
 
         // Sing up verification.
         router.GET().route(subRoute +"/signup/verify")
-                .with(SignUpVerificationController.class, "verifySignUpGet");
+                .with(SignUpVerificationController::verifySignUpGet);
         router.POST().route(subRoute +"/signup/verify")
-                .with(SignUpVerificationController.class, "verifySignUp");
+                .with(SignUpVerificationController::verifySignUp);
         router.GET().route(subRoute +"/signup/verify-email")
-                .with(SignUpVerificationController.class, "verifyEmail");
+                .with(SignUpVerificationController::verifyEmail);
 
         // Sign in.
-        router.GET().route(subRoute +"/signin").with(SignInController.class, "signInGet");
-        router.POST().route(subRoute +"/signin").with(SignInController.class, "signIn");
+        router.GET().route(subRoute +"/signin").with(SignInController::signInGet);
+        router.POST().route(subRoute +"/signin").with(SignInController::signIn);
 
         // Sign out.
-        router.POST().route(subRoute + "/signout").with(SignOutController.class, "signOut");
+        router.POST().route(subRoute + "/signout").with(SignOutController::signOut);
 
         // Forgot password.
         router.GET().route(subRoute +"/forgot")
-                .with(ForgotPasswordController.class, "forgotGet");
+                .with(ForgotPasswordController::forgotGet);
         router.POST().route(subRoute +"/forgot")
-                .with(ForgotPasswordController.class, "forgot");
+                .with(ForgotPasswordController::forgot);
 
         // Restore password.
         router.GET().route(subRoute +"/restore")
-                .with(RestorePasswordController.class, "restorePasswordGet");
+                .with(RestorePasswordController::restorePasswordGet);
         router.POST().route(subRoute +"/restore")
-                .with(RestorePasswordController.class, "restorePassword");
+                .with(RestorePasswordController::restorePassword);
 
         // Admin routes.
         // Users.
-        router.GET().route(subRoute + "/admin/users").with(UsersController.class, "users");
+        router.GET().route(subRoute + "/admin/users").with(UsersController::users);
         // Edit personal data.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-personal")
-                .with(EditPersonalDataController.class, "get");
+                .with(EditPersonalDataController::get);
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-personal")
-                .with(EditPersonalDataController.class, "post");
+                .with(EditPersonalDataController::post);
         // Edit contact data.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-contact")
-                .with(EditContactDataController.class, "get");
+                .with(EditContactDataController::get);
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-contact")
-                .with(EditContactDataController.class, "post");
+                .with(EditContactDataController::post);
         // Edit user role.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-access")
-                .with(EditAccessController.class, "get");
+                .with(EditAccessController::get);
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-access")
-                .with(EditAccessController.class, "post");
+                .with(EditAccessController::post);
         // View access log.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/access-log")
-                .with(ViewAccessLogController.class, "get");
+                .with(ViewAccessLogController::get);
         // Change password.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-password")
-                .with(EditPasswordController.class, "get");
+                .with(EditPasswordController::get);
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/edit-password")
-                .with(EditPasswordController.class, "post");
+                .with(EditPasswordController::post);
         // Send email.
         router.GET().route(subRoute + "/admin/user/{userId: [0-9]+}/send-email")
-                .with(SendEmailController.class, "get");
+                .with(SendEmailController::get);
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/send-email")
-                .with(SendEmailController.class, "post");
+                .with(SendEmailController::post);
 
     }
 }

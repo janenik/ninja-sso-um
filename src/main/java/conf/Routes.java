@@ -49,13 +49,13 @@ public class Routes implements ApplicationRoutes {
         ///////////////////////////////////////////////////////////////////////
         // Assets (pictures / javascript)
         ///////////////////////////////////////////////////////////////////////    
-        router.GET().route("/assets/webjars/{fileName: .*}").with(AssetsController.class, "serveWebJars");
-        router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
+        router.GET().route("/assets/webjars/{fileName: .*}").with(AssetsController::serveWebJars);
+        router.GET().route("/assets/{fileName: .*}").with(AssetsController::serveStatic);
 
         ///////////////////////////////////////////////////////////////////////
         // Index / Catchall shows index page
         ///////////////////////////////////////////////////////////////////////
-        router.POST().route("/.*").with(ApplicationController.class, "index");
-        router.GET().route("/.*").with(ApplicationController.class, "index");
+        router.POST().route("/.*").with(ApplicationController::index);
+        router.GET().route("/.*").with(ApplicationController::index);
     }
 }

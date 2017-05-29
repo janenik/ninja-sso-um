@@ -10,14 +10,14 @@
                 <#assign editMode = "contact" />
                 <#include 'edit-submenu.ftl.html' />
 
-                <#if errors.hasBeanViolations()>
+                <#if errors.hasViolations()>
                     <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
                 </#if>
 
                 <form id="editContactForm" method="POST" class="form-horizontal"
                       action="${contextPath}/auth/admin/user/${userEntity.getId()?url}/edit-contact?lang=${lang?url}&amp;query=${query?url}&amp;page=${page?url}">
 
-                    <div class="form-group <#if errors.hasBeanViolation('countryId')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('countryId')>has-error</#if>">
                         <label class="control-label col-sm-3" for="countryIdButton">${i18n("signUpCountry")}</label>
                         <div class="col-sm-9">
                             <div class="dropdown">
@@ -58,7 +58,7 @@
                                 <input type="hidden" id="countryId" name="countryId"
                                        value="${(user.getCountryId())!}"/>
                             </div>
-                            <#if errors.hasBeanViolation('countryId')>
+                            <#if errors.hasViolation('countryId')>
                                 <p class="help-block ssoFieldErrorDescription">
                                     ${i18n("signUpCountryRequired")}
                                 </p>
@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group <#if errors.hasBeanViolation('phone')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('phone')>has-error</#if>">
                         <label class="control-label  col-sm-3" for="phone">${i18n("signUpPhone")}</label>
                         <div class="col-sm-9">
                             <input type="tel" id="phone" name="phone"
@@ -74,7 +74,7 @@
                                    value="${(user.getPhone())!}"
                                    ${_enableHtml5Required}
                                    class="form-control"/>
-                            <#if errors.hasBeanViolation('phone')>
+                            <#if errors.hasViolation('phone')>
                                 <div class="input-group">
                                     <p class="help-block ssoFieldErrorDescription">
                                         ${i18n("signUpPhoneRequired")}
@@ -84,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
+                    <div class="form-group <#if errors.hasViolation('email') || errors.hasViolation('emailDuplicate')>
                             has-error</#if>">
                         <label class="control-label col-sm-3" for="email">${i18n("signUpEmailAddress")}</label>
                         <div class="col-sm-9">
@@ -94,10 +94,10 @@
                                    ${_enableHtml5Required}
                                    class="form-control"
                             />
-                            <#if errors.hasBeanViolation('email')>
+                            <#if errors.hasViolation('email')>
                                 <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailRequired")}</p>
                             </#if>
-                            <#if errors.hasBeanViolation('emailDuplicate')>
+                            <#if errors.hasViolation('emailDuplicate')>
                                 <p class="help-block ssoFieldErrorDescription">
                                     ${i18n("signUpEmailUsed")}
                                 </p>

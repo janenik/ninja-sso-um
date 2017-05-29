@@ -23,22 +23,22 @@
                 </div>
             </#if>
 
-            <#if errors.hasBeanViolation('emailNotConfirmed')>
+            <#if errors.hasViolation('emailNotConfirmed')>
                 <div class="alert alert-danger">${i18n("signInEmailNotConfirmedMessage")}</div>
-            <#elseif errors.hasBeanViolation('emailOrPassword')>
+            <#elseif errors.hasViolation('emailOrPassword')>
                 <div class="alert alert-danger ssoEmailOrPassword">${i18n("signInEmailOrPasswordNotFound")}</div>
-            <#elseif errors.hasBeanViolation('captchaCode')>
+            <#elseif errors.hasViolation('captchaCode')>
                 <div class="alert alert-danger">${i18n("signInCaptchaCodeRequired")}</div>
-            <#elseif errors.hasBeanViolation('signInDisabled')>
+            <#elseif errors.hasViolation('signInDisabled')>
                 <div class="alert alert-danger">${i18n("signInDisabled")}</div>
-            <#elseif errors.hasBeanViolations()>
+            <#elseif errors.hasViolations()>
                 <div class="alert alert-danger">${i18n("signInFixTheErrorsAlert")}</div>
             </#if>
 
             <form role="form" id="signInForm" method="POST"
                   action="${contextPath}/auth/signin?lang=${lang?url}&amp;continue=${continue?url}">
                 <div class="form-group
-                     <#if errors.hasBeanViolation('emailOrUsername') || errors.hasBeanViolation('emailOrPassword')>
+                     <#if errors.hasViolation('emailOrUsername') || errors.hasViolation('emailOrPassword')>
                        has-error
                      </#if>">
                     <label class="control-label" for="emailOrUsername">${i18n("signInEmailOrUsername")}</label>
@@ -51,7 +51,7 @@
                            class="form-control"/>
                 </div>
                 <div class="form-group
-                     <#if errors.hasBeanViolation('emailOrPassword') || errors.hasBeanViolation('password')>
+                     <#if errors.hasViolation('emailOrPassword') || errors.hasViolation('password')>
                        has-error
                      </#if>">
                     <label class="control-label" for="password">${i18n("signInPassword")}</label>
@@ -62,7 +62,7 @@
                            value="${(user.password)!}"
                            ${_enableHtml5Required}
                            class="form-control"/>
-                    <#if errors.hasBeanViolation('passwordChanged')>
+                    <#if errors.hasViolation('passwordChanged')>
                         <p class="help-block ssoFieldErrorDescription">
                             ${i18n("signInPasswordChangedAgo")}
                             ${prettyTime(passwordChangeDate)}.
@@ -72,13 +72,13 @@
                 <#if ipHitsExceeded>
                     <div class="row">
                         <div class="col-xs-6 col-md-6">
-                            <div class="form-group <#if errors.hasBeanViolation('captchaCode')>has-error</#if>">
+                            <div class="form-group <#if errors.hasViolation('captchaCode')>has-error</#if>">
                                 <label class="control-label" for="captchaCode">${i18n("signInCaptchaCode")}</label>
                                 <input type="text" autocomplete="off"
                                        class="form-control" id="captchaCode"
                                        name="captchaCode" ${_enableHtml5Required}
                                        placeholder="${i18n('signInCaptchaCodePlaceHolder')}"/>
-                                <#if errors.hasBeanViolation('captchaCode')>
+                                <#if errors.hasViolation('captchaCode')>
                                     <p class="help-block ssoFieldErrorDescription">
                                         ${i18n("signInCaptchaCodeRequired")}
                                     </p>
@@ -90,7 +90,7 @@
                                  class="ssoCaptchaImage" id="captchaImage"
                                  alt="${i18n('signUpCaptchaCodeHelp')}"
                                  title="${i18n('signUpCaptchaCodeHelp')}" />
-                            <#if errors.hasBeanViolation('captchaCode')>
+                            <#if errors.hasViolation('captchaCode')>
                                 <p class="help-block">${i18n("signInCaptchaCodeHelp")}</p>
                             </#if>
                         </div>

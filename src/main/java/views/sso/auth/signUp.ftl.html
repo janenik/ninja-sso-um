@@ -32,11 +32,11 @@
             <div class="alert alert-danger">${i18n("singUpNoScriptError")}</div>
         </noscript>
 
-        <#if errors.hasBeanViolations() && !errors.hasBeanViolation('age')>
+        <#if errors.hasViolations() && !errors.hasViolation('age')>
             <div class="alert alert-danger">${i18n("signUpFixTheErrorsAlert")}</div>
         </#if>
 
-        <#if errors.hasBeanViolation('age')>
+        <#if errors.hasViolation('age')>
             <div class="alert alert-danger">${i18n("signUpAgeRestriction")}</div>
         </#if>
 
@@ -45,15 +45,14 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group <#if errors.hasBeanViolation('firstName')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('firstName')>has-error</#if>">
                         <label class="control-label" for="firstName">${i18n("signUpFirstName")}</label>
                         <input type="text" id="firstName" name="firstName"
                                placeholder="${i18n('signUpFirstNamePlaceHolder')}"
                                value="${(user.getFirstName())!}"
                                ${_enableHtml5Required}
                                class="form-control"/>
-                        <!--<#--<p class="help-block">Example block-level help text here.</p>-->-->
-                        <#if errors.hasBeanViolation('firstName') || errors.hasBeanViolation('lastName')>
+                        <#if errors.hasViolation('firstName') || errors.hasViolation('lastName')>
                             <p class="help-block ssoFieldErrorDescription">
                                 ${i18n("signUpNameDescription")}
                             </p>
@@ -61,7 +60,7 @@
                     </div>
                 </div>
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group <#if errors.hasBeanViolation('lastName')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('lastName')>has-error</#if>">
                         <label class="control-label" for="lastName">${i18n("signUpLastName")}</label>
                         <input type="text" id="lastName" name="lastName"
                                placeholder="${i18n('signUpLastNamePlaceHolder')}"
@@ -73,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="form-group <#if errors.hasBeanViolation('username') || errors.hasBeanViolation('usernameDuplicate')>
+            <div class="form-group <#if errors.hasViolation('username') || errors.hasViolation('usernameDuplicate')>
                             has-error</#if>">
                 <label class="control-label" for="username">${i18n("signUpUsername")}</label>
                 <input type="text" id="username" name="username"
@@ -82,12 +81,12 @@
                        ${_enableHtml5Required}
                        class="form-control"
                 />
-                <#if errors.hasBeanViolation('usernameDuplicate')>
+                <#if errors.hasViolation('usernameDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">
                         ${i18n("signUpUsernameUsed")}
                     </p>
                 </#if>
-                <#if errors.hasBeanViolation('username')>
+                <#if errors.hasViolation('username')>
                     <p class="help-block ssoFieldErrorDescription">
                         ${i18n("signUpUsernameFormatDescription")}
                     </p>
@@ -96,8 +95,8 @@
 
             <div class="row">
                 <div class="col-xs-12 col-md-8">
-                    <div class="form-group <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
-                                || errors.hasBeanViolation('birthYear') || errors.hasBeanViolation('age')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('birthDay') || errors.hasViolation('birthMonth')
+                                || errors.hasViolation('birthYear') || errors.hasViolation('age')>has-error</#if>">
                         <label class="control-label" for="birthday">${i18n("signUpBirthday")}</label>
                         <div class="row">
                             <div class="col-xs-5 col-md-3">
@@ -149,7 +148,7 @@
                                         </select>
                                 </#if>
                             </div>
-                            <div class="col-xs-3 col-md-3 <#if errors.hasBeanViolation('birthDay')>has-error</#if>">
+                            <div class="col-xs-3 col-md-3 <#if errors.hasViolation('birthDay')>has-error</#if>">
                                 <input type="text" id="birthDay" name="birthDay"
                                        placeholder="${i18n('signUpBirthDayPlaceHolder')}"
                                        maxlength="2"
@@ -158,7 +157,7 @@
                                        ${_enableHtml5Required}
                                        class="form-control"/>
                             </div>
-                            <div class="col-xs-4 col-md-6 <#if errors.hasBeanViolation('birthYear')>has-error</#if>">
+                            <div class="col-xs-4 col-md-6 <#if errors.hasViolation('birthYear')>has-error</#if>">
                                 <input type="text" id="birthYear" name="birthYear"
                                        placeholder="${i18n('signUpBirthYearPlaceHolder')}"
                                        maxlength="4"
@@ -168,8 +167,8 @@
                                        class="form-control"/>
                             </div>
                         </div>
-                        <#if errors.hasBeanViolation('birthDay') || errors.hasBeanViolation('birthMonth')
-                                || errors.hasBeanViolation('birthYear')>
+                        <#if errors.hasViolation('birthDay') || errors.hasViolation('birthMonth')
+                                || errors.hasViolation('birthYear')>
                             <div class="input-group row">
                                 <p style="padding-left:15px;" class="help-block ssoFieldErrorDescription">
                                     ${i18n("signUpBirthDayDescription")}
@@ -180,7 +179,7 @@
                 </div>
                 <div class="clearfix visible-xs-block"></div>
                 <div class="col-xs-12 col-md-4">
-                    <div class="form-group <#if errors.hasBeanViolation('gender')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('gender')>has-error</#if>">
                         <label class="control-label" for="genderButton">${i18n("signUpGender")}</label>
                         <#if useBootstrapDropdowns>
                             <div class="dropdown">
@@ -209,7 +208,7 @@
                                     </div>
                                 </div>
                         </#if>
-                        <#if errors.hasBeanViolation('gender')>
+                        <#if errors.hasViolation('gender')>
                             <p class="clearfix help-block ssoFieldErrorDescription">
                                 ${i18n("signUpGenderDescription")}
                             </p>
@@ -218,7 +217,7 @@
                 </div>
             </div>
 
-            <div class="form-group <#if errors.hasBeanViolation('email') || errors.hasBeanViolation('emailDuplicate')>
+            <div class="form-group <#if errors.hasViolation('email') || errors.hasViolation('emailDuplicate')>
                        has-error</#if>">
                 <label class="control-label" for="email">${i18n("signUpEmailAddress")}</label>
                 <input type="email" id="email" name="email"
@@ -227,10 +226,10 @@
                        ${_enableHtml5Required}
                        class="form-control"
                 />
-                <#if errors.hasBeanViolation('email')>
+                <#if errors.hasViolation('email')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpEmailRequired")}</p>
                 </#if>
-                <#if errors.hasBeanViolation('emailDuplicate')>
+                <#if errors.hasViolation('emailDuplicate')>
                     <p class="help-block ssoFieldErrorDescription">
                         ${i18n("signUpEmailUsed")}
                     </p>
@@ -240,7 +239,7 @@
 
             <div class="row">
                 <div class="col-xs-5 col-md-3">
-                    <div class="form-group <#if errors.hasBeanViolation('countryId')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('countryId')>has-error</#if>">
                         <label class="control-label" for="countryIdButton">${i18n("signUpCountry")}</label>
                         <#if useBootstrapDropdowns>
                             <div class="dropdown">
@@ -310,7 +309,7 @@
                                     </div>
                                 </div>
                         </#if>
-                        <#if errors.hasBeanViolation('countryId')>
+                        <#if errors.hasViolation('countryId')>
                             <p class="help-block ssoFieldErrorDescription">
                                 ${i18n("signUpCountryRequired")}
                             </p>
@@ -318,7 +317,7 @@
                     </div>
                 </div>
                 <div class="col-xs-7 col-md-9">
-                    <div class="form-group <#if errors.hasBeanViolation('phone')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('phone')>has-error</#if>">
                         <label class="control-label" for="phone">${i18n("signUpPhone")}</label>
                         <input type="tel" id="phone" name="phone"
                                placeholder="${i18n('signUpPhonePlaceHolder')}"
@@ -326,7 +325,7 @@
                                ${_enableHtml5Required}
                                class="form-control"/>
                         <!--<p class="help-block">${i18n("signUpPhoneOptional")}</p>-->
-                        <#if errors.hasBeanViolation('phone')>
+                        <#if errors.hasViolation('phone')>
                             <div class="input-group">
                                 <p class="help-block ssoFieldErrorDescription">
                                     ${i18n("signUpPhoneRequired")}
@@ -339,7 +338,7 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group has-feedback <#if errors.hasBeanViolation('password')>has-error</#if>">
+                    <div class="form-group has-feedback <#if errors.hasViolation('password')>has-error</#if>">
                         <label class="control-label" for="password">
                             <span id="password-label-text">${i18n("signUpPassword")}</span>
                             <span id="password-meter"></span>
@@ -352,14 +351,14 @@
                                class="form-control"/>
                         <i id="password-feedback"
                            class="glyphicon glyphicon-ok-circle form-control-feedback"></i>
-                        <#if errors.hasBeanViolation('passwordRepeat')>
+                        <#if errors.hasViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp1")}</p>
                         </#if>
                     </div>
                 </div>
 
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group has-feedback <#if errors.hasBeanViolation('passwordRepeat')>has-error</#if>">
+                    <div class="form-group has-feedback <#if errors.hasViolation('passwordRepeat')>has-error</#if>">
                         <label class="control-label" for="password-repeat">
                             ${i18n("signUpPasswordRepeat")}
                         </label>
@@ -372,7 +371,7 @@
                         />
                         <i id="password-repeat-feedback"
                            class="glyphicon glyphicon-ok-circle form-control-feedback"></i>
-                        <#if errors.hasBeanViolation('passwordRepeat')>
+                        <#if errors.hasViolation('passwordRepeat')>
                             <p class="help-block ssoFieldErrorDescription">${i18n("signUpPasswordHelp2")}</p>
                         </#if>
                     </div>
@@ -381,14 +380,14 @@
 
             <div class="row">
                 <div class="col-xs-6 col-md-6">
-                    <div class="form-group <#if errors.hasBeanViolation('captchaCode')>has-error</#if>">
+                    <div class="form-group <#if errors.hasViolation('captchaCode')>has-error</#if>">
                         <label class="control-label" for="captchaCode">${i18n("signUpCaptchaCode")}</label>
                         <input type="text" class="form-control" id="captchaCode"
                                name="captchaCode"
                                ${_enableHtml5Required}
                                autocomplete="off"
                                placeholder="${i18n('signUpCaptchaCodePlaceHolder')}"/>
-                        <#if errors.hasBeanViolation('captchaCode')>
+                        <#if errors.hasViolation('captchaCode')>
                             <p class="help-block ssoFieldErrorDescription">
                                 ${i18n("signUpCaptchaCodeRequired")}
                             </p>
@@ -401,7 +400,7 @@
                          alt="${i18n('signUpCaptchaCodeHelp')}"
                          title="${i18n('signUpCaptchaCodeHelp')}"
                     />
-                    <#if errors.hasBeanViolation('captchaCode')>
+                    <#if errors.hasViolation('captchaCode')>
                         <p class="help-block">${i18n("signUpCaptchaCodeHelp")}</p>
                     </#if>
                 </div>
@@ -419,7 +418,7 @@
                         href="${config.get('application.baseUrl')}/privacy_policy${_underscopeLang}.html"
                         target="_blank">${i18n("signUpPrivacyPolicy")}</a>.
                 </label>
-                <#if errors.hasBeanViolation('agreement')>
+                <#if errors.hasViolation('agreement')>
                     <p class="help-block ssoFieldErrorDescription">${i18n("signUpAgreementRequired")}</p>
                 </#if>
             </div>

@@ -242,7 +242,7 @@ public class SignInController {
      * @return Sign up response object.
      */
     Result createResult(UserSignInDto user, Context context, Validation validation, String field) {
-        validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
+        validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
 

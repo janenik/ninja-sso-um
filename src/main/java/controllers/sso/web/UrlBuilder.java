@@ -17,6 +17,7 @@ import controllers.sso.auth.SignUpVerificationController;
 import controllers.sso.captcha.CaptchaController;
 import controllers.sso.filters.LanguageFilter;
 import ninja.Context;
+import ninja.ReverseRouter;
 import ninja.Router;
 import ninja.utils.NinjaProperties;
 
@@ -41,6 +42,11 @@ public class UrlBuilder {
      * Router.
      */
     final Router router;
+
+    /**
+     * Reverse router.
+     */
+    final ReverseRouter reverseRouter;
 
     /**
      * Current request context.
@@ -79,11 +85,13 @@ public class UrlBuilder {
     public UrlBuilder(
             NinjaProperties properties,
             Router router,
+            ReverseRouter reverseRouter,
             HttpServletRequest servletRequest,
             @InjectedContext Context context,
             @AllowedContinueUrls List<String> allowedContinueUrls) {
         this.properties = properties;
         this.router = router;
+        this.reverseRouter = reverseRouter;
         this.context = context;
         this.servletRequest = servletRequest;
         this.allowedContinueUrls = allowedContinueUrls;
@@ -147,7 +155,7 @@ public class UrlBuilder {
      * @return Confirmation URL.
      */
     public String getEmailConfirmationUrl(String emailConfirmationToken) {
-        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "verifyEmail");
+        String reverseRoute = reverseRouter.with(SignUpVerificationController::verifyEmail).build();
         StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
         return urlBuilder
                 .append("&token=")

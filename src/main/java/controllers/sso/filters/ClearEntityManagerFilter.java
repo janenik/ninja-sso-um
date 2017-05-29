@@ -17,6 +17,11 @@ import javax.persistence.EntityManager;
 public class ClearEntityManagerFilter implements Filter {
 
     /**
+     * Assets prefix for the exclusion.
+     */
+    private static final String ASSETS_PREFIX = "/assets/";
+
+    /**
      * Entity manager provider.
      */
     final Provider<EntityManager> entityManagerProvider;
@@ -33,6 +38,9 @@ public class ClearEntityManagerFilter implements Filter {
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {
+        if (context.getRequestPath().startsWith(ASSETS_PREFIX)) {
+            return filterChain.next(context);
+        }
         try {
             return filterChain.next(context);
         } finally {

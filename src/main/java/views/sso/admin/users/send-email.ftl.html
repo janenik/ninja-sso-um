@@ -10,7 +10,7 @@
                     <#assign editMode = "sendEmail" />
                     <#include 'edit-submenu.ftl.html' />
 
-                    <#if errors.hasBeanViolations()>
+                    <#if errors.hasViolations()>
                         <div class="alert alert-danger">${i18n("adminEditUserSendEmailFillFields")}</div>
                     </#if>
 
@@ -28,7 +28,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group <#if errors.hasBeanViolation('subject')>has-error</#if>">
+                        <div class="form-group <#if errors.hasViolation('subject')>has-error</#if>">
                             <label class="control-label col-sm-3" for="subject">
                                 ${i18n("adminEditUserSendEmailSubject")}
                             </label>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group <#if errors.hasBeanViolation('body')>has-error</#if>">
+                        <div class="form-group <#if errors.hasViolation('body')>has-error</#if>">
                             <label class="control-label col-sm-3" for="body">
                                 ${i18n("adminEditUserSendEmailBody")}
                             </label>
