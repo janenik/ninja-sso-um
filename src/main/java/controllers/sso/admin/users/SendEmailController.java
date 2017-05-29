@@ -18,7 +18,6 @@ import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
-import ninja.validation.FieldViolation;
 import ninja.validation.Validation;
 import services.sso.UserService;
 import services.sso.mail.EmailService;

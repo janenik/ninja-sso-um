@@ -165,11 +165,11 @@ public class EditPasswordController {
      * @param user User.
      * @param context Context.
      * @param validation Validation.
-     * @param errorField Field to report as an error.
+     * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(User user, Context context, Validation validation, String errorField) {
-        validation.addBeanViolation(new FieldViolation(errorField, ConstraintViolation.create(errorField)));
+    Result createResult(User user, Context context, Validation validation, String field) {
+        validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
 

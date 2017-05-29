@@ -84,7 +84,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @param htmlAdminSecureHeadersProvider HTML with secure headers provider for admin.
      * @param properties Application properties.
      */
-    public EditAbstractController(
+    protected EditAbstractController(
             UserService userService,
             UserEventService userEventService,
             CountryService countryService,
@@ -237,7 +237,7 @@ public abstract class EditAbstractController<C extends Converter<User, DTO>, DTO
      * @return Sign up response object.
      */
     private Result createResult(DTO dto, User user, Context ctx, Validation validation, String field) {
-        validation.addBeanViolation(new FieldViolation(field, ConstraintViolation.create(field)));
+        validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(dto, user, ctx, validation);
     }
 

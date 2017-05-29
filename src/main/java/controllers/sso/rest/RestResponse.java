@@ -30,19 +30,11 @@ public class RestResponse<T> implements Serializable {
     private final T data;
 
     /**
-     * Constructs response with empty data and 200/OK metadata.
-     */
-    public RestResponse() {
-        this.data = null;
-        this.meta = new RestMetadata();
-    }
-
-    /**
      * Constructs response with given data and 200/OK metadata.
      *
      * @param data Response data.
      */
-    public RestResponse(T data) {
+    private RestResponse(T data) {
         this.data = data;
         this.meta = new RestMetadata();
     }
@@ -50,17 +42,12 @@ public class RestResponse<T> implements Serializable {
     /**
      * Constructs response with given data and metadata parameters.
      *
-     * @param data Data.
-     * @param status Status code for metadata.
+     * @param data    Data.
+     * @param status  Status code for metadata.
      * @param message Status message for metadata.
      */
-    public RestResponse(T data, int status, String message) {
+    private RestResponse(T data, int status, String message) {
         this.data = data;
-        this.meta = new RestMetadata(status, message);
-    }
-
-    public RestResponse(int status, String message) {
-        this.data = null;
         this.meta = new RestMetadata(status, message);
     }
 
@@ -86,7 +73,7 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 200/OK response.
      *
      * @param data Data for response.
-     * @param <T> Data type.
+     * @param <T>  Data type.
      * @return REST response with data and 200/OK metadata.
      */
     public static <T> RestResponse<T> newResponse(T data) {
@@ -96,9 +83,9 @@ public class RestResponse<T> implements Serializable {
     /**
      * Static factory for 200 response and given message.
      *
-     * @param data Data for response.
+     * @param data    Data for response.
      * @param message Status message.
-     * @param <T> Data type.
+     * @param <T>     Data type.
      * @return REST response with data and 200 code in metadata.
      */
     public static <T> RestResponse<T> newResponse(T data, String message) {
@@ -109,7 +96,7 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 400 (bad) response and given message.
      *
      * @param message Status message.
-     * @param <T> Data type.
+     * @param <T>     Data type.
      * @return REST response with data and 400 code in metadata.
      */
     public static <T> RestResponse<T> badRequest(String message) {
@@ -120,8 +107,8 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 400 (bad) response and given data and message..
      *
      * @param message Status message.
-     * @param data REST data.
-     * @param <T> Data type.
+     * @param data    REST data.
+     * @param <T>     Data type.
      * @return REST response with data and 400 code in metadata.
      */
     public static <T> RestResponse<T> badRequest(String message, T data) {
@@ -132,13 +119,15 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 400 (bad) response by given violation field name (validation errors) and exception.
      *
      * @param fieldName Field name.
-     * @param e Exception.
+     * @param e         Exception.
      * @return REST response with 400 status code and violation field.
      */
     public static RestResponse<Map<String, String>> badRequestWithViolation(String fieldName, Exception e) {
-        return badRequestWithViolations(
-                Collections.singletonList(new FieldViolation(fieldName, ConstraintViolation.create(
-                        e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : "")))));
+        String violationMessage =
+                e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : "");
+        FieldViolation violation = new FieldViolation(fieldName,
+                new ConstraintViolation(fieldName, fieldName, violationMessage));
+        return badRequestWithViolations(Collections.singletonList(violation));
     }
 
     /**
@@ -146,12 +135,13 @@ public class RestResponse<T> implements Serializable {
      * kes as string.
      *
      * @param fieldName Field name.
-     * @param key Constraint violation key as string.
+     * @param key       Constraint violation key as string.
      * @return REST response with 400 status code and violation field.
      */
     public static RestResponse<Map<String, String>> badRequestWithViolation(String fieldName, String key) {
-        return badRequestWithViolations(
-                Collections.singletonList(new FieldViolation(fieldName, ConstraintViolation.create(key))), key);
+        FieldViolation violation = new FieldViolation(fieldName,
+                new ConstraintViolation(fieldName, fieldName, fieldName));
+        return badRequestWithViolations(Collections.singletonList(violation), key);
     }
 
     /**
@@ -159,14 +149,14 @@ public class RestResponse<T> implements Serializable {
      * kes as string.
      *
      * @param fieldName Field name.
-     * @param key Constraint violation key as string.
-     * @param message Message for violation (validation error).
+     * @param key       Constraint violation key as string.
+     * @param message   Message for violation (validation error).
      * @return REST response with 400 status code and violation field.
      */
-    public static RestResponse<Map<String, String>> badRequestWithViolation(String fieldName, String key,
-                                                                            String message) {
-        return badRequestWithViolations(
-                Collections.singletonList(new FieldViolation(fieldName, ConstraintViolation.create(key))), message);
+    public static RestResponse<Map<String, String>> badRequestWithViolation(
+            String fieldName, String key, String message) {
+        FieldViolation violation = new FieldViolation(fieldName, new ConstraintViolation(key, fieldName, message));
+        return badRequestWithViolations(Collections.singletonList(violation), message);
     }
 
     /**
@@ -193,11 +183,11 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 400 (bad) response and given list of violations (validation errors) and message.
      *
      * @param violations List of violations (validation errors).
-     * @param message Status message.
+     * @param message    Status message.
      * @return REST response with data and 400 code in metadata.
      */
-    public static RestResponse<Map<String, String>> badRequestWithViolations(List<FieldViolation> violations,
-                                                                             String message) {
+    public static RestResponse<Map<String, String>> badRequestWithViolations(
+            List<FieldViolation> violations, String message) {
         Map<String, String> mapped = new HashMap<>(violations.size() + 1);
         mapped.put("invalidValues", "true");
         for (FieldViolation fv : violations) {
@@ -210,7 +200,7 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 404 (not found) response and given message.
      *
      * @param message Status message.
-     * @param <T> Data type.
+     * @param <T>     Data type.
      * @return REST response with 401 code in metadata.
      */
     public static <T> RestResponse<T> notAuthorized(String message) {
@@ -221,7 +211,7 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 404 (forbidden) response and given message.
      *
      * @param message Status message.
-     * @param <T> Data type.
+     * @param <T>     Data type.
      * @return REST response with 403 code in metadata.
      */
     public static <T> RestResponse<T> forbidden(String message) {
@@ -232,7 +222,7 @@ public class RestResponse<T> implements Serializable {
      * Static factory for 404 (not found) response and given message.
      *
      * @param message Status message.
-     * @param <T> Data type.
+     * @param <T>     Data type.
      * @return REST response with 404 code in metadata.
      */
     public static <T> RestResponse<T> notFound(String message) {

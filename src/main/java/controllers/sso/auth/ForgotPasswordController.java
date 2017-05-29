@@ -25,7 +25,6 @@ import ninja.Router;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
-import ninja.validation.FieldViolation;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.slf4j.Logger;
