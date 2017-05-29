@@ -200,7 +200,7 @@ public class SendEmailController {
      * @return Sign up response object.
      */
     Result createPostResult(User user, Context context, Validation validation, String errorField, String... emailData) {
-        validation.addBeanViolation(new FieldViolation(errorField, ConstraintViolation.create(errorField)));
+        validation.addViolation(new ConstraintViolation(errorField, errorField, errorField));
         return createResult(user, context, validation, emailData);
     }
 }
