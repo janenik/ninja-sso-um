@@ -158,7 +158,6 @@ public class EditPasswordController {
         return Controllers.redirect(urlBuilderProvider.get().getAdminEditPasswordUrl(userId, query, page));
     }
 
-
     /**
      * Creates response result, validation and field that lead to error.
      *

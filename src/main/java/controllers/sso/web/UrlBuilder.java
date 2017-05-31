@@ -76,9 +76,9 @@ public class UrlBuilder {
     /**
      * Constructs URL builder.
      *
-     * @param properties Application properties.
-     * @param router Router.
-     * @param context Context.
+     * @param properties          Application properties.
+     * @param router              Router.
+     * @param context             Context.
      * @param allowedContinueUrls List of allowed continue URLs.
      */
     @Inject
@@ -106,18 +106,17 @@ public class UrlBuilder {
      * @return URL to captcha image with given token.
      */
     public String getCaptchaUrl(String captchaToken) {
-        StringBuilder sb = new StringBuilder();
         String contextPath = context.getContextPath();
-        String reversedRoute = router.getReverseRoute(CaptchaController.class, "captcha");
+        String reversedRoute = reverseRouter
+                .with(CaptchaController::captcha)
+                .queryParam(CaptchaController.CAPTCHA_PARAMETER, captchaToken)
+                .build();
         if (!reversedRoute.startsWith(contextPath)) {
-            sb.append(contextPath);
+            return new StringBuilder(contextPath)
+                    .append(reversedRoute)
+                    .toString();
         }
-        sb.append(reversedRoute);
-        sb.append("?");
-        sb.append(CaptchaController.CAPTCHA_PARAMETER);
-        sb.append("=");
-        sb.append(Escapers.encodePercent(captchaToken));
-        return sb.toString();
+        return reversedRoute;
     }
 
     /**
@@ -156,7 +155,7 @@ public class UrlBuilder {
      */
     public String getEmailConfirmationUrl(String emailConfirmationToken) {
         String reverseRoute = reverseRouter.with(SignUpVerificationController::verifyEmail).build();
-        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        StringBuilder urlBuilder = newAbsoluteUrlBuilder(reverseRoute);
         return urlBuilder
                 .append("&token=")
                 .append(Escapers.encodePercent(emailConfirmationToken))
@@ -173,8 +172,8 @@ public class UrlBuilder {
      * @return URL to sign up verification page.
      */
     public String getSignUpVerificationPage(String signUpVerificationToken) {
-        String reverseRoute = router.getReverseRoute(SignUpVerificationController.class, "verifySignUp");
-        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
+        String reverseRoute = reverseRouter.with(SignUpVerificationController::verifySignUp).build();
+        StringBuilder urlBuilder = newRelativeUrlBuilder(reverseRoute);
         return urlBuilder
                 .append("&token=")
                 .append(Escapers.encodePercent(signUpVerificationToken))
@@ -191,8 +190,8 @@ public class UrlBuilder {
      * @return Relative Sign In URL.
      */
     public String getSignInUrl(Object... state) {
-        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
-        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
+        String reverseRoute = reverseRouter.with(SignInController::signInGet).build();
+        StringBuilder urlBuilder = newRelativeUrlBuilder(reverseRoute);
         if (state != null && state.length > 0 && state[0] != null) {
             urlBuilder
                     .append("&state=")
@@ -211,8 +210,8 @@ public class UrlBuilder {
      * @return Absolute Sign In URL.
      */
     public String getAbsoluteSignInUrl() {
-        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
-        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        String reverseRoute = reverseRouter.with(SignInController::signInGet).build();
+        StringBuilder urlBuilder = newAbsoluteUrlBuilder(reverseRoute);
         return urlBuilder
                 .append("&continue=")
                 .append(Escapers.encodePercent(getContinueUrlParameter()))
@@ -226,10 +225,9 @@ public class UrlBuilder {
      * @return Relative Sign In URL.
      */
     public String getSignInUrlForCurrentUrl() {
-        String reverseRoute = router.getReverseRoute(SignInController.class, "signInGet");
-        StringBuilder urlBuilder = newRelativeUrlBuilder(context, reverseRoute);
-        String currentAbsoluteUrl = newAbsoluteUrlBuilder(context,
-                context.getContextPath() + context.getRequestPath()).toString();
+        String reverseRoute = reverseRouter.with(SignInController::signInGet).build();
+        StringBuilder urlBuilder = newRelativeUrlBuilder(reverseRoute);
+        String currentAbsoluteUrl = newAbsoluteUrlBuilder(context.getContextPath() + context.getRequestPath()).toString();
         return urlBuilder
                 .append("&continue=")
                 .append(Escapers.encodePercent(currentAbsoluteUrl))
@@ -244,8 +242,8 @@ public class UrlBuilder {
      * @return Restore password URL.
      */
     public String getRestorePasswordUrl(String token) {
-        String reverseRoute = router.getReverseRoute(RestorePasswordController.class, "restorePasswordGet");
-        StringBuilder urlBuilder = newAbsoluteUrlBuilder(context, reverseRoute);
+        String reverseRoute = reverseRouter.with(RestorePasswordController::restorePasswordGet).build();
+        StringBuilder urlBuilder = newAbsoluteUrlBuilder(reverseRoute);
         return urlBuilder
                 .append("&restoreToken=").append(Escapers.encodePercent(token))
                 .append("&continue=")
@@ -260,8 +258,8 @@ public class UrlBuilder {
      * @return Relative URL to application index.
      */
     public String getIndexUrl() {
-        String reverseRoute = router.getReverseRoute(ApplicationController.class, "index");
-        return newRelativeUrlBuilder(context, reverseRoute.replaceAll("\\.\\*", "")).toString();
+        String reverseRoute = reverseRouter.with(ApplicationController::index).build();
+        return newRelativeUrlBuilder(reverseRoute.replaceAll("\\.\\*", "")).toString();
     }
 
     /**
@@ -271,8 +269,8 @@ public class UrlBuilder {
      * @return Absolute URL to application index.
      */
     public String getAbsoluteIndexUrl() {
-        String reverseRoute = router.getReverseRoute(ApplicationController.class, "index");
-        return newAbsoluteUrlBuilder(context, reverseRoute.replaceAll("\\.\\*", "")).toString();
+        String reverseRoute = reverseRouter.with(ApplicationController::index).build();
+        return newAbsoluteUrlBuilder(reverseRoute.replaceAll("\\.\\*", "")).toString();
     }
 
     /**
@@ -373,15 +371,15 @@ public class UrlBuilder {
      * URL is relative.
      *
      * @param controllerClass Edit user data controller class.
-     * @param methodName Method name.
-     * @param query Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
+     * @param methodName      Method name.
+     * @param query           Optional query parameter. Item at index 0 is a query, item at index 1 is a page.
      * @return Relative URL to one of the edit user controllers.
      */
     private String getAdminEditUserDataUrl(Class<?> controllerClass, String methodName, Long userId, Object... query) {
         String reverseRoute = userId != null ?
-                router.getReverseRoute(controllerClass, methodName, "userId", userId) :
-                router.getReverseRoute(controllerClass, methodName);
-        StringBuilder builder = newRelativeUrlBuilder(context, reverseRoute);
+                reverseRouter.with(controllerClass, methodName).pathParam("userId", userId).build() :
+                reverseRouter.with(controllerClass, methodName).build();
+        StringBuilder builder = newRelativeUrlBuilder(reverseRoute);
         if (query != null && query.length > 0 && query[0] != null && !query[0].toString().isEmpty()) {
             builder.append("&query=");
             builder.append(Escapers.encodePercent(query[0].toString()));
@@ -396,23 +394,20 @@ public class UrlBuilder {
     /**
      * Returns absolute URL string builder for constructing URLs.
      *
-     * @param route Application route to controller without context path.
-     * @param context Context.
      * @return URL StringBuilder.
      */
-    private StringBuilder newAbsoluteUrlBuilder(Context context, String route) {
-        return newAbsoluteUrlBuilder(context, baseUrl, route);
+    private StringBuilder newAbsoluteUrlBuilder(String route) {
+        return newAbsoluteUrlBuilder(baseUrl, route);
     }
 
     /**
      * Returns absolute URL string builder for constructing URLs.
      *
-     * @param context Context.
      * @param baseUrl Base URL.
-     * @param route Application path (without context path).
+     * @param route   Application path (without context path).
      * @return URL StringBuilder.
      */
-    private StringBuilder newAbsoluteUrlBuilder(Context context, String baseUrl, String route) {
+    private StringBuilder newAbsoluteUrlBuilder(String baseUrl, String route) {
         String lang = (String) context.getAttribute(LanguageFilter.LANG);
         return new StringBuilder(baseUrl)
                 .append(route)
@@ -425,12 +420,11 @@ public class UrlBuilder {
     /**
      * Returns relative URL builder with optional context path and language parameter.
      *
-     * @param context Context.
      * @param route Controller route.
      * @return Relative URL.
      */
-    private StringBuilder newRelativeUrlBuilder(Context context, String route) {
-        return newAbsoluteUrlBuilder(context, "", route);
+    private StringBuilder newRelativeUrlBuilder(String route) {
+        return newAbsoluteUrlBuilder("", route);
     }
 
     /**
@@ -467,7 +461,7 @@ public class UrlBuilder {
     /**
      * Appends given URL parameters as in URL query and appends everything to given string builder.
      *
-     * @param parameters Parameters to concatenate.
+     * @param parameters   Parameters to concatenate.
      * @param queryBuilder String builder to append to.
      * @return Given query builder for chaining.
      */
