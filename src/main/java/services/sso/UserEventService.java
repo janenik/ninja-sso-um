@@ -213,6 +213,7 @@ public class UserEventService implements Paginatable<UserEvent> {
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         UserEvent userEvent = newEvent(user, UserEventType.ENABLE_SIGN, ip, dataToSave);
         entityManagerProvider.get().persist(userEvent);
+        entityManagerProvider.get().flush();
         return userEvent;
     }
 
@@ -252,6 +253,7 @@ public class UserEventService implements Paginatable<UserEvent> {
         UserEvent userEvent = newEvent(user, UserEventType.PASSWORD_CHANGE, ip, dataToSave);
         userEvent.setTargetUser(targetUser);
         entityManagerProvider.get().persist(userEvent);
+        entityManagerProvider.get().flush();
         return userEvent;
     }
 
@@ -268,8 +270,9 @@ public class UserEventService implements Paginatable<UserEvent> {
         Map<String, Object> dataToSave = new HashMap<>();
         dataToSave.put(EVENT_DATA_NAMESPACE, data);
         dataToSave.put("users.search.query", String.valueOf(query));
-        UserEvent event = newEvent(source, UserEventType.ACCESS, ip, dataToSave);
+        UserEvent event = newEvent(source, UserEventType.SEARCH_USERS, ip, dataToSave);
         entityManagerProvider.get().persist(event);
+        entityManagerProvider.get().flush();
         return event;
     }
 

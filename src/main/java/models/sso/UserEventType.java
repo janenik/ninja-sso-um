@@ -46,6 +46,11 @@ public enum UserEventType {
     ACCESS,
 
     /**
+     * Search users event.
+     */
+    SEARCH_USERS,
+
+    /**
      * Access to user events.
      */
     EVENTS_ACCESS,

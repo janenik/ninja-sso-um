@@ -449,16 +449,6 @@ public class UrlBuilder {
     }
 
     /**
-     * Constructs query string. Returns string builder with results.
-     *
-     * @param parameters URL parameters to concatenate.
-     * @return String builder with result.
-     */
-    public static StringBuilder toQueryString(Map<String, String> parameters) {
-        return toQueryString(parameters, new StringBuilder());
-    }
-
-    /**
      * Appends given URL parameters as in URL query and appends everything to given string builder.
      *
      * @param parameters   Parameters to concatenate.

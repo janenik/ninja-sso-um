@@ -16,7 +16,6 @@ import ninja.Result;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
-import ninja.validation.FieldViolation;
 import ninja.validation.Validation;
 import services.sso.CountryService;
 import services.sso.UserEventService;
