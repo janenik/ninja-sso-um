@@ -10,42 +10,42 @@ public class UserDto implements Serializable {
     /**
      * User id.
      */
-    Long id;
+    private Long id;
 
     /**
      * Username.
      */
-    String username;
+    private String username;
 
     /**
      * First name.
      */
-    String firstName;
+    private String firstName;
 
     /**
      * Middle name.
      */
-    String middleName;
+    private String middleName;
 
     /**
      * Last name.
      */
-    String lastName;
+    private String lastName;
 
     /**
      * Country code.
      */
-    String country;
+    private String country;
 
     /**
      * Role as string.
      */
-    String role;
+    private String role;
 
     /**
      * Age.
      */
-    long age;
+    private long age;
 
     /**
      * Returns id.

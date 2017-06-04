@@ -34,72 +34,72 @@ public class SignUpTest extends WebDriverTest {
     /**
      * First name for test account.
      */
-    static final String FIRST_NAME = "FirstName";
+    private static final String FIRST_NAME = "FirstName";
 
     /**
      * Last name for test account.
      */
-    static final String LAST_NAME = "LastName";
+    private static final String LAST_NAME = "LastName";
 
     /**
      * Username for test account.
      */
-    static final String USERNAME = "webDriverUsername1234567890";
+    private static final String USERNAME = "webDriverUsername1234567890";
 
     /**
      * Username in lowercase.
      */
-    static final String USERNAME_LOWERCASED = USERNAME.toLowerCase();
+    private static final String USERNAME_LOWERCASED = USERNAME.toLowerCase();
 
     /**
      * Email for test account.
      */
-    static final String EMAIL = "email@somewhere.org";
+    private static final String EMAIL = "email@somewhere.org";
 
     /**
      * Phone for test account.
      */
-    static final String PHONE = "+1 650 9999 999";
+    private static final String PHONE = "+1 650 9999 999";
 
     /**
      * Password for test account.
      */
-    static final String PASSWORD = "wrongPassword";
+    private static final String PASSWORD = "wrongPassword";
 
     /**
      * Country for test account.
      */
-    static final String COUNTRY_ID = "US";
+    private static final String COUNTRY_ID = "US";
 
     /**
      * Birth year for test account.
      */
-    static final int YEAR = 1988;
+    private static final int YEAR = 1988;
 
     /**
      * Birth month for test account.
      */
-    static final int MONTH = 12;
+    private static final int MONTH = 12;
 
     /**
      * Birth day for test account.
      */
-    static final int DAY_OF_MONTH = 24;
+    private static final int DAY_OF_MONTH = 24;
 
     /**
      * User service.
      */
-    UserService userService;
+    private UserService userService;
 
     /**
      * Encryptor.
      */
-    ExpirableTokenEncryptor encryptor;
+    private ExpirableTokenEncryptor encryptor;
 
     /**
      * Captcha token service.
      */
-    CaptchaTokenService captchaTokenService;
+    private CaptchaTokenService captchaTokenService;
 
     @Before
     public void setUp() {
@@ -154,7 +154,7 @@ public class SignUpTest extends WebDriverTest {
 
         // Verify that the browser has opened verification form.
         assertTrue("Verify URL expected: " + url,
-                url.contains(router.getReverseRoute(SignUpVerificationController.class, "verifySignUp")));
+                url.contains(reverseRouter.with(SignUpVerificationController::verifySignUp).build()));
         assertTrue("Verify URL contains valid continue URL: " + urlParameters.get("continue"),
                 urlParameters.get("continue").contains("successful_sign_up=true"));
 
@@ -177,7 +177,7 @@ public class SignUpTest extends WebDriverTest {
         url = webDriver.getCurrentUrl();
         urlParameters = extractParameters(new URI(url));
         assertTrue("Sign in URL expected: " + url,
-                url.contains(router.getReverseRoute(SignInController.class, "signInGet")));
+                url.contains(reverseRouter.with(SignInController::signInGet).build()));
         assertTrue("Sign in URL with message: " + url,
                 url.contains(SignInState.EMAIL_VERIFICATION_CONFIRMED.toString().toLowerCase()));
         assertTrue("Verify URL contains valid continue URL: " + urlParameters.get("continue"),

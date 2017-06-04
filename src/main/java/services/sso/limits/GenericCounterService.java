@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Counter service that counts generic key usage (number of tries, etc).
+ * Counter service that counts entry usage (number of tries, etc).
  */
 @Singleton
 public class GenericCounterService extends CounterService {

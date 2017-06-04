@@ -36,37 +36,37 @@ public class UsersController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users/users.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/users.ftl.html";
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * Date formatter for list of users.
      */
-    final DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlAdminSecureHeadersProvider;
+    private final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Objects per page.
      */
-    final int objectsPerPage;
+    private final int objectsPerPage;
 
     /**
      * Constructs controller.
@@ -118,7 +118,7 @@ public class UsersController {
      * @param loggedInUser Logged-in user.
      * @param context Web context.
      */
-    void logSearchAccess(String query, User loggedInUser, Context context) {
+    private void logSearchAccess(String query, User loggedInUser, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         userEventService.onUsersSearchAccess(loggedInUser, query, ip, context.getHeaders());
     }

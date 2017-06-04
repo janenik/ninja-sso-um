@@ -47,37 +47,37 @@ public class RestorePasswordController {
     /**
      * Template to render sign up page.
      */
-    static final String TEMPLATE = "views/sso/auth/restorePassword.ftl.html";
+    private static final String TEMPLATE = "views/sso/auth/restorePassword.ftl.html";
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User's event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * Expirable token encryptor.
      */
-    final ExpirableTokenEncryptor expirableTokenEncryptor;
+    private final ExpirableTokenEncryptor expirableTokenEncryptor;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    private final Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Constructs controller.
@@ -183,7 +183,7 @@ public class RestorePasswordController {
      * @param restoreToken Restore token.
      * @return Result with data and template.
      */
-    Result createResult(Context context, String restoreToken) {
+    private Result createResult(Context context, String restoreToken) {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         return htmlWithSecureHeadersProvider.get()
                 .render("context", context)
@@ -201,7 +201,7 @@ public class RestorePasswordController {
      * @param confirmPassword Confirm password.
      * @return Whether the given password is valid.
      */
-    static boolean isValidPassword(String password, String confirmPassword) {
+    private static boolean isValidPassword(String password, String confirmPassword) {
         return password.length() >= Constants.PASSWORD_MIN_LENGTH
                 && password.length() <= Constants.PASSWORD_MAX_LENGTH
                 && password.equals(confirmPassword);

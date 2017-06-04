@@ -55,8 +55,17 @@ public class DeviceTypeFilter implements Filter {
     /**
      * Logger.
      */
+    private final Logger logger;
+
+    /**
+     * Constructs device filter type.
+     *
+     * @param logger Logger.
+     */
     @Inject
-    Logger logger;
+    public DeviceTypeFilter(Logger logger) {
+        this.logger = logger;
+    }
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {

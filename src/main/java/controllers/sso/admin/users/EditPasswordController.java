@@ -19,7 +19,6 @@ import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
-import ninja.validation.FieldViolation;
 import ninja.validation.Validation;
 import services.sso.UserEventService;
 import services.sso.UserService;
@@ -44,37 +43,37 @@ public class EditPasswordController {
     /**
      * Edit password template.
      */
-    static final String TEMPLATE = "views/sso/admin/users/edit-password.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/edit-password.ftl.html";
 
     /**
      * Message id for changed password.
      */
-    static final String PASSWORD_CHANGED_MESSAGE = "adminPasswordChanged";
+    private static final String PASSWORD_CHANGED_MESSAGE = "adminPasswordChanged";
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlAdminSecureHeadersProvider;
+    private final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Constructs the controller.
@@ -167,7 +166,7 @@ public class EditPasswordController {
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(User user, Context context, Validation validation, String field) {
+    private Result createResult(User user, Context context, Validation validation, String field) {
         validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
@@ -180,7 +179,7 @@ public class EditPasswordController {
      * @param validation Validation.
      * @return Forgot password response object.
      */
-    Result createResult(User user, Context context, Validation validation) {
+    private Result createResult(User user, Context context, Validation validation) {
         User loggedInUser = userService.get((Long) context.getAttribute(AuthenticationFilter.USER_ID));
         return htmlAdminSecureHeadersProvider.get()
                 .render("context", context)

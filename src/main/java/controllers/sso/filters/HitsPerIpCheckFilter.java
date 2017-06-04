@@ -26,8 +26,17 @@ public class HitsPerIpCheckFilter implements Filter {
     /**
      * IP counter service.
      */
+    private final IPCounterService ipCounterService;
+
+    /**
+     * Constructs per IP checker.
+     *
+     * @param ipCounterService IP counter service.
+     */
     @Inject
-    IPCounterService ipCounterService;
+    public HitsPerIpCheckFilter(IPCounterService ipCounterService) {
+        this.ipCounterService = ipCounterService;
+    }
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {

@@ -14,9 +14,9 @@ import java.io.IOException;
  */
 class StubImageRenderable implements Renderable {
 
-    static final String RESOURCE_PATH = "assets/i/expired-captcha.png";
-    final byte[] stubBytes;
-    final Logger logger;
+    private static final String RESOURCE_PATH = "assets/i/expired-captcha.png";
+    private final byte[] stubBytes;
+    private final Logger logger;
 
     public StubImageRenderable(String resourcePath, Logger logger) {
         this.logger = logger;

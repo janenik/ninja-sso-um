@@ -40,42 +40,42 @@ public class ViewAccessLogController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users/view-access-log.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/view-access-log.ftl.html";
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * Date-time formatter for list of users.
      */
-    final DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlAdminSecureHeadersProvider;
+    private final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Objects per page.
      */
-    final int objectsPerPage;
+    private final int objectsPerPage;
 
     /**
      * Constructs access log controller.
@@ -147,7 +147,7 @@ public class ViewAccessLogController {
      * @param loggedInUser Logged-in user.
      * @param context Web context.
      */
-    void logEventsAccess(User target, User loggedInUser, Context context) {
+    private void logEventsAccess(User target, User loggedInUser, Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         String currentUrl = urlBuilderProvider.get().getCurrentUrl();
         userEventService.onUserLogAccess(loggedInUser, target, currentUrl, ip, context.getHeaders());

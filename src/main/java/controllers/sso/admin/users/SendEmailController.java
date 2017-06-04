@@ -47,7 +47,7 @@ public class SendEmailController {
     /**
      * Template to render users' list page.
      */
-    static final String TEMPLATE = "views/sso/admin/users/send-email.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/send-email.ftl.html";
 
     /**
      * Message id for email sent.
@@ -57,32 +57,32 @@ public class SendEmailController {
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * Email service.
      */
-    final EmailService emailService;
+    private final EmailService emailService;
 
     /**
      * Date-time formatter for list of users.
      */
-    final DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlAdminSecureHeadersProvider;
+    private final Provider<Result> htmlAdminSecureHeadersProvider;
 
     /**
      * Creates send email controller.
@@ -171,7 +171,7 @@ public class SendEmailController {
      * @param emailData Current email subject and body.
      * @return Forgot password response object.
      */
-    Result createResult(User user, Context context, Validation validation, String... emailData) {
+    private Result createResult(User user, Context context, Validation validation, String... emailData) {
         User loggedInUser = userService.get((long) context.getAttribute(AuthenticationFilter.USER_ID));
         return htmlAdminSecureHeadersProvider.get()
                 .template(TEMPLATE)
@@ -198,7 +198,7 @@ public class SendEmailController {
      * @param emailData Current email subject and body.
      * @return Sign up response object.
      */
-    Result createPostResult(User user, Context context, Validation validation, String errorField, String... emailData) {
+    private Result createPostResult(User user, Context context, Validation validation, String errorField, String... emailData) {
         validation.addViolation(new ConstraintViolation(errorField, errorField, errorField));
         return createResult(user, context, validation, emailData);
     }

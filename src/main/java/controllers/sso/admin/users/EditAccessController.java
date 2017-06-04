@@ -44,7 +44,7 @@ public class EditAccessController extends EditAbstractController<EditAccessConve
     /**
      * Template.
      */
-    static final String TEMPLATE = "views/sso/admin/users/edit-access.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/edit-access.ftl.html";
 
     /**
      * Constructs controller.

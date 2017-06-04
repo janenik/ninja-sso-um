@@ -54,7 +54,7 @@ public class SignInController {
     /**
      * Template to render sign up page.
      */
-    static final String TEMPLATE = "views/sso/auth/signIn.ftl.html";
+    private static final String TEMPLATE = "views/sso/auth/signIn.ftl.html";
 
     /**
      * Empty effectively immutable user DTO.
@@ -64,69 +64,69 @@ public class SignInController {
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User's event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * Captcha token service.
      */
-    final CaptchaTokenService captchaTokenService;
+    private final CaptchaTokenService captchaTokenService;
 
     /**
      * IP counter service.
      */
-    final IPCounterService ipCounterService;
+    private final IPCounterService ipCounterService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Sign In response supplier provider to supply responses in case of successful Sign In authentication.
      */
-    final Provider<SignInResponseBuilder> signInResponseSupplierProvider;
+    private final Provider<SignInResponseBuilder> signInResponseSupplierProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    private final Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Application router.
      */
-    final Router router;
+    private final Router router;
 
     /**
      * Application messages.
      */
-    final Messages messages;
+    private final Messages messages;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Constructs sign in controller.
      *
-     * @param userService User service.
-     * @param userEventService User's event service.
+     * @param userService         User service.
+     * @param userEventService    User's event service.
      * @param captchaTokenService Captcha token service.
-     * @param urlBuilderProvider URL builder provider.
-     * @param properties Application properties./
-     * @param router Router.
-     * @param messages Messages.
-     * @param logger Logger.
+     * @param urlBuilderProvider  URL builder provider.
+     * @param properties          Application properties./
+     * @param router              Router.
+     * @param messages            Messages.
+     * @param logger              Logger.
      */
     @Inject
     public SignInController(UserService userService,
@@ -168,8 +168,8 @@ public class SignInController {
     /**
      * Sign in (POST).
      *
-     * @param context Application context.
-     * @param validation Validation object.
+     * @param context       Application context.
+     * @param validation    Validation object.
      * @param userSignInDto User sign in DTO.
      * @return Result of sign in.
      */
@@ -235,13 +235,13 @@ public class SignInController {
     /**
      * Creates response result with given user, validation and field that lead to error.
      *
-     * @param user User to use in response.
-     * @param context Context.
+     * @param user       User to use in response.
+     * @param context    Context.
      * @param validation Validation.
-     * @param field Field to report as an error.
+     * @param field      Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(UserSignInDto user, Context context, Validation validation, String field) {
+    private Result createResult(UserSignInDto user, Context context, Validation validation, String field) {
         validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
@@ -249,14 +249,15 @@ public class SignInController {
     /**
      * Creates response result with given user.
      *
-     * @param user User to use in response.
-     * @param context Context.
+     * @param user       User to use in response.
+     * @param context    Context.
      * @param validation Validation.
      * @return Sign in response object.
      */
-    Result createResult(UserSignInDto user, Context context, Validation validation) {
+    private Result createResult(UserSignInDto user, Context context, Validation validation) {
         boolean ipHitsExceeded = (boolean) context.getAttribute(HitsPerIpCheckFilter.HITS_PER_IP_LIMIT_EXCEEDED);
         String langCode = (String) context.getAttribute(LanguageFilter.LANG);
+
         Result result = htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
@@ -265,6 +266,7 @@ public class SignInController {
                 .render("ipHitsExceeded", ipHitsExceeded)
                 .render("continue", urlBuilderProvider.get().getContinueUrlParameter())
                 .render("config", properties);
+
         if (ipHitsExceeded) {
             regenerateCaptchaTokenAndUrl(result);
         }
@@ -282,7 +284,7 @@ public class SignInController {
      *
      * @param result Result.
      */
-    void regenerateCaptchaTokenAndUrl(Result result) {
+    private void regenerateCaptchaTokenAndUrl(Result result) {
         String token = captchaTokenService.newCaptchaToken();
         result.render("captchaToken", token);
         result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(token));

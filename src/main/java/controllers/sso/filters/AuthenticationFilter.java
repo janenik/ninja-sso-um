@@ -16,9 +16,7 @@ import org.slf4j.Logger;
 import services.sso.token.ExpirableTokenEncryptor;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.persistence.EntityManager;
 
 /**
  * Authentication filter that extracts user id and expirable token from request, according to DeviceAuthPolicy
@@ -69,50 +67,51 @@ public class AuthenticationFilter implements Filter {
     /**
      * Encryptor to extract data from token.
      */
-    final ExpirableTokenEncryptor encryptor;
+    private final ExpirableTokenEncryptor encryptor;
 
     /**
      * XSRF token time to live, in milliseconds.
      */
-    final long xsrfTokenTimeToLive;
+    private final long xsrfTokenTimeToLive;
 
     /**
      * Device auth policy.
      */
-    final DeviceAuthPolicy deviceAuthPolicy;
+    private final DeviceAuthPolicy deviceAuthPolicy;
 
     /**
      * Parameter name to hold access token.
      */
-    final String parameterName;
+    private final String parameterName;
 
     /**
      * Cookie name to hold access token.
      */
-    final String cookieName;
+    private final String cookieName;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Constructs authorization filter.
      *
      * @param encryptor  Encryptor.
+     * @param deviceAuthPolicy Device authorization policy.
      * @param properties Properties.
+     * @param logger Logger.
      */
     @Inject
     public AuthenticationFilter(
             ExpirableTokenEncryptor encryptor,
             DeviceAuthPolicy deviceAuthPolicy,
             NinjaProperties properties,
-            Provider<EntityManager> entityManagerProvider,
             Logger logger) {
         this.encryptor = encryptor;
         this.deviceAuthPolicy = deviceAuthPolicy;

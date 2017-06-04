@@ -18,12 +18,12 @@ public class EditContactDataConverter implements Converter<User, EditContactData
     /**
      * DTO mapper.
      */
-    final Mapper mapper;
+    private final Mapper mapper;
 
     /**
      * Country service.
      */
-    final CountryService countryService;
+    private final CountryService countryService;
 
     /**
      * Constructs converter.

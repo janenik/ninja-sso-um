@@ -20,7 +20,7 @@ public class RequireUnauthenticatedUserFilter implements Filter {
     /**
      * URL builder provider to get redirection URL.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Constructs filter.

@@ -38,17 +38,17 @@ public class LanguageFilter implements Filter {
     /**
      * Language.
      */
-    final Lang lang;
+    private final Lang lang;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Mapped languages.
      */
-    final Map<String, String> mappedLanguages;
+    private final Map<String, String> mappedLanguages;
 
     /**
      * Constructs language filter.

@@ -21,12 +21,12 @@ class CaptchaRenderable implements Renderable {
     /**
      * Captcha.
      */
-    final Captcha captcha;
+    private final Captcha captcha;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Construcs renderable captcha.

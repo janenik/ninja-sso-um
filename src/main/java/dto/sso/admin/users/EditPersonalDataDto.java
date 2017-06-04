@@ -23,7 +23,7 @@ public final class EditPersonalDataDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
-    String username;
+    private String username;
 
     /**
      * First name.
@@ -31,13 +31,13 @@ public final class EditPersonalDataDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.FIRST_NAME_MAX_LENGTH)
-    String firstName;
+    private String firstName;
 
     /**
      * Middle name, optional.
      */
     @Size(max = Constants.MIDDLE_NAME_MAX_LENGTH)
-    String middleName;
+    private String middleName;
 
     /**
      * Last name.
@@ -45,7 +45,7 @@ public final class EditPersonalDataDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.LAST_NAME_MAX_LENGTH)
-    String lastName;
+    private String lastName;
 
     /**
      * User gender.
@@ -53,28 +53,28 @@ public final class EditPersonalDataDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 4, max = Constants.ENUM_MAX_LENGTH)
-    String gender;
+    private String gender;
 
     /**
      * Birth month.
      */
     @NotNull
     @Range(min = 1, max = 12)
-    Integer birthMonth;
+    private Integer birthMonth;
 
     /**
      * Birth day.
      */
     @NotNull
     @Range(min = 1, max = 31)
-    Integer birthDay;
+    private Integer birthDay;
 
     /**
      * Birth year.
      */
     @NotNull
     @Min(1800)
-    Integer birthYear;
+    private Integer birthYear;
 
     /**
      * Returns username.

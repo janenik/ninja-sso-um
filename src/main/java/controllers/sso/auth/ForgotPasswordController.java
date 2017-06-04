@@ -59,82 +59,82 @@ public class ForgotPasswordController {
     /**
      * Template to render sign up page.
      */
-    static final String TEMPLATE = "views/sso/auth/forgotPassword.ftl.html";
+    private static final String TEMPLATE = "views/sso/auth/forgotPassword.ftl.html";
 
     /**
      * Forgot password email template.
      */
-    static final String FORGOT_PASSWORD_EMAIL_TEMPLATE = "forgotPassword.%s.ftl.html";
+    private static final String FORGOT_PASSWORD_EMAIL_TEMPLATE = "forgotPassword.%s.ftl.html";
 
     /**
      * Empty forgot password DTO.
      */
-    static final ForgotPasswordDto EMPTY_FORGOT_PASSWORD = new ForgotPasswordDto();
+    private static final ForgotPasswordDto EMPTY_FORGOT_PASSWORD = new ForgotPasswordDto();
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * Expirable token encryptor.
      */
-    final ExpirableTokenEncryptor expirableTokenEncryptor;
+    private final ExpirableTokenEncryptor expirableTokenEncryptor;
 
     /**
      * Captcha token service.
      */
-    final CaptchaTokenService captchaTokenService;
+    private final CaptchaTokenService captchaTokenService;
 
     /**
      * IP counter service.
      */
-    final IPCounterService ipCounterService;
+    private final IPCounterService ipCounterService;
 
     /**
      * Email service.
      */
-    final EmailService emailService;
+    private final EmailService emailService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    private final Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Application router.
      */
-    final Router router;
+    private final Router router;
 
     /**
      * Application messages.
      */
-    final Messages messages;
+    private final Messages messages;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Restore password token time to live, in milliseconds.
      */
-    final long restorePasswordTokenTtl;
+    private final long restorePasswordTokenTtl;
 
     /**
      * Whether to produce fake "email sent" response to non-existing user.
      */
-    final boolean produceFakeResponseForNonExistingUser;
+    private final boolean produceFakeResponseForNonExistingUser;
 
     /**
      * Constructs the forgot password controller.
@@ -237,7 +237,7 @@ public class ForgotPasswordController {
      * @param context Context.
      * @throws RuntimeException In case when error happens while creating or sending the email
      */
-    void sendRestorePasswordEmail(User user, Context context) {
+    private void sendRestorePasswordEmail(User user, Context context) {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         try {
             // Create verification token.
@@ -269,7 +269,7 @@ public class ForgotPasswordController {
      * @param user User to use in token.
      * @return Restore password token.
      */
-    ExpirableToken forgotEmailConfirmationToken(User user) {
+    private ExpirableToken forgotEmailConfirmationToken(User user) {
         return ExpirableToken.newUserToken(
                 ExpirableTokenType.RESTORE_PASSWORD, user.getId(), restorePasswordTokenTtl);
     }
@@ -283,7 +283,7 @@ public class ForgotPasswordController {
      * @param field Field to report as an error.
      * @return Forgot password response object.
      */
-    Result createResult(ForgotPasswordDto user, Context context, Validation validation, String field) {
+    private Result createResult(ForgotPasswordDto user, Context context, Validation validation, String field) {
         validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
@@ -296,7 +296,7 @@ public class ForgotPasswordController {
      * @param validation Validation.
      * @return Forgot password response object.
      */
-    Result createResult(ForgotPasswordDto user, Context context, Validation validation) {
+    private Result createResult(ForgotPasswordDto user, Context context, Validation validation) {
         Result result = htmlWithSecureHeadersProvider.get()
                 .template(TEMPLATE)
                 .render("context", context)
@@ -316,7 +316,7 @@ public class ForgotPasswordController {
      * @param result Result.
      * @param context Context.
      */
-    void regenerateCaptchaTokenAndUrl(Result result, Context context) {
+    private void regenerateCaptchaTokenAndUrl(Result result, Context context) {
         String captchaToken = captchaTokenService.newCaptchaToken();
         result.render("captchaToken", captchaToken);
         result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(captchaToken));

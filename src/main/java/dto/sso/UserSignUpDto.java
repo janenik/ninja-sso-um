@@ -23,7 +23,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.EMAIL_MIN_LENGTH, max = Constants.EMAIL_MAX_LENGTH)
-    String email;
+    private String email;
 
     /**
      * Username.
@@ -32,7 +32,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
-    String username;
+    private String username;
 
     /**
      * First name.
@@ -40,13 +40,13 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.FIRST_NAME_MAX_LENGTH)
-    String firstName;
+    private String firstName;
 
     /**
      * Middle name, optional.
      */
     @Size(max = Constants.MIDDLE_NAME_MAX_LENGTH)
-    String middleName;
+    private String middleName;
 
     /**
      * Last name.
@@ -54,7 +54,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 1, max = Constants.LAST_NAME_MAX_LENGTH)
-    String lastName;
+    private String lastName;
 
     /**
      * Phone.
@@ -63,7 +63,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 5, max = Constants.PHONE_MAX_LENGTH)
-    String phone;
+    private String phone;
 
     /**
      * Country id (ISO code).
@@ -71,7 +71,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 2, max = Constants.COUNTRY_ISO_MAX_LENGTH)
-    String countryId;
+    private String countryId;
 
     /**
      * Password in clear form.
@@ -79,7 +79,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
-    String password;
+    private String password;
 
     /**
      * Repeat password in clear form.
@@ -87,14 +87,14 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
-    String passwordRepeat;
+    private String passwordRepeat;
 
     /**
      * Captcha code, entered by user.
      */
     @NotBlank
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
-    String captchaCode;
+    private String captchaCode;
 
     /**
      * Captcha token.
@@ -102,7 +102,7 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 3, max = Constants.TOKEN_MAX_LENGTH)
-    String token;
+    private String token;
 
     /**
      * User gender.
@@ -110,28 +110,28 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 4, max = Constants.ENUM_MAX_LENGTH)
-    String gender;
+    private String gender;
 
     /**
      * Birth month.
      */
     @NotNull
     @Range(min = 1, max = 12)
-    Integer birthMonth;
+    private Integer birthMonth;
 
     /**
      * Birth day.
      */
     @NotNull
     @Range(min = 1, max = 31)
-    Integer birthDay;
+    private Integer birthDay;
 
     /**
      * Birth year.
      */
     @NotNull
     @Min(1800)
-    Integer birthYear;
+    private Integer birthYear;
 
     /**
      * User agreement checkbox value.
@@ -139,12 +139,12 @@ public class UserSignUpDto implements WithBirthDay, Serializable {
     @NotBlank
     @NotNull
     @Size(min = 3, max = Constants.TOKEN_MAX_LENGTH)
-    String agreement;
+    private String agreement;
 
     /**
      * Language field.
      */
-    String lang;
+    private String lang;
 
     /**
      * Returns email.

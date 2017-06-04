@@ -19,7 +19,7 @@ public class EditPersonalDataConverter implements Converter<User, EditPersonalDa
     /**
      * DTO mapper.
      */
-    final Mapper mapper;
+    private final Mapper mapper;
 
     /**
      * Constructs converter.

@@ -10,6 +10,7 @@ import controllers.sso.auth.SignUpController;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import ninja.NinjaFluentLeniumTest;
+import ninja.ReverseRouter;
 import ninja.Router;
 import ninja.utils.NinjaProperties;
 import org.junit.Before;
@@ -40,6 +41,11 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
     protected Router router;
 
     /**
+     * Reverse router;
+     */
+    protected ReverseRouter reverseRouter;
+
+    /**
      * Application properties.
      */
     protected NinjaProperties properties;
@@ -55,6 +61,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
 
         this.entityManagerProvider = injector.getProvider(EntityManager.class);
         this.router = injector.getBinding(Router.class).getProvider().get();
+        this.reverseRouter = injector.getBinding(ReverseRouter.class).getProvider().get();
         this.properties = injector.getBinding(NinjaProperties.class).getProvider().get();
         this.logger = injector.getBinding(Logger.class).getProvider().get();
 
@@ -89,7 +96,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      */
     protected String getSignUpUrl(String... continueUrl) {
         StringBuilder sb = new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(SignUpController.class, "signUpGet"))
+                .append(reverseRouter.with(SignUpController::signUpGet).build())
                 .append("?");
         if (continueUrl.length > 0 && continueUrl[0] != null) {
             sb.append("&continue=");
@@ -111,12 +118,12 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * Constructs Sign In URL with optional continue URL and optional state.
      *
      * @param continueUrl Continue URL. Optional.
-     * @param state State of the sign in. Optional.
+     * @param state       State of the sign in. Optional.
      * @return Continue URL.
      */
     protected String getSignInUrl(String continueUrl, String... state) {
         StringBuilder sb = new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(SignInController.class, "signInGet"))
+                .append(reverseRouter.with(SignInController::signInGet))
                 .append("?");
         if (continueUrl != null) {
             sb.append("&continue=");
@@ -137,7 +144,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      */
     protected String getForgotPasswordUrl(String... continueUrl) {
         StringBuilder sb = new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(ForgotPasswordController.class, "forgotGet"))
+                .append(reverseRouter.with(ForgotPasswordController::forgotGet))
                 .append("?");
         if (continueUrl.length > 0 && continueUrl[0] != null) {
             sb.append("&continue=");
@@ -154,7 +161,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      */
     protected String getRestorePasswordUrl(String restorePasswordToken) {
         return new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(RestorePasswordController.class, "restorePasswordGet"))
+                .append(reverseRouter.with(RestorePasswordController::restorePasswordGet))
                 .append("?restoreToken=")
                 .append(Escapers.encodePercent(restorePasswordToken))
                 .toString();
@@ -167,7 +174,7 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      */
     protected String getAdminUsersUrl() {
         return new StringBuilder(getServerAddress())
-                .append(router.getReverseRoute(UsersController.class, "users"))
+                .append(reverseRouter.with(UsersController::users))
                 .toString();
     }
 

@@ -15,12 +15,12 @@ class SimpleFishEyeGimpyRenderer implements GimpyRenderer {
     /**
      * Multiplier for algorithm.
      */
-    static final double[] MULTIPLIERS = new double[]{0.2, 0.4d, 0.5d, 0.6d, 0.8d};
+    private static final double[] MULTIPLIERS = new double[]{0.2, 0.4d, 0.5d, 0.6d, 0.8d};
 
     /**
      * Random.
      */
-    static final Random random = new SecureRandom();
+    private static final Random random = new SecureRandom();
 
     @Override
     public void gimp(BufferedImage image) {

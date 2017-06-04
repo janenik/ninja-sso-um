@@ -44,7 +44,7 @@ public class EditPersonalDataController extends
     /**
      * Template.
      */
-    static final String TEMPLATE = "views/sso/admin/users/edit-personal.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/edit-personal.ftl.html";
 
     /**
      * Constructs controller.

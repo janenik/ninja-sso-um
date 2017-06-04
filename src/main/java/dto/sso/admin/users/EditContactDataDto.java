@@ -20,7 +20,7 @@ public final class EditContactDataDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.EMAIL_MIN_LENGTH, max = Constants.EMAIL_MAX_LENGTH)
-    String email;
+    private String email;
 
     /**
      * Phone.
@@ -29,7 +29,7 @@ public final class EditContactDataDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.PHONE_MIN_LENGTH, max = Constants.PHONE_MAX_LENGTH)
-    String phone;
+    private String phone;
 
     /**
      * Country id (ISO code).
@@ -37,7 +37,7 @@ public final class EditContactDataDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = Constants.COUNTRY_ISO_MIN_LENGTH, max = Constants.COUNTRY_ISO_MAX_LENGTH)
-    String countryId;
+    private String countryId;
 
     /**
      * Returns email.

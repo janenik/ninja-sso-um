@@ -20,7 +20,7 @@ public class SignOutController {
     /**
      * Authentication response builder.
      */
-    final Provider<SignInResponseBuilder> responseBuilderProvider;
+    private final Provider<SignInResponseBuilder> responseBuilderProvider;
 
     /**
      * Controller constructor.

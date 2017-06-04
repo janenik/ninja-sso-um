@@ -32,83 +32,83 @@ public class ForgotPasswordTest extends WebDriverTest {
     /**
      * First name for test account.
      */
-    static final String FIRST_NAME = "FirstName";
+    private static final String FIRST_NAME = "FirstName";
 
     /**
      * Last name for test account.
      */
-    static final String LAST_NAME = "LastName";
+    private static final String LAST_NAME = "LastName";
 
     /**
      * Username for test user.
      */
-    static final String USERNAME = "forgotPasswordUser";
+    private static final String USERNAME = "forgotPasswordUser";
 
     /**
      * Password for test user.
      */
-    static final String EMAIL = "forgotPasswordEmail@example.org";
+    private static final String EMAIL = "forgotPasswordEmail@example.org";
 
     /**
      * PHONE for test user.
      */
-    static final String PHONE = "+1 650 999 9999";
+    private static final String PHONE = "+1 650 999 9999";
 
     /**
      * Password for test account.
      */
-    static final String PASSWORD = "wrongPassword";
+    private static final String PASSWORD = "wrongPassword";
 
     /**
      * Password for test account.
      */
-    static final String RESTORED_PASSWORD = "restoredPassword";
+    private static final String RESTORED_PASSWORD = "restoredPassword";
 
     /**
      * Country for test account.
      */
-    static final String COUNTRY_ID = "US";
+    private static final String COUNTRY_ID = "US";
 
     /**
      * Birth year for test account.
      */
-    static final int YEAR = 1988;
+    private static final int YEAR = 1988;
 
     /**
      * Birth month for test account.
      */
-    static final int MONTH = 12;
+    private static final int MONTH = 12;
 
     /**
      * Birth day for test account.
      */
-    static final int DAY_OF_MONTH = 24;
+    private static final int DAY_OF_MONTH = 24;
 
     /**
      * User service.
      */
-    UserService userService;
+    private UserService userService;
 
     /**
      * Country service.
      */
-    CountryService countryService;
+    private CountryService countryService;
 
     /**
      * Email service mock.
      */
-    PostofficeMockImpl emailServiceMock;
+    private PostofficeMockImpl emailServiceMock;
 
 
     /**
      * Captcha token service.
      */
-    CaptchaTokenService captchaTokenService;
+    private CaptchaTokenService captchaTokenService;
 
     /**
      * User to restore password.
      */
-    User user;
+    private User user;
 
     @Before
     public void setUp() {
@@ -168,7 +168,7 @@ public class ForgotPasswordTest extends WebDriverTest {
 
         String url = webDriver.getCurrentUrl();
         assertTrue("Sign in URL expected: " + url,
-                url.contains(router.getReverseRoute(SignInController.class, "signInGet")));
+                url.contains(reverseRouter.with(SignInController::signInGet).build()));
         assertTrue("Sign in URL must contain email state: " + url,
                 url.contains(SignInState.FORGOT_EMAIL_SENT.toString().toLowerCase()));
         assertTrue("Sign in URL must contain correct continue URL: " + url, url.contains("forgot_password_url"));

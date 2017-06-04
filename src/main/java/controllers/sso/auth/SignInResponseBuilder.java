@@ -34,52 +34,52 @@ public class SignInResponseBuilder {
     /**
      * Device authentication policy.
      */
-    final DeviceAuthPolicy deviceAuthPolicy;
+    private final DeviceAuthPolicy deviceAuthPolicy;
 
     /**
      * Policy that defines a way to append auth token to browser's response.
      */
-    final AppendAuthTokenPolicy browserAppendTokenPolicy;
+    private final AppendAuthTokenPolicy browserAppendTokenPolicy;
 
     /**
      * Policy that defines a way to append auth token to standalone application's response.
      */
-    final AppendAuthTokenPolicy applicationAppendTokenPolicy;
+    private final AppendAuthTokenPolicy applicationAppendTokenPolicy;
 
     /**
      * URL builder.
      */
-    final UrlBuilder urlBuilder;
+    private final UrlBuilder urlBuilder;
 
     /**
      * Context.
      */
-    final Context context;
+    private final Context context;
 
     /**
      * Expirable token encryptor.
      */
-    final ExpirableTokenEncryptor encryptor;
+    private final ExpirableTokenEncryptor encryptor;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Application domain.
      */
-    final String domain;
+    private final String domain;
 
     /**
      * Authentication cookie name.
      */
-    final String authCookieName;
+    private final String authCookieName;
 
     /**
      * Whether to force insecure cookie for authentication token in case of browser response.
      */
-    final boolean forceInsecureCookie;
+    private final boolean forceInsecureCookie;
 
     /**
      * Constructs response provider.
@@ -239,8 +239,7 @@ public class SignInResponseBuilder {
                     user.getId(),
                     "role",
                     user.getRole().toString(),
-                    ttl
-            );
+                    ttl);
         } else {
             token = ExpirableToken.newUserToken(ExpirableTokenType.ACCESS, user.getId(), ttl);
         }

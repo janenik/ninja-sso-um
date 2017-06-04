@@ -45,7 +45,7 @@ public class EditContactDataController extends
     /**
      * Template for contact data.
      */
-    static final String TEMPLATE = "views/sso/admin/users/edit-contact.ftl.html";
+    private static final String TEMPLATE = "views/sso/admin/users/edit-contact.ftl.html";
 
     /**
      * Constructs controller.

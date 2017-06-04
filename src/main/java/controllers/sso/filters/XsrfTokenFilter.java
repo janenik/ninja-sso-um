@@ -19,7 +19,8 @@ import javax.inject.Singleton;
 
 /**
  * XSRF token filter: verifies presence of valid XSRF token in POST request during form submission.
- * Must be used after {@link AuthenticationFilter}.
+ * Must be used after {@link AuthenticationFilter}. This application uses own XSRF token mechanism since user identity
+ * may be stored in access token in cookies or URL parameters.
  */
 @Singleton
 public class XsrfTokenFilter implements Filter {
@@ -32,17 +33,17 @@ public class XsrfTokenFilter implements Filter {
     /**
      * Encryptor to extract data from token.
      */
-    final ExpirableTokenEncryptor encryptor;
+    private final ExpirableTokenEncryptor encryptor;
 
     /**
      * URL builder provider to get redirection URL.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Constructs XSRF token filter.

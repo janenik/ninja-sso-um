@@ -30,7 +30,6 @@ import ninja.i18n.Lang;
 import ninja.i18n.Messages;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
-import ninja.validation.FieldViolation;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.dozer.Mapper;
@@ -67,122 +66,122 @@ public class SignUpController {
     /**
      * Template to render sign up page.
      */
-    static final String TEMPLATE = "views/sso/auth/signUp.ftl.html";
+    private static final String TEMPLATE = "views/sso/auth/signUp.ftl.html";
 
     /**
      * Verification email template pattern.
      */
-    static final String EMAIL_VERIFICATION_TEMPLATE = "signUpConfirmation.%s.ftl.html";
+    private static final String EMAIL_VERIFICATION_TEMPLATE = "signUpConfirmation.%s.ftl.html";
 
     /**
      * Welcome email template pattern.
      */
-    static final String EMAIL_WELCOME_TEMPLATE = "signUpWelcome.%s.ftl.html";
+    private static final String EMAIL_WELCOME_TEMPLATE = "signUpWelcome.%s.ftl.html";
 
     /**
      * Empty user DTO for get request. Effectively immutable.
      */
-    static final UserSignUpDto EMPTY_USER = new UserSignUpDto();
+    private static final UserSignUpDto EMPTY_USER = new UserSignUpDto();
 
     /**
      * Secure random.
      */
-    static final Random random = new SecureRandom();
+    private static final Random random = new SecureRandom();
 
     /**
      * Expirable token encryptor.
      */
-    final ExpirableTokenEncryptor expirableTokenEncryptor;
+    private final ExpirableTokenEncryptor expirableTokenEncryptor;
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * User's event service.
      */
-    final UserEventService userEventService;
+    private final UserEventService userEventService;
 
     /**
      * Country service.
      */
-    final CountryService countryService;
+    private final CountryService countryService;
 
     /**
      * DTO mapper.
      */
-    final Mapper dtoMapper;
+    private final Mapper dtoMapper;
 
     /**
      * Email service to send emails with templates.
      */
-    final EmailService emailService;
+    private final EmailService emailService;
 
     /**
      * Captcha token service.
      */
-    final CaptchaTokenService captchaTokenService;
+    private final CaptchaTokenService captchaTokenService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * Html result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    private final Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Language.
      */
-    final Lang lang;
+    private final Lang lang;
 
     /**
      * Application messages.
      */
-    final Messages messages;
+    private final Messages messages;
 
     /**
      * Base URL to application, including scheme, domain and port.
      */
-    final String baseUrl;
+    private final String baseUrl;
 
     /**
      * Minimum registration age.
      */
-    final int minimumRegistrationAge;
+    private final int minimumRegistrationAge;
 
     /**
      * Access token time to live, in millis.
      */
-    final long accessTokenTtl;
+    private final long accessTokenTtl;
 
     /**
      * Email token time to live, in millis.
      */
-    final long emailTokenTtl;
+    private final long emailTokenTtl;
 
     /**
      * Sign up verification token time to live, in millis.
      */
-    final long signUpVerificationTokenTtl;
+    private final long signUpVerificationTokenTtl;
 
     /**
      * Email notification type.
      */
-    final EmailNotificationType emailNotificationType;
+    private final EmailNotificationType emailNotificationType;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Constructs sign up controller.
@@ -366,7 +365,7 @@ public class SignUpController {
      * @param context Web context.
      * @return URL to redirect.
      */
-    String invokePostSignUpActions(User createdUser, Context context) {
+    private String invokePostSignUpActions(User createdUser, Context context) {
         // Make user confirmed in case of no email.
         if (EmailNotificationType.NONE.equals(this.emailNotificationType)) {
             return urlBuilderProvider.get().getSignInUrl(SignInState.SUCCESSFUL_SIGN_UP);
@@ -394,7 +393,7 @@ public class SignUpController {
      * @param field Field to report as an error.
      * @return Sign up response object.
      */
-    Result createResult(UserSignUpDto user, Context context, Validation validation, String field) {
+    private Result createResult(UserSignUpDto user, Context context, Validation validation, String field) {
         validation.addViolation(new ConstraintViolation(field, field, field));
         return createResult(user, context, validation);
     }
@@ -407,7 +406,7 @@ public class SignUpController {
      * @param validation Validation.
      * @return Sign up response object.
      */
-    Result createResult(UserSignUpDto user, Context context, Validation validation) {
+    private Result createResult(UserSignUpDto user, Context context, Validation validation) {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         List<Country> countries = "en".equals(locale) ?
                 countryService.getAllSortedByName() : countryService.getAllSortedByNativeName();
@@ -431,7 +430,7 @@ public class SignUpController {
      * @param result Result.
      * @param context Context.
      */
-    void regenerateCaptchaTokenAndUrl(Result result, Context context) {
+    private void regenerateCaptchaTokenAndUrl(Result result, Context context) {
         String token = captchaTokenService.newCaptchaToken();
         result.render("token", token);
         result.render("captchaUrl", urlBuilderProvider.get().getCaptchaUrl(token));
@@ -442,7 +441,7 @@ public class SignUpController {
      *
      * @return New verification code for tokens.
      */
-    String newVerificationCode() {
+    private String newVerificationCode() {
         return Integer.toString(100000 + random.nextInt(899999));
     }
 
@@ -479,7 +478,7 @@ public class SignUpController {
      * @param verificationCode Optional verification code for confirmation email.
      * @throws MessagingException In case when error happens while creating or sending the email.
      */
-    void sendSignUpNotification(User user, Context context, Optional<String> verificationCode)
+    private void sendSignUpNotification(User user, Context context, Optional<String> verificationCode)
             throws MessagingException {
         String locale = (String) context.getAttribute(LanguageFilter.LANG);
         try {
@@ -522,7 +521,7 @@ public class SignUpController {
      * @param verificationCode Verification code.
      * @return Verification token.
      */
-    ExpirableToken newEmailVerificationToken(User user, String verificationCode) {
+    private ExpirableToken newEmailVerificationToken(User user, String verificationCode) {
         return ExpirableToken.newUserToken(ExpirableTokenType.EMAIL_VERIFICATION, user.getId(),
                 "verificationCode", verificationCode, emailTokenTtl);
     }
@@ -534,7 +533,7 @@ public class SignUpController {
      * @param verificationCode Verification code.
      * @return Sign up page verification token.
      */
-    ExpirableToken newSignUpPageVerificationToken(User user, String verificationCode) {
+    private ExpirableToken newSignUpPageVerificationToken(User user, String verificationCode) {
         return ExpirableToken.newUserToken(ExpirableTokenType.SIGNUP_VERIFICATION, user.getId(),
                 "verificationCode", verificationCode, signUpVerificationTokenTtl);
     }

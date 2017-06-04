@@ -29,19 +29,18 @@ public class UserOrModeratorAdminPageAccessTest extends WebDriverTest {
     /**
      * User service.
      */
-    UserService userService;
+    private UserService userService;
 
     /**
      * Admin users relative URL.
      */
-    String adminUsersRelativeUrl;
+    private String adminUsersRelativeUrl;
 
     @Before
     public void setUp() {
         Injector injector = this.getInjector();
         this.userService = injector.getBinding(UserService.class).getProvider().get();
-
-        this.adminUsersRelativeUrl = router.getReverseRoute(UsersController.class, "users");
+        this.adminUsersRelativeUrl = reverseRouter.with(UsersController::users).build();
     }
 
     @Test
@@ -49,7 +48,7 @@ public class UserOrModeratorAdminPageAccessTest extends WebDriverTest {
         goTo(getAdminUsersUrl());
 
         String url = webDriver.getCurrentUrl();
-        String signInRelativeUrl = router.getReverseRoute(SignInController.class, "signInGet");
+        String signInRelativeUrl = reverseRouter.with(SignInController::signInGet).build();
         String continueParameter = extractParameters(url).get("continue");
         assertTrue("Must be redirected to sign in", url.contains(signInRelativeUrl));
         assertNotNull("Sign in URL must contain continue", continueParameter);

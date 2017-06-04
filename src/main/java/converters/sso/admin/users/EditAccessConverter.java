@@ -18,7 +18,7 @@ public class EditAccessConverter implements Converter<User, EditAccessDto> {
     /**
      * DTO mapper.
      */
-    final Mapper mapper;
+    private final Mapper mapper;
 
     /**
      * Constructs converter.

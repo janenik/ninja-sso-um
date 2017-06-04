@@ -17,25 +17,25 @@ public class UserSignInDto implements Serializable {
      */
     @Size(min = Constants.USERNAME_MIN_LENGTH, max = Constants.USERNAME_MAX_LENGTH)
     @NotNull
-    String emailOrUsername;
+    private String emailOrUsername;
 
     /**
      * Password field.
      */
     @Size(max = Constants.PASSWORD_MAX_LENGTH)
-    String password;
+    private String password;
 
     /**
      * Captcha token.
      */
     @Size(max = Constants.TOKEN_MAX_LENGTH)
-    String captchaToken;
+    private String captchaToken;
 
     /**
      * Captcha code, user input.
      */
     @Size(max = Constants.CAPTCHA_MAX_LENGTH)
-    String captchaCode;
+    private String captchaCode;
 
     /**
      * Returns email or username field.

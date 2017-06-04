@@ -24,7 +24,7 @@ public class ClearEntityManagerFilter implements Filter {
     /**
      * Entity manager provider.
      */
-    final Provider<EntityManager> entityManagerProvider;
+    private final Provider<EntityManager> entityManagerProvider;
 
     /**
      * Constructs the filter.

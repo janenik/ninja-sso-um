@@ -30,47 +30,47 @@ public class CaptchaController {
     /**
      * Captcha token service.
      */
-    final CaptchaTokenService captchaTokenService;
+    private final CaptchaTokenService captchaTokenService;
 
     /**
      * Stub image for expired / wrong captcha tokens.
      */
-    final StubImageRenderable stubImageRenderable;
+    private final StubImageRenderable stubImageRenderable;
 
     /**
      * Fish eye renderer.
      */
-    final SimpleFishEyeGimpyRenderer fishEyeGimpyRenderer;
+    private final SimpleFishEyeGimpyRenderer fishEyeGimpyRenderer;
 
     /**
      * Curved line.
      */
-    final CurvedLineNoiseProducer curvedLineNoiseProducer;
+    private final CurvedLineNoiseProducer curvedLineNoiseProducer;
 
     /**
      * Background.
      */
-    final GradiatedBackgroundProducer background1;
+    private final GradiatedBackgroundProducer background1;
 
     /**
      * Background.
      */
-    final GradiatedBackgroundProducer background2;
+    private final GradiatedBackgroundProducer background2;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Captcha width.
      */
-    final int width;
+    private final int width;
 
     /**
      * Captcha height.
      */
-    final int height;
+    private final int height;
 
     /**
      * Constructs captcha controller.

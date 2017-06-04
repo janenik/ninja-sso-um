@@ -17,7 +17,7 @@ public final class EditAccessDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = 2, max = 50)
-    String role;
+    private String role;
 
     /**
      * User sign-in state as string.
@@ -25,7 +25,7 @@ public final class EditAccessDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = 2, max = 50)
-    String signInState;
+    private String signInState;
 
     /**
      * User confirmation state as string.
@@ -33,7 +33,7 @@ public final class EditAccessDto implements Serializable {
     @NotBlank
     @NotNull
     @Size(min = 2, max = 50)
-    String confirmationState;
+    private String confirmationState;
 
     /**
      * Returns role.

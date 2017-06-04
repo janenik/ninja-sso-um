@@ -46,42 +46,42 @@ public class SignUpVerificationController {
     /**
      * Controller template to render sign up verification page.
      */
-    static final String TEMPLATE = "views/sso/auth/signUpVerification.ftl.html";
+    private static final String TEMPLATE = "views/sso/auth/signUpVerification.ftl.html";
 
     /**
      * Expirable token encryptor.
      */
-    final ExpirableTokenEncryptor expirableTokenEncryptor;
+    private final ExpirableTokenEncryptor expirableTokenEncryptor;
 
     /**
      * User service.
      */
-    final UserService userService;
+    private final UserService userService;
 
     /**
      * URL builder provider for controller. Instance per request.
      */
-    final Provider<UrlBuilder> urlBuilderProvider;
+    private final Provider<UrlBuilder> urlBuilderProvider;
 
     /**
      * HTML result with secure headers.
      */
-    final Provider<Result> htmlWithSecureHeadersProvider;
+    private final Provider<Result> htmlWithSecureHeadersProvider;
 
     /**
      * Counter service.
      */
-    final GenericCounterService counterService;
+    private final GenericCounterService counterService;
 
     /**
      * Application properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Constructs verification controller.
@@ -169,7 +169,7 @@ public class SignUpVerificationController {
     }
 
     /**
-     * Verifies user email: this action is invoked when the user clicks link in email.
+     * Verifies user's email: this action is invoked when the user clicks link in email.
      *
      * @param tokenAsString Code (encrypted user id).
      * @return Result.

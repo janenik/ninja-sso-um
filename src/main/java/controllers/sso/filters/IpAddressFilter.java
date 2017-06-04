@@ -50,22 +50,22 @@ public class IpAddressFilter implements Filter {
     /**
      * Logger.
      */
-    final Logger logger;
+    private final Logger logger;
 
     /**
      * Ninja properties.
      */
-    final NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Proxy IP header name. Value provided in header by frontend server like nginx.
      */
-    final String proxyIpHeaderName;
+    private final String proxyIpHeaderName;
 
     /**
      * Proxy IP header name, lowercased. Value provided in header by frontend server like nginx.
      */
-    final String proxyIpHeaderNameLowerCased;
+    private final String proxyIpHeaderNameLowerCased;
 
     @Inject
     public IpAddressFilter(NinjaProperties properties, Logger logger) {
