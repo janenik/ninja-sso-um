@@ -1,6 +1,5 @@
 package web.sso;
 
-import com.google.common.base.Throwables;
 import com.google.inject.Injector;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.SignInController;
@@ -94,7 +93,7 @@ public class UserOrModeratorAdminPageAccessTest extends WebDriverTest {
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
 
         try {

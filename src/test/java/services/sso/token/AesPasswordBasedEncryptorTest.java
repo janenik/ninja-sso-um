@@ -1,6 +1,5 @@
 package services.sso.token;
 
-import com.google.common.base.Throwables;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -17,10 +16,10 @@ import static org.junit.Assert.assertArrayEquals;
  */
 public class AesPasswordBasedEncryptorTest {
 
-    static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AesPasswordBasedEncryptorTest.class);
 
-    byte[] data;
-    char[] passwordCharacters;
+    private byte[] data;
+    private char[] passwordCharacters;
 
     @Before
     public void setUp() {
@@ -117,8 +116,8 @@ public class AesPasswordBasedEncryptorTest {
                     ee.getMessage(),
                     ee.getCause().getMessage());
             if (keySize <= 128) {
-                // Propagate exception except base case.
-                Throwables.propagate(ee);
+                // Propagate exception in case if basic 128bit encryption is not supported..
+                throw new RuntimeException(ee);
             }
         }
     }
@@ -129,7 +128,7 @@ public class AesPasswordBasedEncryptorTest {
      * @return whether unlimited policy is enabled.
      * @throws NoSuchAlgorithmException Should not happen.
      */
-    static boolean isUnlimitedStrengthCryptographySupported() throws NoSuchAlgorithmException {
+    private static boolean isUnlimitedStrengthCryptographySupported() throws NoSuchAlgorithmException {
         return Cipher.getMaxAllowedKeyLength("AES") > 128;
     }
 }

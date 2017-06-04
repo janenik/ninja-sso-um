@@ -50,12 +50,9 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     /**
      * Using thread local {@link SecureRandom} for efficiency and uniform distribution.
      */
-    private static final ThreadLocal<SecureRandom> secureRandom = new ThreadLocal<SecureRandom>() {
-        @Override
-        protected SecureRandom initialValue() {
-            return new SecureRandom(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
-        }
-    };
+    private static final ThreadLocal<SecureRandom> secureRandom =
+            ThreadLocal.withInitial(() ->
+                    new SecureRandom(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)));
 
     /**
      * Password for encryption.
@@ -95,7 +92,7 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
      * Constructs arbitrary AES PBE with 1024 iterations, salt of 16 bytes and 512 bytes for read buffer.
      *
      * @param password Password.
-     * @param keySize Key size
+     * @param keySize  Key size
      */
     public AesPasswordBasedEncryptor(char[] password, short keySize) {
         this(password, 1024, keySize, (short) 16, 512);
@@ -104,11 +101,11 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     /**
      * Constructs arbitrary AES password based encryptor (PBE).
      *
-     * @param password Password.
+     * @param password           Password.
      * @param passwordIterations Iterations to construct a hash from password.
-     * @param keySize Key size in bits.
-     * @param saltSize Salt size.
-     * @param readBufferSize Read buffer size for encryption/decryption.
+     * @param keySize            Key size in bits.
+     * @param saltSize           Salt size.
+     * @param readBufferSize     Read buffer size for encryption/decryption.
      */
     public AesPasswordBasedEncryptor(char[] password, int passwordIterations, short keySize, short saltSize,
                                      int readBufferSize) {
@@ -235,10 +232,10 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
         /**
          * Constructs key spec and with generated salt of given size.
          *
-         * @param password Password for key.
+         * @param password           Password for key.
          * @param passwordIterations Number of iterations to use for building safe hash.
-         * @param keyLength Key length (128, 192 or 256).
-         * @param saltSize Salt size.
+         * @param keyLength          Key length (128, 192 or 256).
+         * @param saltSize           Salt size.
          * @throws EncryptionException Exception in case of key building.
          */
         public KeySpecAndSalt(char[] password, int passwordIterations, short keyLength, short saltSize)
@@ -259,10 +256,10 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
         /**
          * Constructs key spec with given salt.
          *
-         * @param password Password for key.
+         * @param password           Password for key.
          * @param passwordIterations Number of iterations to use for building safe hash.
-         * @param keyLength Key length (128, 192 or 256).
-         * @param salt Salt.
+         * @param keyLength          Key length (128, 192 or 256).
+         * @param salt               Salt.
          * @throws DecryptionException Exception in case of key building.
          */
         public KeySpecAndSalt(char[] password, int passwordIterations, short keyLength, byte[] salt)
