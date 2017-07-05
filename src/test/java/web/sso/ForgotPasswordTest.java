@@ -15,6 +15,7 @@ import org.openqa.selenium.By;
 import services.sso.CaptchaTokenService;
 import services.sso.CountryService;
 import services.sso.UserService;
+import web.sso.common.WebDriverTest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -152,17 +153,14 @@ public class ForgotPasswordTest extends WebDriverTest {
         assertNotNull("Error notification exists.", webDriver.findElement(By.className("alert-danger")));
 
         // Fix form errors.
-        getFormElement("emailOrUsername").clear();
-        getFormElement("emailOrUsername").sendKeys(USERNAME);
+        setFormElementValue("emailOrUsername", USERNAME);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "forgotPassword";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
 
-        getFormElement("captchaCode").clear();
-        getFormElement("captchaCode").sendKeys(captchaWord);
-        getFormElement("captchaToken").clear();
-        getFormElement("captchaToken").sendKeys(captchaToken);
+        setFormElementValue("captchaCode", captchaWord);
+        setFormElementValue("captchaToken", captchaToken);
 
         click("#forgotSubmit");
 
@@ -187,11 +185,8 @@ public class ForgotPasswordTest extends WebDriverTest {
         assertTrue("No error notification.", webDriver.findElements(By.className("alert-danger")).isEmpty());
 
         // Enter new password.
-        getFormElement("password").clear();
-        getFormElement("password").sendKeys(RESTORED_PASSWORD);
-
-        getFormElement("confirmPassword").clear();
-        getFormElement("confirmPassword").sendKeys(RESTORED_PASSWORD);
+        setFormElementValue("password", RESTORED_PASSWORD);
+        setFormElementValue("confirmPassword", RESTORED_PASSWORD);
 
         click("#restorePasswordSubmit");
 

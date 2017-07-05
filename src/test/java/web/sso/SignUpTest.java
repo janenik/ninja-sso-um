@@ -16,6 +16,7 @@ import org.openqa.selenium.By;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
+import web.sso.common.WebDriverTest;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -137,10 +138,8 @@ public class SignUpTest extends WebDriverTest {
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
         assertEquals(captchaWord, captchaTokenService.extractCaptchaText(captchaToken));
 
-        getFormElement("captchaCode").clear();
-        getFormElement("captchaCode").sendKeys(captchaWord);
-        getFormElement("token").clear();
-        getFormElement("token").sendKeys(captchaToken);
+        setFormElementValue("captchaCode", captchaWord);
+        setFormElementValue("token", captchaToken);
 
         if (!getFormElement("agreement").isSelected()) {
             click("#agreement");
@@ -195,26 +194,25 @@ public class SignUpTest extends WebDriverTest {
      * Fills in form data, omitting captcha code and agreement.
      */
     private void fillSignUpFormWithoutCaptchaCodeAndAgreement() {
-        getFormElement("firstName").sendKeys(FIRST_NAME);
-        getFormElement("lastName").sendKeys(LAST_NAME);
+        setFormElementValue("firstName", FIRST_NAME);
+        setFormElementValue("lastName", LAST_NAME);
 
-        getFormElement("birthMonth").sendKeys(Integer.toString(MONTH));
-        getFormElement("birthDay").sendKeys(Integer.toString(DAY_OF_MONTH));
-        getFormElement("birthYear").sendKeys(Integer.toString(YEAR));
+        setFormElementValue("birthMonth", Integer.toString(MONTH));
+        setFormElementValue("birthDay", Integer.toString(DAY_OF_MONTH));
+        setFormElementValue("birthYear", Integer.toString(YEAR));
 
-        getFormElement("username").sendKeys(USERNAME);
+        setFormElementValue("username", USERNAME);
 
-        getFormElement("gender").sendKeys(UserGender.FEMALE.toString());
+        setFormElementValue("gender", UserGender.FEMALE.toString());
 
-        getFormElement("email").sendKeys(EMAIL);
-        getFormElement("password").sendKeys(PASSWORD);
-        getFormElement("passwordRepeat").sendKeys(PASSWORD);
+        setFormElementValue("email", EMAIL);
+        setFormElementValue("password", PASSWORD);
+        setFormElementValue("passwordRepeat", PASSWORD);
 
-        getFormElement("countryId").sendKeys(COUNTRY_ID);
-        getFormElement("phone").sendKeys(PHONE);
+        setFormElementValue("countryId", COUNTRY_ID);
+        setFormElementValue("phone", PHONE);
 
-        getFormElement("captchaCode").clear();
-        getFormElement("captchaCode").sendKeys("@@@@@");
+        setFormElementValue("captchaCode", "@@@@@");
     }
 
 

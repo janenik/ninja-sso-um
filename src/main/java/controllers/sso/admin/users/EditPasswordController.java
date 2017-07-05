@@ -153,6 +153,10 @@ public class EditPasswordController {
         userService.updatePassword(user, newPassword);
         userEventService.onUserPasswordUpdate(admin, user, oldSalt, oldHash, ip, context.getHeaders());
 
+        if (!userService.isValidPassword(user, newPassword)) {
+            throw new IllegalStateException("RE_READING FAILURE?");
+        }
+
         flashScope.success(PASSWORD_CHANGED_MESSAGE);
         return Controllers.redirect(urlBuilderProvider.get().getAdminEditPasswordUrl(userId, query, page));
     }

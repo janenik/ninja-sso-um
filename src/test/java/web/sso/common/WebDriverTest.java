@@ -1,7 +1,10 @@
-package web.sso;
+package web.sso.common;
 
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+import controllers.sso.admin.users.EditAccessController;
+import controllers.sso.admin.users.EditContactDataController;
+import controllers.sso.admin.users.EditPersonalDataController;
 import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
@@ -28,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Abstract class with common data members and methods for all SSO tests.
  */
-abstract class WebDriverTest extends NinjaFluentLeniumTest {
+public abstract class WebDriverTest extends NinjaFluentLeniumTest {
 
     /**
      * Entity manager provider.
@@ -86,6 +89,22 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
      */
     protected WebElement getFormElement(String name) {
         return webDriver.findElement(By.name(name));
+    }
+
+    /**
+     * Returns form element by name.
+     *
+     * @param name Name of the element.
+     * @return Web element on the page.
+     */
+    protected WebElement setFormElementValue(String name, String value) {
+        WebElement element = getFormElement(name);
+        if (element == null) {
+            throw new IllegalArgumentException("Form element with name " + name + " was not found.");
+        }
+        element.clear();
+        element.sendKeys(value);
+        return element;
     }
 
     /**
@@ -164,17 +183,6 @@ abstract class WebDriverTest extends NinjaFluentLeniumTest {
                 .append(reverseRouter.with(RestorePasswordController::restorePasswordGet))
                 .append("?restoreToken=")
                 .append(Escapers.encodePercent(restorePasswordToken))
-                .toString();
-    }
-
-    /**
-     * Returns administrator users page,
-     *
-     * @return Admin users list URL.
-     */
-    protected String getAdminUsersUrl() {
-        return new StringBuilder(getServerAddress())
-                .append(reverseRouter.with(UsersController::users))
                 .toString();
     }
 

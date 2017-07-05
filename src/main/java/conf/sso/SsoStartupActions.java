@@ -62,14 +62,11 @@ public class SsoStartupActions {
 
 
     @Start(order = 100)
-    public void addDataForDevAndTest() {
-        if (properties.isProd()) {
-            return;
-        }
-
+    public void addRequiredData() {
         EntityManager em = entityManagerProvider.get();
         EntityTransaction transaction = em.getTransaction();
 
+        logger.info("Checking required data...");
         try {
             transaction.begin();
 
@@ -85,13 +82,14 @@ public class SsoStartupActions {
                 createNewRootUser(country);
             }
 
-            // Create demo users if needed.
+            // Create demo users if not in production.
             createDemoUsersForTestAndDev(country, root != null);
 
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
         }
+        logger.info("Checking required data: done.");
     }
 
     /***
@@ -118,13 +116,13 @@ public class SsoStartupActions {
         root.confirm();
 
         String defaultPassword = get.apply("application.root.defaultPassword", "+1 650-999-9999");
-        return userService.createNew(root,defaultPassword);
+        return userService.createNew(root, defaultPassword);
     }
 
     /**
      * Creates demo users for test and development environment.
      *
-     * @param country Country.
+     * @param country     Country.
      * @param rootExisted Whether the root existed prior this application start.
      */
     private void createDemoUsersForTestAndDev(Country country, boolean rootExisted) {

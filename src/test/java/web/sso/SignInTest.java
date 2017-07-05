@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import services.sso.CaptchaTokenService;
+import web.sso.common.WebDriverTest;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -48,8 +49,8 @@ public class SignInTest extends WebDriverTest {
         assertTrue("No success notifications.", webDriver.findElements(By.className("alert-success")).isEmpty());
         assertTrue("No captcha with the first hit.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
-        getFormElement("emailOrUsername").sendKeys("email@nowhere.org");
-        getFormElement("password").sendKeys("wrongPassword");
+        setFormElementValue("emailOrUsername", "email@nowhere.org");
+        setFormElementValue("password", "wrongPassword");
 
         click("#signInSubmit");
 
@@ -61,8 +62,8 @@ public class SignInTest extends WebDriverTest {
         assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
         // Apply existing user.
-        getFormElement("emailOrUsername").sendKeys("root");
-        getFormElement("password").sendKeys(rootPassword);
+        setFormElementValue("emailOrUsername", "root");
+        setFormElementValue("password", rootPassword);
 
         click("#signInSubmit");
 
@@ -80,24 +81,22 @@ public class SignInTest extends WebDriverTest {
         for (int i = 0; i < numberOfSafeRequests; i++) {
             goTo(getSignInUrl());
         }
-        String signInUrl = getSignInUrl(getServerAddress() + "?successful_sign_in=true", null);
+        String signInUrl = getSignInUrl(getServerAddress() + "?successful_sign_in=true", "");
         goTo(signInUrl);
 
         assertTrue("No error notification.", webDriver.findElements(By.className("alert-danger")).isEmpty());
         assertTrue("No success notifications.", webDriver.findElements(By.className("alert-success")).isEmpty());
 
         // Apply existing user.
-        getFormElement("emailOrUsername").sendKeys("root");
-        getFormElement("password").sendKeys(rootPassword);
+        setFormElementValue("emailOrUsername", "root");
+        setFormElementValue("password", rootPassword);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "captchaSecret393";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
 
-        getFormElement("captchaCode").clear();
-        getFormElement("captchaCode").sendKeys(captchaWord);
-        getFormElement("captchaToken").clear();
-        getFormElement("captchaToken").sendKeys(captchaToken);
+        setFormElementValue("captchaCode", captchaWord);
+        setFormElementValue("captchaToken", captchaToken);
 
         click("#signInSubmit");
 
