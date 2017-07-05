@@ -120,7 +120,7 @@ public class SignUpTest extends WebDriverTest {
 
         fillSignUpFormWithoutCaptchaCodeAndAgreement();
 
-        if (!getFormElement("agreement").isSelected()) {
+        if (!getFormInput("agreement").isSelected()) {
             click("#agreement");
         }
 
@@ -138,10 +138,10 @@ public class SignUpTest extends WebDriverTest {
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
         assertEquals(captchaWord, captchaTokenService.extractCaptchaText(captchaToken));
 
-        setFormElementValue("captchaCode", captchaWord);
-        setFormElementValue("token", captchaToken);
+        setFormInputValue("captchaCode", captchaWord);
+        setFormInputValue("token", captchaToken);
 
-        if (!getFormElement("agreement").isSelected()) {
+        if (!getFormInput("agreement").isSelected()) {
             click("#agreement");
         }
 
@@ -169,7 +169,7 @@ public class SignUpTest extends WebDriverTest {
         String verificationCode = token.getAttributeValue("verificationCode");
         assertNotNull("Verification code is expected in token.", verificationCode);
 
-        getFormElement("verificationCode").sendKeys(verificationCode);
+        getFormInput("verificationCode").sendKeys(verificationCode);
         click("#verifySignUpSubmit");
 
         // Verify that the browser has opened sign in form and the URL has valid continue parameter..
@@ -194,25 +194,25 @@ public class SignUpTest extends WebDriverTest {
      * Fills in form data, omitting captcha code and agreement.
      */
     private void fillSignUpFormWithoutCaptchaCodeAndAgreement() {
-        setFormElementValue("firstName", FIRST_NAME);
-        setFormElementValue("lastName", LAST_NAME);
+        setFormInputValue("firstName", FIRST_NAME);
+        setFormInputValue("lastName", LAST_NAME);
 
-        setFormElementValue("birthMonth", Integer.toString(MONTH));
-        setFormElementValue("birthDay", Integer.toString(DAY_OF_MONTH));
-        setFormElementValue("birthYear", Integer.toString(YEAR));
+        setFormInputValue("birthMonth", Integer.toString(MONTH));
+        setFormInputValue("birthDay", Integer.toString(DAY_OF_MONTH));
+        setFormInputValue("birthYear", Integer.toString(YEAR));
 
-        setFormElementValue("username", USERNAME);
+        setFormInputValue("username", USERNAME);
 
-        setFormElementValue("gender", UserGender.FEMALE.toString());
+        setFormInputValue("gender", UserGender.FEMALE.toString());
 
-        setFormElementValue("email", EMAIL);
-        setFormElementValue("password", PASSWORD);
-        setFormElementValue("passwordRepeat", PASSWORD);
+        setFormInputValue("email", EMAIL);
+        setFormInputValue("password", PASSWORD);
+        setFormInputValue("passwordRepeat", PASSWORD);
 
-        setFormElementValue("countryId", COUNTRY_ID);
-        setFormElementValue("phone", PHONE);
+        setFormInputValue("countryId", COUNTRY_ID);
+        setFormInputValue("phone", PHONE);
 
-        setFormElementValue("captchaCode", "@@@@@");
+        setFormInputValue("captchaCode", "@@@@@");
     }
 
 
@@ -220,23 +220,23 @@ public class SignUpTest extends WebDriverTest {
      * Verifies that current sign up form values are preserved in case of error after submit.
      */
     private void verifyFormValuesPreserved() {
-        assertEquals("First name must be preserved.", FIRST_NAME, getFormElementValue("firstName"));
-        assertEquals("Last name must be preserved.", LAST_NAME, getFormElementValue("lastName"));
+        assertEquals("First name must be preserved.", FIRST_NAME, getFormInputValue("firstName"));
+        assertEquals("Last name must be preserved.", LAST_NAME, getFormInputValue("lastName"));
 
-        assertEquals("Gender must be preserved.", UserGender.FEMALE.toString(), getFormElementValue("gender"));
+        assertEquals("Gender must be preserved.", UserGender.FEMALE.toString(), getFormInputValue("gender"));
 
-        assertEquals("Birth day must be preserved.", Integer.toString(MONTH), getFormElementValue("birthMonth"));
-        assertEquals("Birth month must be preserved.", Integer.toString(DAY_OF_MONTH), getFormElementValue("birthDay"));
-        assertEquals("Birth year must be preserved.", Integer.toString(YEAR), getFormElementValue("birthYear"));
+        assertEquals("Birth day must be preserved.", Integer.toString(MONTH), getFormInputValue("birthMonth"));
+        assertEquals("Birth month must be preserved.", Integer.toString(DAY_OF_MONTH), getFormInputValue("birthDay"));
+        assertEquals("Birth year must be preserved.", Integer.toString(YEAR), getFormInputValue("birthYear"));
 
-        assertEquals("Username must be preserved.", USERNAME, getFormElementValue("username"));
+        assertEquals("Username must be preserved.", USERNAME, getFormInputValue("username"));
 
-        assertEquals("Country must be preserved.", COUNTRY_ID, getFormElementValue("countryId"));
-        assertEquals("Phone must be preserved.", PHONE, getFormElementValue("phone"));
-        assertEquals("Email must be preserved.", EMAIL, getFormElementValue("email"));
+        assertEquals("Country must be preserved.", COUNTRY_ID, getFormInputValue("countryId"));
+        assertEquals("Phone must be preserved.", PHONE, getFormInputValue("phone"));
+        assertEquals("Email must be preserved.", EMAIL, getFormInputValue("email"));
 
-        assertEquals("Password must be preserved.", PASSWORD, getFormElementValue("password"));
-        assertEquals("Password must be preserved.", PASSWORD, getFormElementValue("passwordRepeat"));
+        assertEquals("Password must be preserved.", PASSWORD, getFormInputValue("password"));
+        assertEquals("Password must be preserved.", PASSWORD, getFormInputValue("passwordRepeat"));
     }
 
     /**

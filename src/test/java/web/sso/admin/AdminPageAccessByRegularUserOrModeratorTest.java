@@ -77,8 +77,8 @@ public class AdminPageAccessByRegularUserOrModeratorTest extends AdminWebDriverT
         assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
         // Apply existing user.
-        getFormElement("emailOrUsername").sendKeys(username);
-        getFormElement("password").sendKeys(password);
+        getFormInput("emailOrUsername").sendKeys(username);
+        getFormInput("password").sendKeys(password);
 
         click("#signInSubmit");
 
@@ -117,8 +117,8 @@ public class AdminPageAccessByRegularUserOrModeratorTest extends AdminWebDriverT
             assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
             // Apply existing user.
-            getFormElement("emailOrUsername").sendKeys(username);
-            getFormElement("password").sendKeys(password);
+            getFormInput("emailOrUsername").sendKeys(username);
+            getFormInput("password").sendKeys(password);
 
             click("#signInSubmit");
 

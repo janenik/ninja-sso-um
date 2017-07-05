@@ -125,14 +125,14 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
 
         // Update data.
         String expectedFirstName = user.firstName + "_edited";
-        setFormElementValue("firstName", expectedFirstName);
+        setFormInputValue("firstName", expectedFirstName);
 
         submitButton.click();
 
         // Reload and re-read the updated first name.
         goTo(getAdminPersonalDataPageUrl(user.id));
 
-        String updatedFirstName = getFormElementValue("firstName");
+        String updatedFirstName = getFormInputValue("firstName");
         assertEquals("First name must be updated.", updatedFirstName, expectedFirstName);
     }
 
@@ -149,14 +149,14 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
 
         // Update data.
         String expectedEmail = "edited_" + user.email;
-        setFormElementValue("email", expectedEmail);
+        setFormInputValue("email", expectedEmail);
 
         submitButton.click();
 
         // Reload and re-read the updated email.
         goTo(getAdminContactDataPageUrl(user.id));
 
-        String updatedFirstName = getFormElementValue("email");
+        String updatedFirstName = getFormInputValue("email");
         assertEquals("First name must be updated.", updatedFirstName, expectedEmail);
     }
 
@@ -171,9 +171,9 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
         WebElement submitButton = webDriver.findElement(By.id("editRoleSubmit"));
         assertNotNull("Access page with submit button expected.", submitButton);
 
-        String currentRole = getFormElementValue("role");
-        String currentSignInState = getFormElementValue("signInState");
-        String currentConfirmationState = getFormElementValue("confirmationState");
+        String currentRole = getFormInputValue("role");
+        String currentSignInState = getFormInputValue("signInState");
+        String currentConfirmationState = getFormInputValue("confirmationState");
 
         assertEquals("Test user role is expected to be USER.", UserRole.USER.name(), currentRole);
         assertEquals("Test user sign in state is expected to be ENABLED.",
@@ -182,17 +182,17 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
                 UserConfirmationState.CONFIRMED.name(), currentConfirmationState);
 
         // Update data.
-        setFormElementValue("role", UserRole.MODERATOR.name());
-        setFormElementValue("signInState", UserSignInState.DISABLED.name());
+        setFormInputValue("role", UserRole.MODERATOR.name());
+        setFormInputValue("signInState", UserSignInState.DISABLED.name());
 
         submitButton.click();
 
         // Reload and re-read the updated data.
         goTo(getAdminAccessPageUrl(user.id));
 
-        String updatedRole = getFormElementValue("role");
-        String updatedSignInState = getFormElementValue("signInState");
-        String updatedConfirmationState = getFormElementValue("confirmationState");
+        String updatedRole = getFormInputValue("role");
+        String updatedSignInState = getFormInputValue("signInState");
+        String updatedConfirmationState = getFormInputValue("confirmationState");
 
         assertEquals("Updated test user role is expected to be USER.", UserRole.MODERATOR.name(), updatedRole);
         assertEquals("Updated test user sign in state is expected to be ENABLED.",
@@ -220,8 +220,8 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
         assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
         // Apply existing user.
-        getFormElement("emailOrUsername").sendKeys(username);
-        getFormElement("password").sendKeys(password);
+        getFormInput("emailOrUsername").sendKeys(username);
+        getFormInput("password").sendKeys(password);
 
         click("#signInSubmit");
 

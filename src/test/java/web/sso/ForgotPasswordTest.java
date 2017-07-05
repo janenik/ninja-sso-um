@@ -145,22 +145,22 @@ public class ForgotPasswordTest extends WebDriverTest {
         String forgotPasswordUrl = getForgotPasswordUrl(getServerAddress() + "?forgot_password_url=true");
         goTo(forgotPasswordUrl);
 
-        getFormElement("emailOrUsername").sendKeys(USERNAME + "_DOESNT_EXIST");
-        getFormElement("captchaCode").sendKeys("WRONG_CAPTCHA");
+        getFormInput("emailOrUsername").sendKeys(USERNAME + "_DOESNT_EXIST");
+        getFormInput("captchaCode").sendKeys("WRONG_CAPTCHA");
 
         click("#forgotSubmit");
 
         assertNotNull("Error notification exists.", webDriver.findElement(By.className("alert-danger")));
 
         // Fix form errors.
-        setFormElementValue("emailOrUsername", USERNAME);
+        setFormInputValue("emailOrUsername", USERNAME);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "forgotPassword";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
 
-        setFormElementValue("captchaCode", captchaWord);
-        setFormElementValue("captchaToken", captchaToken);
+        setFormInputValue("captchaCode", captchaWord);
+        setFormInputValue("captchaToken", captchaToken);
 
         click("#forgotSubmit");
 
@@ -185,8 +185,8 @@ public class ForgotPasswordTest extends WebDriverTest {
         assertTrue("No error notification.", webDriver.findElements(By.className("alert-danger")).isEmpty());
 
         // Enter new password.
-        setFormElementValue("password", RESTORED_PASSWORD);
-        setFormElementValue("confirmPassword", RESTORED_PASSWORD);
+        setFormInputValue("password", RESTORED_PASSWORD);
+        setFormInputValue("confirmPassword", RESTORED_PASSWORD);
 
         click("#restorePasswordSubmit");
 

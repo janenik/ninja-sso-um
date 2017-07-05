@@ -2,10 +2,6 @@ package web.sso.common;
 
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import controllers.sso.admin.users.EditAccessController;
-import controllers.sso.admin.users.EditContactDataController;
-import controllers.sso.admin.users.EditPersonalDataController;
-import controllers.sso.admin.users.UsersController;
 import controllers.sso.auth.ForgotPasswordController;
 import controllers.sso.auth.RestorePasswordController;
 import controllers.sso.auth.SignInController;
@@ -72,33 +68,34 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
     }
 
     /**
+     * Returns form element by name.
+     *
+     * @param name Name of the element.
+     * @return Web element on the page.
+     */
+    protected WebElement getFormInput(String name) {
+        return webDriver.findElement(By.name(name));
+    }
+
+    /**
      * Returns form element value by name.
      *
      * @param name Name of the element.
      * @return Form element value.
      */
-    protected String getFormElementValue(String name) {
-        return getFormElement(name).getAttribute("value");
+    protected String getFormInputValue(String name) {
+        return getFormInput(name).getAttribute("value");
     }
 
     /**
-     * Returns form element by name.
+     * Sets value for form input by its name. Returns form input.
      *
-     * @param name Name of the element.
+     * @param name  Name of the element.
+     * @param value Value.
      * @return Web element on the page.
      */
-    protected WebElement getFormElement(String name) {
-        return webDriver.findElement(By.name(name));
-    }
-
-    /**
-     * Returns form element by name.
-     *
-     * @param name Name of the element.
-     * @return Web element on the page.
-     */
-    protected WebElement setFormElementValue(String name, String value) {
-        WebElement element = getFormElement(name);
+    protected WebElement setFormInputValue(String name, String value) {
+        WebElement element = getFormInput(name);
         if (element == null) {
             throw new IllegalArgumentException("Form element with name " + name + " was not found.");
         }

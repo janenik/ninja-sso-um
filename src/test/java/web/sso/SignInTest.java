@@ -49,8 +49,8 @@ public class SignInTest extends WebDriverTest {
         assertTrue("No success notifications.", webDriver.findElements(By.className("alert-success")).isEmpty());
         assertTrue("No captcha with the first hit.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
-        setFormElementValue("emailOrUsername", "email@nowhere.org");
-        setFormElementValue("password", "wrongPassword");
+        setFormInputValue("emailOrUsername", "email@nowhere.org");
+        setFormInputValue("password", "wrongPassword");
 
         click("#signInSubmit");
 
@@ -62,8 +62,8 @@ public class SignInTest extends WebDriverTest {
         assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
         // Apply existing user.
-        setFormElementValue("emailOrUsername", "root");
-        setFormElementValue("password", rootPassword);
+        setFormInputValue("emailOrUsername", "root");
+        setFormInputValue("password", rootPassword);
 
         click("#signInSubmit");
 
@@ -88,15 +88,15 @@ public class SignInTest extends WebDriverTest {
         assertTrue("No success notifications.", webDriver.findElements(By.className("alert-success")).isEmpty());
 
         // Apply existing user.
-        setFormElementValue("emailOrUsername", "root");
-        setFormElementValue("password", rootPassword);
+        setFormInputValue("emailOrUsername", "root");
+        setFormInputValue("password", rootPassword);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "captchaSecret393";
         String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
 
-        setFormElementValue("captchaCode", captchaWord);
-        setFormElementValue("captchaToken", captchaToken);
+        setFormInputValue("captchaCode", captchaWord);
+        setFormInputValue("captchaToken", captchaToken);
 
         click("#signInSubmit");
 
