@@ -287,8 +287,7 @@ public class UserService implements Paginatable<User> {
      * @return Credentials for given user.
      */
     public UserCredentials getCredentials(long userId) {
-        UserCredentials credentials = entityManagerProvider.get().find(UserCredentials.class, userId);
-        return credentials;
+        return entityManagerProvider.get().find(UserCredentials.class, userId);
     }
 
     @Override

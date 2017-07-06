@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import services.sso.UserService;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
         performPersonalDataPageTest(userToEdit);
         performContactDataPageTest(userToEdit);
         performAccessPageTest(userToEdit);
+        performResetPasswordPageTest(userToEdit);
     }
 
     /**
@@ -199,6 +201,36 @@ public class AdminPageAccessByAdminTest extends AdminWebDriverTest {
                 UserSignInState.DISABLED.name(), updatedSignInState);
         assertEquals("Updated test user confirmation state is expected to be CONFIRMED.",
                 UserConfirmationState.CONFIRMED.name(), updatedConfirmationState);
+    }
+
+    /**
+     * Performs reset password page test.
+     *
+     * @param user User to edit.
+     */
+    private void performResetPasswordPageTest(TableUser user) {
+        goTo(getAdminResetPasswordPageUrl(user.id));
+
+        WebElement submitButton = webDriver.findElement(By.id("restorePasswordSubmit"));
+        assertNotNull("Reset password page with submit button expected.", submitButton);
+
+        String expectedPassword = "testPasswordFor" + user.email;
+        setFormInputValue("password", expectedPassword);
+        setFormInputValue("confirmPassword", expectedPassword);
+
+        submitButton.click();
+
+        EntityManager em = entityManagerProvider.get();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            // Make sure credentials are read from DB, not cached in persistent context.
+            em.detach(userService.getCredentials(user.id));
+            assertTrue("Updated password is expected to be correct.",
+                    userService.isValidPassword(userService.get(user.id), expectedPassword));
+        } finally {
+            transaction.commit();
+        }
     }
 
     /**
