@@ -7,8 +7,10 @@ import com.google.inject.Provides;
 import controllers.annotations.AllowedContinueUrls;
 import controllers.annotations.ApplicationPolicy;
 import controllers.annotations.BrowserPolicy;
+import services.sso.annotations.entitiestopreload.PreloadedCountries;
 import controllers.sso.auth.policy.AppendAuthTokenPolicy;
 import controllers.sso.auth.policy.DeviceAuthPolicy;
+import models.sso.Country;
 import ninja.utils.NinjaProperties;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
@@ -31,11 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,6 +49,21 @@ public class SsoModule extends AbstractModule {
      * Exclusion dictionaries directory.
      */
     private static final String EXCLUSION_DICTIONARIES_DIRECTORY = "dictionaries";
+
+    /**
+     * Entities to preload directory.
+     */
+    private static final String ENTITIES_TO_PRELOAD_DIRECTORY = "entitiestopreload";
+
+    /**
+     * CSV filename with countries.
+     */
+    private static final String COUNTRIES_CSV = "countries.csv";
+
+    /**
+     * CSV split regular expression.
+     */
+    private static final String CSV_SPLIT_REGEXP = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
     @Override
     protected void configure() {
@@ -108,7 +121,7 @@ public class SsoModule extends AbstractModule {
      * Provides device authorization policy (how to pass authentication tokens to browser and mobile devices).
      *
      * @param properties Properties.
-     * @param logger Logger.
+     * @param logger     Logger.
      * @return Device authentication policy.
      */
     @Provides
@@ -128,7 +141,7 @@ public class SsoModule extends AbstractModule {
      * Provides browser append token policy.
      *
      * @param properties Properties.
-     * @param logger Logger.
+     * @param logger     Logger.
      * @return Desktop append token policy.
      */
     @Provides
@@ -150,7 +163,7 @@ public class SsoModule extends AbstractModule {
      * Provides standalone application append token policy.
      *
      * @param properties Properties.
-     * @param logger Logger.
+     * @param logger     Logger.
      * @return Application append token policy.
      */
     @Provides
@@ -185,7 +198,7 @@ public class SsoModule extends AbstractModule {
      *
      * @param dictionary All exclusion dictionary.
      * @param properties Application properties.
-     * @param logger Logger.
+     * @param logger     Logger.
      * @return A set of exclusion keywords.
      */
     @Provides
@@ -208,6 +221,46 @@ public class SsoModule extends AbstractModule {
         }
         logger.info("Exclusion substrings set contains {} substrings.", exclusionSubstrings.size());
         return Collections.unmodifiableSet(exclusionSubstrings);
+    }
+
+    /**
+     * Preloads countries from csv.
+     *
+     * @param properties Application properties.
+     * @param logger     Logger.
+     * @return Preloaded countries.
+     */
+    @Provides
+    @PreloadedCountries
+    @Singleton
+    List<Country> providePreloadedCountries(
+            NinjaProperties properties,
+            Logger logger) throws IOException {
+        logger.info("Reading countries from CSV...");
+        Optional<String> csvFile = getResourceWithSubpath(ENTITIES_TO_PRELOAD_DIRECTORY + '/' + COUNTRIES_CSV, logger);
+        List<Country> countries;
+        if (!csvFile.isPresent()) {
+            countries = Collections.emptyList();
+        } else {
+            countries = new ArrayList<>(300);
+            int index = 0;
+            for (String line : getResourceLines(csvFile.get(), logger)) {
+                if (index++ == 0) {
+                    continue;
+                }
+                String[] tokens = line.split(CSV_SPLIT_REGEXP);
+                countries.add(
+                        new Country(
+                                tokens[0],
+                                tokens[1],
+                                tokens[2],
+                                tokens[3],
+                                tokens[4].isEmpty() ? null : Integer.valueOf(tokens[4]),
+                                Integer.valueOf(tokens[5])));
+            }
+        }
+        logger.info("Read {} countries ('{}' file exists: {}).", countries.size(), COUNTRIES_CSV, csvFile.isPresent());
+        return Collections.unmodifiableList(countries);
     }
 
     /**
@@ -235,7 +288,7 @@ public class SsoModule extends AbstractModule {
      * Excludes lines that start with '#' character.
      *
      * @param resource Resource to read.
-     * @param logger Logger.
+     * @param logger   Logger.
      * @return List of lines from resource.
      */
     private static List<String> getResourceLines(String resource, Logger logger) {
@@ -277,7 +330,7 @@ public class SsoModule extends AbstractModule {
      * Reads resources which contain sub path.
      *
      * @param subPath Resource sub path to search for.
-     * @param logger Logger.
+     * @param logger  Logger.
      * @return Resources with given sub path..
      */
     private static List<String> getResourcesWithSubpath(String subPath, Logger logger) {
@@ -285,10 +338,25 @@ public class SsoModule extends AbstractModule {
     }
 
     /**
+     * Reads the first resource which contain sub path.
+     *
+     * @param subPath Resource sub path to search for.
+     * @param logger  Logger.
+     * @return The first resources with given sub path..
+     */
+    private static Optional<String> getResourceWithSubpath(String subPath, Logger logger) {
+        List<String> resources = getResourcesWithSubpath(subPath, logger);
+        if (resources.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(resources.get(0));
+    }
+
+    /**
      * Reads resources for current module.
      *
      * @param predicate Predicate for entries' tests.
-     * @param logger Logger.
+     * @param logger    Logger.
      * @return List of module resources.
      */
     private static List<String> getModuleResources(Predicate<String> predicate, Logger logger) {

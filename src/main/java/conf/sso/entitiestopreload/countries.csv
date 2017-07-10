@@ -1,0 +1,237 @@
+iso,iso3,name,nativename,numcode,phonecode
+KH,KHM,Cambodia,កម្ពុជា,116,855
+AF,AFG,Afghanistan,افغانستان,4,93
+AL,ALB,Albania,Shqipëria,8,355
+DZ,DZA,Algeria,الجزائر,12,213
+AS,ASM,American Samoa,Amerika Sāmoa,16,1684
+AD,AND,Andorra,Andorra,20,376
+AO,AGO,Angola,Angola,24,244
+AI,AIA,Anguilla,Anguilla,660,1264
+AG,ATG,Antigua and Barbuda,Antigua and Barbuda,28,1268
+AR,ARG,Argentina,Argentina,32,54
+AM,ARM,Armenia,Հայաստան,51,374
+AW,ABW,Aruba,Aruba,533,297
+AU,AUS,Australia,Australia,36,61
+AT,AUT,Austria,Österreich,40,43
+AZ,AZE,Azerbaijan,Azərbaycan,31,994
+BH,BHR,Bahrain,البحرين,48,973
+BD,BGD,Bangladesh,বাংলাদেশ,50,880
+BB,BRB,Barbados,Barbados,52,1246
+BY,BLR,Belarus,Беларусь,112,375
+BE,BEL,Belgium,Belgien,56,32
+BZ,BLZ,Belize,Belize,84,501
+BJ,BEN,Benin,Bénin,204,229
+BM,BMU,Bermuda,Bermuda,60,1441
+BT,BTN,Bhutan,འབྲུག་ཡུལ,64,975
+BO,BOL,Bolivia,Volívia,68,591
+BA,BIH,Bosnia and Herzegovina,Босна и Херцеговина,70,387
+BW,BWA,Botswana,Botswana,72,267
+BR,BRA,Brazil,Brasil,76,55
+BG,BGR,Bulgaria,България,100,359
+BF,BFA,Burkina Faso,Burkina Faso,854,226
+BI,BDI,Burundi,Burundi,108,257
+CM,CMR,Cameroon,Cameroun,120,237
+CA,CAN,Canada,Canada,124,1
+CV,CPV,Cape Verde,Cabo Verde,132,238
+KY,CYM,Cayman Islands,Cayman Islands,136,1345
+CF,CAF,Central African Republic,Ködörösêse tî Bêafrîka,140,236
+TD,TCD,Chad,تشاد,148,235
+CL,CHL,Chile,Chile,152,56
+CN,CHN,China,中国 (中华人民共和国),156,86
+CO,COL,Colombia,Colombia,170,57
+KM,COM,Comoros,Comores,174,269
+CK,COK,Cook Islands,Cook Islands,184,682
+CR,CRI,Costa Rica,Costa Rica,188,506
+CI,CIV,Cote D'Ivoire,Côte d'Ivoire,384,225
+HR,HRV,Croatia,Hrvatska,191,385
+CU,CUB,Cuba,Cuba,192,53
+CY,CYP,Cyprus,Kıbrıs,196,357
+CZ,CZE,Czech Republic,Česko,203,420
+DK,DNK,Denmark,Danmark,208,45
+DJ,DJI,Djibouti,جيبوتي,262,253
+DM,DMA,Dominica,Dominica,212,1767
+DO,DOM,Dominican Republic,República Dominicana,214,1809
+EC,ECU,Ecuador,Ecuador,218,593
+EG,EGY,Egypt,مصر,818,20
+SV,SLV,El Salvador,El Salvador,222,503
+GQ,GNQ,Equatorial Guinea,Guinea Ecuatorial,226,240
+ER,ERI,Eritrea,ኤርትራ,232,291
+BS,BHS,Bahamas,Bahamas,44,1242
+IO,,British Indian Ocean Territory,British Indian Ocean Territory,,246
+BN,BRN,Brunei Darussalam,Brunei Darussalam,96,673
+CG,COG,Congo,Congo,178,242
+CD,COD,"Congo, the Democratic Republic of the","Congo, the Democratic Republic of the",180,242
+EE,EST,Estonia,Eesti,233,372
+ET,ETH,Ethiopia,ኢትዮጵያ,231,251
+MV,MDV,Maldives,Maldives,462,960
+FO,FRO,Faroe Islands,Færøerne,234,298
+FJ,FJI,Fiji,फ़िजी,242,679
+FI,FIN,Finland,Suomi,246,358
+FR,FRA,France,France,250,33
+GF,GUF,French Guiana,Guyane,254,594
+PF,PYF,French Polynesia,Polynésie française,258,689
+GA,GAB,Gabon,République gabonaise,266,241
+GE,GEO,Georgia,საქართველო,268,995
+DE,DEU,Germany,Deutschland,276,49
+GH,GHA,Ghana,Ghana,288,233
+GI,GIB,Gibraltar,Gibraltar,292,350
+GR,GRC,Greece,Ελλάδα,300,30
+GL,GRL,Greenland,Grønland,304,299
+GD,GRD,Grenada,Grenada,308,1473
+GP,GLP,Guadeloupe,Guadeloupe,312,590
+GU,GUM,Guam,Guåhån,316,1671
+GT,GTM,Guatemala,Guatemala,320,502
+GN,GIN,Guinea,Gine,324,224
+GW,GNB,Guinea-Bissau,Guiné-Bissau,624,245
+GY,GUY,Guyana,Guyana,328,592
+HT,HTI,Haiti,Ayiti,332,509
+HN,HND,Honduras,Honduras,340,504
+HK,HKG,Hong Kong,香港,344,852
+HU,HUN,Hungary,Magyarország,348,36
+IS,ISL,Iceland,Ísland,352,354
+IN,IND,India,Bhārat,356,91
+ID,IDN,Indonesia,Indonesia,360,62
+IQ,IRQ,Iraq,Îraq,368,964
+IE,IRL,Ireland,Éire,372,353
+IL,ISR,Israel,إسرائيل,376,972
+IT,ITA,Italy,Italia,380,39
+JM,JAM,Jamaica,Jamaica,388,1876
+JP,JPN,Japan,日本,392,81
+JO,JOR,Jordan,الأردن,400,962
+KZ,KAZ,Kazakhstan,Казахстан,398,7
+KE,KEN,Kenya,Kenya,404,254
+KI,KIR,Kiribati,Kiribati,296,686
+KW,KWT,Kuwait,الكويت,414,965
+KG,KGZ,Kyrgyzstan,Киргизия,417,996
+LV,LVA,Latvia,Latvija,428,371
+LB,LBN,Lebanon,لبنان,422,961
+LS,LSO,Lesotho,Lesotho,426,266
+LR,LBR,Liberia,Liberia,430,231
+LI,LIE,Liechtenstein,Liechtenstein,438,423
+LT,LTU,Lithuania,Lietuva,440,370
+LU,LUX,Luxembourg,Luxemburg,442,352
+MG,MDG,Madagascar,Madagasikara,450,261
+MW,MWI,Malawi,Malawi,454,265
+MY,MYS,Malaysia,மலேசியா,458,60
+ML,MLI,Mali,Mali,466,223
+MT,MLT,Malta,Malta,470,356
+MH,MHL,Marshall Islands,Aorōkin M̧ajeļ,584,692
+MQ,MTQ,Martinique,Martinique,474,596
+MR,MRT,Mauritania,موريتانيا,478,222
+MU,MUS,Mauritius,Maurice,480,230
+MX,MEX,Mexico,México,484,52
+MC,MCO,Monaco,Monaco,492,377
+MN,MNG,Mongolia,Mongol Uls,496,976
+MS,MSR,Montserrat,Montserrat,500,1664
+MA,MAR,Morocco,المغرب,504,212
+MZ,MOZ,Mozambique,Moçambique,508,258
+MM,MMR,Myanmar,မြန်မာ,104,95
+NA,NAM,Namibia,Namibia,516,264
+NR,NRU,Nauru,Naoero,520,674
+NP,NPL,Nepal,Nepāl,524,977
+NL,NLD,Netherlands,Nederlân,528,31
+NC,NCL,New Caledonia,Nouvelle-Calédonie,540,687
+NZ,NZL,New Zealand,Aotearoa,554,64
+NI,NIC,Nicaragua,Nicaragua,558,505
+NE,NER,Niger,Niger,562,227
+NG,NGA,Nigeria,Nigeria,566,234
+NU,NIU,Niue,Niuē,570,683
+NF,NFK,Norfolk Island,Norfolk Island,574,672
+MP,MNP,Northern Mariana Islands,Northern Mariana Islands,580,1670
+NO,NOR,Norway,Noreg,578,47
+OM,OMN,Oman,عُمان,512,968
+PK,PAK,Pakistan,پاکستان,586,92
+PW,PLW,Palau,Belau,585,680
+PA,PAN,Panama,Panamá,591,507
+PG,PNG,Papua New Guinea,Papua Niugini,598,675
+PY,PRY,Paraguay,Paraguái,600,595
+PE,PER,Peru,Piruw,604,51
+PH,PHL,Philippines,Pinas,608,63
+PL,POL,Poland,Polska,616,48
+PT,PRT,Portugal,Portugal,620,351
+PR,PRI,Puerto Rico,Puerto Rico,630,1787
+QA,QAT,Qatar,قطر,634,974
+RE,REU,Reunion,Réunion,638,262
+RO,ROM,Romania,România,642,40
+RU,RUS,Russian Federation,Российская Федерация,643,7
+RW,RWA,Rwanda,Rwanda,646,250
+KN,KNA,Saint Kitts and Nevis,Saint Kitts and Nevis,659,1869
+LC,LCA,Saint Lucia,Saint Lucia,662,1758
+PM,SPM,Saint Pierre and Miquelon,Saint-Pierre et Miquelon,666,508
+VC,VCT,Saint Vincent and the Grenadines,Saint Vincent and the Grenadines,670,1784
+WS,WSM,Samoa,Samoa,882,684
+SM,SMR,San Marino,San Marino,674,378
+FK,FLK,Falkland Islands (Malvinas),Falkland Islands (Malvinas),238,500
+GM,GMB,Gambia,Gambia,270,220
+VA,VAT,Holy See (Vatican City State),Holy See (Vatican City State),336,39
+KR,KOR,"Korea, Republic of","Korea, Republic of",410,82
+ST,STP,Sao Tome and Principe,São Tomé e Príncipe,678,239
+SA,SAU,Saudi Arabia,المملكة العربية السعودية,682,966
+SN,SEN,Senegal,Sénégal,686,221
+SC,SYC,Seychelles,Sesel,690,248
+SL,SLE,Sierra Leone,Sierra Leone,694,232
+SG,SGP,Singapore,சிங்கப்பூர்,702,65
+SK,SVK,Slovakia,Slovensko,703,421
+SI,SVN,Slovenia,Slovenija,705,386
+SB,SLB,Solomon Islands,Solomon Aelan,90,677
+SO,SOM,Somalia,الصومال,706,252
+ZA,ZAF,South Africa,iSewula Afrika,710,27
+ES,ESP,Spain,Espanha,724,34
+LK,LKA,Sri Lanka,இலங்கை,144,94
+SD,SDN,Sudan,السودان,736,249
+SR,SUR,Suriname,Suriname,740,597
+SZ,SWZ,Swaziland,Eswatini,748,268
+SE,SWE,Sweden,Sverige,752,46
+CH,CHE,Switzerland,Svizra,756,41
+TJ,TJK,Tajikistan,Тоҷикистон,762,992
+TH,THA,Thailand,"เมืองไทย, ประเทศไทย, ราชอาณาจักรไทย",764,66
+TG,TGO,Togo,Togo,768,228
+TK,TKL,Tokelau,Tokelau,772,690
+TO,TON,Tonga,Tonga,776,676
+TT,TTO,Trinidad and Tobago,Trinidad and Tobago,780,1868
+TN,TUN,Tunisia,تونس,788,216
+TR,TUR,Turkey,Türkiye,792,90
+TM,TKM,Turkmenistan,Türkmenistan,795,7370
+TC,TCA,Turks and Caicos Islands,Turks and Caicos Islands,796,1649
+TV,TUV,Tuvalu,Tuvalu,798,688
+UG,UGA,Uganda,Uganda,800,256
+UA,UKR,Ukraine,Україна,804,380
+AE,ARE,United Arab Emirates,الإمارات العربيّة المتّحدة,784,971
+GB,GBR,United Kingdom,United Kingdom,826,44
+US,USA,United States,United States,840,1
+UY,URY,Uruguay,República Oriental del Uruguay,858,598
+UZ,UZB,Uzbekistan,Ўзбекистон,860,998
+VU,VUT,Vanuatu,Vanuatu,548,678
+VE,VEN,Venezuela,Venezuela,862,58
+WF,WLF,Wallis and Futuna,Wallis-et-Futuna,876,681
+YE,YEM,Yemen,اليمن,887,967
+ZM,ZMB,Zambia,Zambia,894,260
+ZW,ZWE,Zimbabwe,Zimbabwe,716,263
+RS,SRB,Serbia,Србија,688,381
+ME,MNE,Montenegro,Црна Гора,499,382
+CW,CUW,Curacao,Kòrsou,531,599
+GG,GGY,Guernsey,Guernsey,831,44
+IM,IMN,Isle of Man,Ellan Vannin,833,44
+JE,JEY,Jersey,Jèrri,832,44
+MF,MAF,Saint Martin,Saint-Martin,663,590
+SX,SXM,Sint Maarten,Sint Maarten,534,1
+BL,BLM,Saint Barthelemy,Saint-Barthélemy,652,590
+IR,IRN,"Iran, Islamic Republic of","Iran, Islamic Republic of",364,98
+KP,PRK,"Korea, Democratic People's Republic of","Korea, Democratic People's Republic of",408,850
+LA,LAO,Lao People's Democratic Republic,Lao People's Democratic Republic,418,856
+LY,LBY,Libyan Arab Jamahiriya,Libyan Arab Jamahiriya,434,218
+MO,MAC,Macao,Macao,446,853
+MK,MKD,"Macedonia, the Former Yugoslav Republic of","Macedonia, the Former Yugoslav Republic of",807,389
+FM,FSM,"Micronesia, Federated States of","Micronesia, Federated States of",583,691
+MD,MDA,"Moldova, Republic of","Moldova, Republic of",498,373
+AN,ANT,Netherlands Antilles,Netherlands Antilles,530,599
+PS,,"Palestinian Territory, Occupied","Palestinian Territory, Occupied",,970
+SY,SYR,Syrian Arab Republic,Syrian Arab Republic,760,963
+TW,TWN,"Taiwan, Province of China","Taiwan, Province of China",158,886
+TZ,TZA,"Tanzania, United Republic of","Tanzania, United Republic of",834,255
+TL,,Timor-Leste,Timor-Leste,,670
+VN,VNM,Viet Nam,Viet Nam,704,84
+VG,VGB,"Virgin Islands, British","Virgin Islands, British",92,1284
+VI,VIR,"Virgin Islands, U.s.","Virgin Islands, U.s.",850,1340
+EH,ESH,Western Sahara,Western Sahara,732,212
+SH,SHN,Saint Helena,Saint Helena,654,290

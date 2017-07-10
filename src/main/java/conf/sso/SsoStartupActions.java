@@ -1,5 +1,6 @@
 package conf.sso;
 
+import services.sso.annotations.entitiestopreload.PreloadedCountries;
 import models.sso.Country;
 import models.sso.User;
 import models.sso.UserGender;
@@ -16,6 +17,7 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.BiFunction;
 
 /**
@@ -27,39 +29,64 @@ public class SsoStartupActions {
     /**
      * Password service.
      */
-    @Inject
-    PasswordService passwordService;
-
-    /**
-     * Entity manager provider.
-     */
-    @Inject
-    Provider<EntityManager> entityManagerProvider;
+    private final PasswordService passwordService;
 
     /**
      * User service.
      */
-    @Inject
-    UserService userService;
+    private final UserService userService;
 
     /**
      * Country service.
      */
-    @Inject
-    CountryService countryService;
+    private final CountryService countryService;
+
+    /**
+     * Entity manager provider.
+     */
+    private final Provider<EntityManager> entityManagerProvider;
+
+    /**
+     * Preloaded countries.
+     */
+    private final List<Country> preloadedCountries;
 
     /**
      * Properties.
      */
-    @Inject
-    NinjaProperties properties;
+    private final NinjaProperties properties;
 
     /**
      * Logger.
      */
-    @Inject
-    Logger logger;
+    private final Logger logger;
 
+    /**
+     * Constructs SSO start up actions.
+     *
+     * @param passwordService       Password service.
+     * @param userService           User service.
+     * @param countryService        Country service.
+     * @param entityManagerProvider Entity manager provider.
+     * @param properties            Properties.
+     * @param logger                Logger.
+     */
+    @Inject
+    public SsoStartupActions(PasswordService passwordService,
+                             UserService userService,
+                             CountryService countryService,
+                             @PreloadedCountries List<Country> preloadedCountries,
+                             Provider<EntityManager> entityManagerProvider,
+                             NinjaProperties properties,
+                             Logger logger) {
+        this.passwordService = passwordService;
+        this.userService = userService;
+        this.countryService = countryService;
+        this.preloadedCountries = preloadedCountries;
+        this.entityManagerProvider = entityManagerProvider;
+        this.properties = properties;
+        this.logger = logger;
+    }
 
     @Start(order = 100)
     public void addRequiredData() {
@@ -70,11 +97,7 @@ public class SsoStartupActions {
         try {
             transaction.begin();
 
-            // Make sure default country exists.
-            Country country = em.find(Country.class, "US");
-            if (country == null) {
-                country = countryService.createNew(new Country("US", "USA", "United States", "United States", 1));
-            }
+            Country country = preloadCountries(em);
 
             // Check root.
             User root = userService.getByUsername("root");
@@ -88,8 +111,30 @@ public class SsoStartupActions {
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
+            logger.error("Error while checking required data.", e);
+            return;
         }
         logger.info("Checking required data: done.");
+    }
+
+    /**
+     * Preloads countries.
+     *
+     * @param em Entity manager.
+     * @return Country that was used to check countries' presence.
+     */
+    private Country preloadCountries(EntityManager em) {
+        String keyCountryIsoCode = "US";
+        Country country = em.find(Country.class, keyCountryIsoCode);
+        if (country == null) {
+            for (Country preloadedCountry : preloadedCountries) {
+                preloadedCountry = countryService.createNew(preloadedCountry);
+                if (keyCountryIsoCode.equals(preloadedCountry.getIso())) {
+                    country = preloadedCountry;
+                }
+            }
+        }
+        return country;
     }
 
     /***

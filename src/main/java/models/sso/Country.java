@@ -15,7 +15,6 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "countries", indexes = {
-        @Index(name = "iso3_idx", columnList = "iso3", unique = true),
         @Index(name = "nativeName_idx", columnList = "nativeName", unique = false),
 })
 @NamedQueries({
@@ -37,7 +36,7 @@ public class Country implements Serializable {
     /**
      * ISO-3 code of the country.
      */
-    @Size(min = 3, max = 3)
+    @Size(min = 0, max = 3)
     String iso3;
 
     /**
@@ -73,17 +72,36 @@ public class Country implements Serializable {
     /**
      * Constructs country by given parameters.
      *
-     * @param iso ISO code.
-     * @param iso3 ISO-3 code.
-     * @param name Name, uppercase.
+     * @param iso        ISO code.
+     * @param iso3       ISO-3 code.
+     * @param name       Name, uppercase.
      * @param nativeName Nice name.
-     * @param phoneCode Phone code.
+     * @param phoneCode  Phone code.
      */
     public Country(String iso, String iso3, String name, String nativeName, int phoneCode) {
         this.iso = iso.trim().toUpperCase();
         this.iso3 = iso3.trim().toUpperCase();
         this.name = name;
         this.nativeName = nativeName;
+        this.phoneCode = phoneCode;
+    }
+
+    /**
+     * Constructs country by given parameters.
+     *
+     * @param iso        ISO code.
+     * @param iso3       ISO-3 code.
+     * @param name       Name, uppercase.
+     * @param nativeName Nice name.
+     * @param numCode    Numeric code.
+     * @param phoneCode  Phone code.
+     */
+    public Country(String iso, String iso3, String name, String nativeName, Integer numCode, int phoneCode) {
+        this.iso = iso.trim().toUpperCase();
+        this.iso3 = iso3.trim().toUpperCase();
+        this.name = name;
+        this.nativeName = nativeName;
+        this.numCode = numCode;
         this.phoneCode = phoneCode;
     }
 
