@@ -15,6 +15,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "countries", indexes = {
+        @Index(name = "iso3_idx", columnList = "iso3", unique = false),
         @Index(name = "nativeName_idx", columnList = "nativeName", unique = false),
 })
 @NamedQueries({
