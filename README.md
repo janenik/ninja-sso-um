@@ -21,6 +21,12 @@ Mobile friendly Single Sign-On and User management application template for [Nin
 * Exclusion lists (brands, domains, bad words) to avoid particular username selection/impersonation
 * Predefined list of countries with phone codes and flags
 
+# Usage
+1. Clone this project to your machine
+2. Change artifactId, groupId and version to desired values in **pom.xml**
+3. Change *.sh startup shortcut files (dev with debug, prod or prod with debug) to reflect changes in pom.xml
+4. Develop and use it like you would use any other [Ninja Framework](http://www.ninjaframework.org/) application
+
 # Screenshots
 
 ## Sign Up
