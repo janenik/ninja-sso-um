@@ -31,6 +31,7 @@ Mobile friendly Single Sign-On and User management application template for [Nin
 
 # Screenshots
 
+
 ## Sign Up
 #### Web
 ![Sign Up](docs/images/sign-up-web.png)
@@ -38,14 +39,23 @@ Mobile friendly Single Sign-On and User management application template for [Nin
 #### Mobile
 ![Sign Up](docs/images/sign-up-mobile.png)
 
+
+
+
 ## Sign In
 #### Web
 ![Sign In](docs/images/sign-in-web.png)
 #### Mobile
 ![Sign In mobile](docs/images/sign-in-mobile-small.png)
 
+
+
+
 ## Language selector
 ![Language selector](docs/images/sign-in-mobile-small-language-selector.png)
+
+
+
 
 ## User management
 #### List of users: web
