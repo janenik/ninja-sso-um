@@ -16,7 +16,9 @@ Mobile friendly Single Sign-On and User management application template for [Nin
 * Multiple language support: English, German, Spanish, French, Portuguese, Russian
 * Backed with Hibernate: tested on Postgres and MySQL
 * Bootstrap design/CSS
-* Ability to authenticate in web and mobile applications (see mobile app scheme in configuration)
+* Ability to authenticate in web and mobile applications
+    * Access token in cookies for web application
+    * Access token for mobile application (see mobile app scheme in configuration)
 * No open passwords stored
 * Exclusion lists (brands, domains, bad words) to avoid particular username selection/impersonation
 * Predefined list of countries with phone codes and flags
