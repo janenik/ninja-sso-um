@@ -45,13 +45,13 @@ Mobile friendly Single Sign-On and User management application template for [Nin
 #### List of users: mobile
 ![Sign In mobile](docs/images/admin-users-mobile.png)
 #### Edit personal data
-![Personal data](docs/images/admin-users-personal-data.png)
+![Personal data](docs/images/admin-users-personal-data-e.png)
 #### Edit contact data
 ![Edit contact data](docs/images/admin-users-contact-data.png)
 #### Access management
 ![Access management](docs/images/admin-users-access.png)
 #### Access log
-![Access log](docs/images/admin-users-access-log-web.png)
+![Access log](docs/images/admin-users-access-log-web-e.png)
 #### View access log event
 ![View access log event](docs/images/admin-users-access-log-event-web.png)
 #### Send email to a user
