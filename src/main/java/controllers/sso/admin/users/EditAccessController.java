@@ -15,6 +15,7 @@ import models.sso.UserRole;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -77,6 +78,7 @@ public class EditAccessController extends EditAbstractController<EditAccessConve
      * @param context Request context.
      * @return Result with Edit Access form.
      */
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         return super.renderUserOrRedirectToList(userId, context);
@@ -92,6 +94,7 @@ public class EditAccessController extends EditAbstractController<EditAccessConve
      * @param validation Validation.
      * @return Result with Edit Access form.
      */
+    @Timed
     @Transactional
     public Result post(
             @PathParam("userId") long userId,

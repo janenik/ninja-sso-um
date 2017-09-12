@@ -18,6 +18,7 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
@@ -110,22 +111,24 @@ public class SignUpVerificationController {
     }
 
     /**
-     * Shows Sign Up verification page after successful user sign up and confirmation email/SMS sent. GET.
+     * Shows Sign Up verification page after successful user sign up and confirmation email/SMS sent. GET method.
      *
      * @param context Context.
      * @return Rendered sign up page.
      */
+    @Timed
     @Transactional
     public Result verifySignUpGet(@Param("token") String tokenAsString, Context context) {
         return verifySignUp(tokenAsString, context);
     }
 
     /**
-     * Verifies Sign Up with user provided code. Redirects to Sign In page. POST.
+     * Verifies Sign Up with user provided code. Redirects to Sign In page. POST method.
      *
      * @param context Context.
      * @return Rendered sign up page.
      */
+    @Timed
     @Transactional
     public Result verifySignUp(@Param("token") String tokenAsString, Context context) {
         String continueUrl = urlBuilderProvider.get().getContinueUrlParameter();
@@ -174,6 +177,7 @@ public class SignUpVerificationController {
      * @param tokenAsString Code (encrypted user id).
      * @return Result.
      */
+    @Timed
     @Transactional
     public Result verifyEmail(@Param("token") String tokenAsString) {
         String signInUrl;

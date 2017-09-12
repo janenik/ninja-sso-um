@@ -11,6 +11,7 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.utils.NinjaProperties;
 import services.sso.UserEventService;
 import services.sso.UserService;
@@ -90,6 +91,7 @@ public class UsersController {
         this.objectsPerPage = properties.getIntegerWithDefault("application.sso.admin.users.objectsPerPage", 20);
     }
 
+    @Timed
     @Transactional
     public Result users(Context context) throws PasswordBasedEncryptor.EncryptionException {
         String query = context.getParameter("query", "").trim();

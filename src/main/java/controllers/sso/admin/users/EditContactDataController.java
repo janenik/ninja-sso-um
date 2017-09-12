@@ -15,6 +15,7 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -78,6 +79,7 @@ public class EditContactDataController extends
      * @param context Web request context.
      * @return Result with contact data form.
      */
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         return super.renderUserOrRedirectToList(userId, context);
@@ -93,6 +95,7 @@ public class EditContactDataController extends
      * @param validation Validation.
      * @return Result with Edit Contact data form.
      */
+    @Timed
     @Transactional
     public Result post(
             @PathParam("userId") long userId,

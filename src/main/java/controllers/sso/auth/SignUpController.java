@@ -28,6 +28,7 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.i18n.Lang;
 import ninja.i18n.Messages;
+import ninja.metrics.Timed;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.JSR303Validation;
@@ -247,6 +248,7 @@ public class SignUpController {
      * @param context Context.
      * @return Sing up response object.
      */
+    @Timed
     @Transactional
     public Result signUpGet(Context context) {
         return createResult(EMPTY_USER, context, Controllers.noViolations());
@@ -260,6 +262,7 @@ public class SignUpController {
      * @param validation Validation object.
      * @return Redirect to a welcome page with welcome message, project information, link to redirect.
      */
+    @Timed
     @Transactional
     public Result signUp(Context context, Validation validation, @JSR303Validation UserSignUpDto userDto) {
         if (userDto == null) {

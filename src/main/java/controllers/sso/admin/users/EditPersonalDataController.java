@@ -14,6 +14,7 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -69,11 +70,13 @@ public class EditPersonalDataController extends
                 htmlAdminSecureHeadersProvider, properties);
     }
 
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         return super.renderUserOrRedirectToList(userId, context);
     }
 
+    @Timed
     @Transactional
     public Result post(
             @PathParam("userId") long userId,

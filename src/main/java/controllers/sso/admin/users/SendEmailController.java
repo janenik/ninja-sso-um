@@ -14,6 +14,7 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -117,6 +118,7 @@ public class SendEmailController {
      * @param context Request context.
      * @return Rendered email form.
      */
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         String query = Strings.nullToEmpty(context.getParameter("query")).trim();
@@ -137,6 +139,7 @@ public class SendEmailController {
      * @param flashScope Flash scope,
      * @return Form with errors or redirect back to the form in case of success.
      */
+    @Timed
     @Transactional
     public Result post(@PathParam("userId") long userId,
                        Context context,

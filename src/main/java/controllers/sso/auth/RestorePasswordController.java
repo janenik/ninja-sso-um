@@ -20,6 +20,7 @@ import models.sso.token.IllegalTokenException;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.Param;
 import ninja.utils.NinjaProperties;
 import services.sso.UserEventService;
@@ -110,6 +111,7 @@ public class RestorePasswordController {
      * @param restoreToken Restore token from email sent to user by {@link ForgotPasswordController}.
      * @return Result with data for restore password form.
      */
+    @Timed
     @Transactional
     public Result restorePasswordGet(Context context, @Param(value = "restoreToken") String restoreToken) {
         Result result = createResult(context, restoreToken);
@@ -139,6 +141,7 @@ public class RestorePasswordController {
      * @param confirmPassword Password confirmation.
      * @return Result.
      */
+    @Timed
     @Transactional
     public Result restorePassword(Context context,
                                   @Param(value = "restoreToken") String restoreToken,

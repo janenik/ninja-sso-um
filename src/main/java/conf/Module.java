@@ -27,6 +27,7 @@ import controllers.annotations.SecureHtmlHeadersForAdmin;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
+import ninja.metrics.MetricsModule;
 import ninja.servlet.NinjaServletContext;
 import ninja.utils.NinjaProperties;
 
@@ -42,6 +43,7 @@ public class Module extends AbstractModule {
      * Configures application module.
      */
     protected void configure() {
+        install(new MetricsModule());
         install(new SsoModule());
         install(new ServletModule());
     }

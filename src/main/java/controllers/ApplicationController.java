@@ -25,6 +25,7 @@ import models.sso.User;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.limits.IPCounterService;
@@ -88,6 +89,7 @@ public class ApplicationController {
      *
      * @return Index page.
      */
+    @Timed
     public Result index(Context context) {
         String ip = (String) context.getAttribute(IpAddressFilter.REMOTE_IP);
         Long userId = (Long) context.getAttribute(AuthenticationFilter.USER_ID);

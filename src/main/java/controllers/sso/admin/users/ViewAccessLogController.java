@@ -15,6 +15,7 @@ import models.sso.UserEvent;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.utils.NinjaProperties;
 import services.sso.UserEventService;
@@ -111,6 +112,7 @@ public class ViewAccessLogController {
      * @param context Request context.
      * @return Results of rendering.
      */
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         String query = context.getParameter("eventsQuery", "").trim();

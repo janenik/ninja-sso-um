@@ -15,6 +15,7 @@ import models.sso.UserCredentials;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 import ninja.params.PathParam;
 import ninja.session.FlashScope;
 import ninja.utils.NinjaProperties;
@@ -105,6 +106,7 @@ public class EditPasswordController {
      * @param context Web context.
      * @return Result with form.
      */
+    @Timed
     @Transactional
     public Result get(@PathParam("userId") long userId, Context context) {
         User user = userService.get(userId);
@@ -123,6 +125,7 @@ public class EditPasswordController {
      * @param validation Form validation.
      * @return Form with errors or redirect back to the form in case of success.
      */
+    @Timed
     @Transactional
     public Result post(@PathParam("userId") long userId,
                        Context context,

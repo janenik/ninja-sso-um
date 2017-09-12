@@ -3,6 +3,7 @@ package controllers.sso.auth;
 import controllers.sso.filters.LanguageFilter;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.metrics.Timed;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -37,6 +38,7 @@ public class SignOutController {
      *
      * @return Sign out result.
      */
+    @Timed
     public Result signOut() {
         return responseBuilderProvider.get().getSignOutResponse();
     }

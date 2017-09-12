@@ -9,6 +9,7 @@ import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
+import ninja.metrics.Timed;
 import ninja.utils.NinjaProperties;
 import org.dozer.Mapper;
 import services.sso.UserService;
@@ -56,6 +57,7 @@ public class UserController {
         this.properties = properties;
     }
 
+    @Timed
     @Transactional
     public Result user(Context context) {
         boolean authenticated = (boolean) context.getAttribute(AuthenticationFilter.USER_AUTHENTICATED);

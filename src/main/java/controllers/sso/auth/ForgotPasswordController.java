@@ -23,6 +23,7 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Router;
 import ninja.i18n.Messages;
+import ninja.metrics.Timed;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.JSR303Validation;
@@ -187,6 +188,7 @@ public class ForgotPasswordController {
      * @param validation Validation.
      * @return Forgot password page.
      */
+    @Timed
     @Transactional
     public Result forgotGet(Context context, Validation validation) {
         return createResult(EMPTY_FORGOT_PASSWORD, context, validation);
@@ -200,6 +202,7 @@ public class ForgotPasswordController {
      * @param validation Validation.
      * @return Forgot password page.
      */
+    @Timed
     @Transactional
     public Result forgot(@JSR303Validation ForgotPasswordDto user, Context context, Validation validation) {
         if (validation.hasViolations() || user == null) {

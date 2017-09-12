@@ -20,6 +20,7 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Router;
 import ninja.i18n.Messages;
+import ninja.metrics.Timed;
 import ninja.utils.NinjaProperties;
 import ninja.validation.ConstraintViolation;
 import ninja.validation.FieldViolation;
@@ -160,6 +161,7 @@ public class SignInController {
      * @param context Context.
      * @return Sing up response object.
      */
+    @Timed
     @Transactional
     public Result signInGet(Context context) {
         return createResult(EMPTY_USER, context, Controllers.noViolations());
@@ -173,6 +175,7 @@ public class SignInController {
      * @param userSignInDto User sign in DTO.
      * @return Result of sign in.
      */
+    @Timed
     @Transactional
     public Result signIn(Context context, Validation validation, @JSR303Validation UserSignInDto userSignInDto) {
         if (userSignInDto == null) {
