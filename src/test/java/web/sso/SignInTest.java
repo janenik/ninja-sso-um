@@ -57,7 +57,7 @@ public class SignInTest extends WebDriverTest {
         assertNotNull("Error notification exists.", webDriver.findElement(By.className("alert-danger")));
 
         // In test mode all continue URLs are allowed.
-        goTo(getSignInUrl(getServerAddress() + "?successful_sign_in=true"));
+        goTo(getSignInUrl(getBaseUrl() + "?successful_sign_in=true"));
 
         assertTrue("No captcha.", webDriver.findElements(By.name("captchaCode")).isEmpty());
 
@@ -81,7 +81,7 @@ public class SignInTest extends WebDriverTest {
         for (int i = 0; i < numberOfSafeRequests; i++) {
             goTo(getSignInUrl());
         }
-        String signInUrl = getSignInUrl(getServerAddress() + "?successful_sign_in=true", "");
+        String signInUrl = getSignInUrl(getBaseUrl() + "?successful_sign_in=true", "");
         goTo(signInUrl);
 
         assertTrue("No error notification.", webDriver.findElements(By.className("alert-danger")).isEmpty());

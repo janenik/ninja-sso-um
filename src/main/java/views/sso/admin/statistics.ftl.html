@@ -1,0 +1,21 @@
+<#import "/views/sso/admin/layout/adminLayout.ftl.html" as layout />
+<#global _mainMenuPage = 'statistics' />
+<#global _jsIncludeChartsLibrary = true />
+<@layout.adminLayout i18n("adminUsers")>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                <h3>${i18n("adminAppStatistics")}</h3>
+
+                <p>${_mainMenuPage}</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</@layout.adminLayout>

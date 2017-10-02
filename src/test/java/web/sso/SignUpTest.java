@@ -1,18 +1,15 @@
 package web.sso;
 
 import com.google.inject.Injector;
-import controllers.sso.auth.SignInController;
 import controllers.sso.auth.SignUpVerificationController;
-import controllers.sso.auth.state.SignInState;
 import models.sso.User;
 import models.sso.UserConfirmationState;
 import models.sso.UserGender;
 import models.sso.UserRole;
-import models.sso.token.ExpirableToken;
-import models.sso.token.ExpirableTokenType;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import services.sso.CaptchaTokenService;
 import services.sso.UserService;
 import services.sso.token.ExpirableTokenEncryptor;
@@ -20,6 +17,7 @@ import web.sso.common.WebDriverTest;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -112,8 +110,8 @@ public class SignUpTest extends WebDriverTest {
     }
 
     @Test
-    public void testSignUp() throws Exception {
-        String signUpUrl = getSignUpUrl(getServerAddress() + "?successful_sign_up=true");
+    public void testSignUpFieldsPreserved() throws Exception {
+        String signUpUrl = getSignUpUrl(getBaseUrl() + "?successful_sign_up=true");
         goTo(signUpUrl);
 
         assertTrue("Must have continue URL", webDriver.getCurrentUrl().contains("successful_sign_up"));
@@ -123,27 +121,45 @@ public class SignUpTest extends WebDriverTest {
         if (!getFormInput("agreement").isSelected()) {
             click("#agreement");
         }
-
         // Try to sign up.
         click("#signUpSubmit");
 
-        // noscript + form warning are expected.
-        assertEquals("warning is expected", 2, webDriver.findElements(By.className("alert-danger")).size());
+        // form warning is expected.
+        List<WebElement> alertElements = webDriver.findElements(By.className("alert-danger"));
+        assertEquals("One warning is expected", 1, alertElements.size());
+
+        List<WebElement> errorElements = webDriver.findElements(By.className("ssoFieldErrorDescription"));
+        assertEquals("One error element is expected", 1, errorElements.size());
+        assertEquals("Please enter correct code.", errorElements.get(0).getText());
 
         verifyFormValuesPreserved();
+    }
 
-        // Continue to fill the form.
-        // Set captcha word and token values that are known to test.
-        String captchaWord = "12345";
-        String captchaToken = captchaTokenService.newCaptchaToken(captchaWord);
-        assertEquals(captchaWord, captchaTokenService.extractCaptchaText(captchaToken));
+    @Test
+    public void testSignUpWithCaptcha() throws Exception {
+        String signUpUrl = getSignUpUrl(getBaseUrl() + "?successful_sign_up=true");
+        goTo(signUpUrl);
 
-        setFormInputValue("captchaCode", captchaWord);
+        assertTrue("Must have continue URL", webDriver.getCurrentUrl().contains("successful_sign_up"));
+
+        fillSignUpFormWithoutCaptchaCodeAndAgreement();
+
+        // Set captcha code and token values that are known to test.
+        String captchaCode = "captchaSecret494";
+        String captchaToken = captchaTokenService.newCaptchaToken(captchaCode);
+        assertEquals(captchaCode, captchaTokenService.extractCaptchaText(captchaToken));
+
+        setFormInputValue("captchaCode", captchaCode);
         setFormInputValue("token", captchaToken);
 
         if (!getFormInput("agreement").isSelected()) {
             click("#agreement");
         }
+
+        String fetchedCaptchaCode = getFormInputValue("captchaCode");
+        String fetchedToken = getFormInputValue("token");
+        assertEquals("Form captcha code is expected to be set.", captchaCode, fetchedCaptchaCode);
+        assertEquals("Form captcha token is expected to be set.", captchaToken, fetchedToken);
 
         click("#signUpSubmit");
 
@@ -160,34 +176,6 @@ public class SignUpTest extends WebDriverTest {
         // Verify that user is created.
         User user = userService.getByUsername(USERNAME);
         verifyUser(user, UserConfirmationState.UNCONFIRMED);
-
-        // Decrypt the verification token.
-        ExpirableToken token = encryptor.decrypt(urlParameters.get("token"));
-        assertEquals(ExpirableTokenType.SIGNUP_VERIFICATION, token.getType());
-
-        // Use verification code to confirm the account.
-        String verificationCode = token.getAttributeValue("verificationCode");
-        assertNotNull("Verification code is expected in token.", verificationCode);
-
-        getFormInput("verificationCode").sendKeys(verificationCode);
-        click("#verifySignUpSubmit");
-
-        // Verify that the browser has opened sign in form and the URL has valid continue parameter..
-        url = webDriver.getCurrentUrl();
-        urlParameters = extractParameters(new URI(url));
-        assertTrue("Sign in URL expected: " + url,
-                url.contains(reverseRouter.with(SignInController::signInGet).build()));
-        assertTrue("Sign in URL with message: " + url,
-                url.contains(SignInState.EMAIL_VERIFICATION_CONFIRMED.toString().toLowerCase()));
-        assertTrue("Verify URL contains valid continue URL: " + urlParameters.get("continue"),
-                urlParameters.get("continue").contains("successful_sign_up=true"));
-
-        // Need to detach the user object to re-read from database.
-        entityManagerProvider.get().detach(user);
-
-        // Verify that the user has confirmed the account.
-        user = userService.getByEmail(EMAIL);
-        verifyUser(user, UserConfirmationState.CONFIRMED);
     }
 
     /**

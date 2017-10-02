@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import controllers.sso.auth.SignInController;
 import controllers.sso.auth.state.SignInState;
 import models.sso.User;
-import models.sso.UserGender;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
@@ -13,14 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import services.sso.CaptchaTokenService;
-import services.sso.CountryService;
 import services.sso.UserService;
+import web.sso.common.TestEntitiesFactory;
 import web.sso.common.WebDriverTest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -31,59 +29,9 @@ import static org.junit.Assert.assertTrue;
 public class ForgotPasswordTest extends WebDriverTest {
 
     /**
-     * First name for test account.
-     */
-    private static final String FIRST_NAME = "FirstName";
-
-    /**
-     * Last name for test account.
-     */
-    private static final String LAST_NAME = "LastName";
-
-    /**
-     * Username for test user.
-     */
-    private static final String USERNAME = "forgotPasswordUser";
-
-    /**
-     * Password for test user.
-     */
-    private static final String EMAIL = "forgotPasswordEmail@example.org";
-
-    /**
-     * PHONE for test user.
-     */
-    private static final String PHONE = "+1 650 999 9999";
-
-    /**
-     * Password for test account.
-     */
-    private static final String PASSWORD = "wrongPassword";
-
-    /**
      * Password for test account.
      */
     private static final String RESTORED_PASSWORD = "restoredPassword";
-
-    /**
-     * Country for test account.
-     */
-    private static final String COUNTRY_ID = "US";
-
-    /**
-     * Birth year for test account.
-     */
-    private static final int YEAR = 1988;
-
-    /**
-     * Birth month for test account.
-     */
-    private static final int MONTH = 12;
-
-    /**
-     * Birth day for test account.
-     */
-    private static final int DAY_OF_MONTH = 24;
 
     /**
      * User service.
@@ -91,20 +39,19 @@ public class ForgotPasswordTest extends WebDriverTest {
     private UserService userService;
 
     /**
-     * Country service.
-     */
-    private CountryService countryService;
-
-    /**
      * Email service mock.
      */
     private PostofficeMockImpl emailServiceMock;
-
 
     /**
      * Captcha token service.
      */
     private CaptchaTokenService captchaTokenService;
+
+    /**
+     * Test entities factory.
+     */
+    private TestEntitiesFactory testEntitiesFactory;
 
     /**
      * User to restore password.
@@ -116,16 +63,15 @@ public class ForgotPasswordTest extends WebDriverTest {
         Injector injector = this.getInjector();
 
         this.userService = injector.getBinding(UserService.class).getProvider().get();
-        this.countryService = injector.getBinding(CountryService.class).getProvider().get();
         this.captchaTokenService = injector.getBinding(CaptchaTokenService.class).getProvider().get();
         this.emailServiceMock = (PostofficeMockImpl) injector.getBinding(Postoffice.class).getProvider().get();
+        this.testEntitiesFactory = injector.getBinding(TestEntitiesFactory.class).getProvider().get();
 
         // Create test user.
         EntityManager em = entityManagerProvider.get();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
-        this.user = createUser();
-        this.userService.createNew(this.user, PASSWORD);
+        this.user = testEntitiesFactory.createNewUser();
         transaction.commit();
     }
 
@@ -141,19 +87,25 @@ public class ForgotPasswordTest extends WebDriverTest {
     }
 
     @Test
-    public void testForgotPassword() throws Exception {
-        String forgotPasswordUrl = getForgotPasswordUrl(getServerAddress() + "?forgot_password_url=true");
+    public void testForgotPasswordForUserThatDoesntExist() throws Exception {
+        String forgotPasswordUrl = getForgotPasswordUrl(getBaseUrl() + "?forgot_password_url=true");
         goTo(forgotPasswordUrl);
 
-        getFormInput("emailOrUsername").sendKeys(USERNAME + "_DOESNT_EXIST");
+        getFormInput("emailOrUsername").sendKeys(TestEntitiesFactory.USERNAME + "_DOESNT_EXIST");
         getFormInput("captchaCode").sendKeys("WRONG_CAPTCHA");
 
         click("#forgotSubmit");
 
         assertNotNull("Error notification exists.", webDriver.findElement(By.className("alert-danger")));
+    }
+
+    @Test
+    public void testForgotPassword() throws Exception {
+        String forgotPasswordUrl = getForgotPasswordUrl(getBaseUrl() + "?forgot_password_url=true");
+        goTo(forgotPasswordUrl);
 
         // Fix form errors.
-        setFormInputValue("emailOrUsername", USERNAME);
+        setFormInputValue("emailOrUsername", TestEntitiesFactory.USERNAME);
 
         // Set captcha word and token that are known to test.
         String captchaWord = "forgotPassword";
@@ -175,10 +127,6 @@ public class ForgotPasswordTest extends WebDriverTest {
         Mail mail = emailServiceMock.getLastSentMail();
         assertNotNull("Email is expected.", mail);
 
-        // Check restore password behavior with wrong token.
-        goTo(getRestorePasswordUrl("wrongToken"));
-        assertNotNull("Error notification exists.", webDriver.findElement(By.className("alert-danger")));
-
         // Now check valid token.
         String restoreToken = extractRestoreTokenFromEmail(mail);
         goTo(getRestorePasswordUrl(restoreToken));
@@ -188,7 +136,7 @@ public class ForgotPasswordTest extends WebDriverTest {
         setFormInputValue("password", RESTORED_PASSWORD);
         setFormInputValue("confirmPassword", RESTORED_PASSWORD);
 
-        click("#restorePasswordSubmit");
+        submitFormWithJavascript();
 
         url = webDriver.getCurrentUrl();
         assertTrue("Redirected to Sign In with restored password state: " + url,
@@ -198,7 +146,7 @@ public class ForgotPasswordTest extends WebDriverTest {
         entityManagerProvider.get().detach(user);
         entityManagerProvider.get().detach(userService.getCredentials(user));
 
-        user = userService.getByEmail(EMAIL);
+        user = userService.getByEmail(TestEntitiesFactory.EMAIL);
         assertTrue("New password is expected.",  userService.isValidPassword(user, RESTORED_PASSWORD));
     }
 
@@ -221,20 +169,5 @@ public class ForgotPasswordTest extends WebDriverTest {
             throw new IllegalStateException("restoreToken parameter is expected: " + restoreUrl);
         }
         return token;
-    }
-
-    /**
-     * Creates new user for test purposes.
-     *
-     * @return New user,
-     */
-    private User createUser() {
-        User user = new User(USERNAME, EMAIL, PHONE);
-        user.setFirstName(FIRST_NAME);
-        user.setLastName(LAST_NAME);
-        user.setCountry(countryService.get(COUNTRY_ID));
-        user.setDateOfBirth(LocalDate.of(YEAR, MONTH, DAY_OF_MONTH));
-        user.setGender(UserGender.FEMALE);
-        return user;
     }
 }

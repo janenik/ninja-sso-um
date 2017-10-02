@@ -14,7 +14,7 @@ public abstract class AdminWebDriverTest extends WebDriverTest {
      * @return Admin users' page URL.
      */
     protected String getAdminUsersPageUrl() {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(UsersController::users))
                 .toString();
     }
@@ -25,7 +25,7 @@ public abstract class AdminWebDriverTest extends WebDriverTest {
      * @return Edit personal data administrator page URL.
      */
     protected String getAdminPersonalDataPageUrl(long userId) {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(EditPersonalDataController::get)
                         .pathParam("userId", userId))
                 .toString();
@@ -37,7 +37,7 @@ public abstract class AdminWebDriverTest extends WebDriverTest {
      * @return Edit contact data administrator page URL.
      */
     protected String getAdminContactDataPageUrl(long userId) {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(EditContactDataController::get)
                         .pathParam("userId", userId))
                 .toString();
@@ -49,7 +49,7 @@ public abstract class AdminWebDriverTest extends WebDriverTest {
      * @return Edit access administrator page URL.
      */
     protected String getAdminAccessPageUrl(long userId) {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(EditAccessController::get)
                         .pathParam("userId", userId))
                 .toString();
@@ -61,7 +61,7 @@ public abstract class AdminWebDriverTest extends WebDriverTest {
      * @return Edit access administrator page URL.
      */
     protected String getAdminResetPasswordPageUrl(long userId) {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(EditPasswordController::get)
                         .pathParam("userId", userId))
                 .toString();

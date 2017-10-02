@@ -15,7 +15,7 @@
     <url>http://www.ninjaframework.org</url>
 
     <properties>
-        <ninja.version>6.1.0</ninja.version>
+        <ninja.version>6.2.0</ninja.version>
         <jetty.version>9.3.11.v20160721</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -189,6 +189,11 @@
             <version>3.3.4</version>
         </dependency>
         <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>c3</artifactId>
+            <version>0.4.11</version>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4.1207.jre7</version>
@@ -203,6 +208,7 @@
             <artifactId>h2</artifactId>
             <version>1.4.186</version>
         </dependency>
+
         <!-- If you want to deploy to a war please -->
         <!-- comment ninja-standalone dependency and  -->
         <!-- uncomment the dependency for ninja-servlet -->

@@ -82,7 +82,7 @@ public class ForgotPasswordController {
      */
     private final ExpirableTokenEncryptor expirableTokenEncryptor;
 
-    /**
+    /**e
      * Captcha token service.
      */
     private final CaptchaTokenService captchaTokenService;

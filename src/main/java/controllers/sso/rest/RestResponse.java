@@ -228,4 +228,17 @@ public class RestResponse<T> implements Serializable {
     public static <T> RestResponse<T> notFound(String message) {
         return new RestResponse<>(null, Result.SC_404_NOT_FOUND, message);
     }
+
+    /**
+     * Static factory for 500 (internal server) response and given data and message..
+     *
+     * @param e Server throwable.
+     * @param <T>     Data type.
+     * @return REST response with data and 400 code in metadata.
+     */
+    public static <T> RestResponse<T> serverError(Throwable e) {
+        String errorMessage =
+                e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : "");
+        return new RestResponse<>(null, Result.SC_500_INTERNAL_SERVER_ERROR, errorMessage);
+    }
 }

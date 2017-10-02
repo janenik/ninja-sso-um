@@ -2,10 +2,7 @@ package web.sso.common;
 
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import controllers.sso.auth.ForgotPasswordController;
-import controllers.sso.auth.RestorePasswordController;
-import controllers.sso.auth.SignInController;
-import controllers.sso.auth.SignUpController;
+import controllers.sso.auth.*;
 import controllers.sso.web.Escapers;
 import controllers.sso.web.UrlBuilder;
 import ninja.NinjaFluentLeniumTest;
@@ -14,7 +11,9 @@ import ninja.Router;
 import ninja.utils.NinjaProperties;
 import org.junit.Before;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 
 import javax.persistence.EntityManager;
@@ -28,6 +27,12 @@ import java.util.concurrent.TimeUnit;
  * Abstract class with common data members and methods for all SSO tests.
  */
 public abstract class WebDriverTest extends NinjaFluentLeniumTest {
+
+    /**
+     * Update hidden field javascript pattern: fetches form element by name and updates its value. Note: may have
+     * problems with escaping.
+     */
+    private final String JAVASCRIPT_PATTERN = "document.getElementsByName(\"%s\")[0].value=\"%s\"";
 
     /**
      * Entity manager provider.
@@ -99,8 +104,25 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
         if (element == null) {
             throw new IllegalArgumentException("Form element with name " + name + " was not found.");
         }
-        element.clear();
-        element.sendKeys(value);
+        if ("hidden".equalsIgnoreCase(element.getAttribute("type"))) {
+            if (webDriver instanceof HtmlUnitDriver) {
+                String script =
+                        String.format(JAVASCRIPT_PATTERN,
+                                Escapers.encodePercent(name),
+                                Escapers.encodePercent(value));
+                HtmlUnitDriver htmlUnitDriver = (HtmlUnitDriver) webDriver;
+                htmlUnitDriver.setJavascriptEnabled(true);
+                htmlUnitDriver.executeScript(script);
+            } else {
+                throw new UnsupportedOperationException(
+                        "Setting value for hidden field must be reviewed. Expected class: "
+                                + HtmlUnitDriver.class.getCanonicalName() + " but got: "
+                                + webDriver.getClass().getCanonicalName());
+            }
+        } else {
+            element.clear();
+            element.sendKeys(value);
+        }
         return element;
     }
 
@@ -111,7 +133,7 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Sign Up URL.
      */
     protected String getSignUpUrl(String... continueUrl) {
-        StringBuilder sb = new StringBuilder(getServerAddress())
+        StringBuilder sb = new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(SignUpController::signUpGet).build())
                 .append("?");
         if (continueUrl.length > 0 && continueUrl[0] != null) {
@@ -138,7 +160,7 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Continue URL.
      */
     protected String getSignInUrl(String continueUrl, String... state) {
-        StringBuilder sb = new StringBuilder(getServerAddress())
+        StringBuilder sb = new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(SignInController::signInGet))
                 .append("?");
         if (continueUrl != null) {
@@ -159,7 +181,7 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Forgot Password URL.
      */
     protected String getForgotPasswordUrl(String... continueUrl) {
-        StringBuilder sb = new StringBuilder(getServerAddress())
+        StringBuilder sb = new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(ForgotPasswordController::forgotGet))
                 .append("?");
         if (continueUrl.length > 0 && continueUrl[0] != null) {
@@ -176,11 +198,62 @@ public abstract class WebDriverTest extends NinjaFluentLeniumTest {
      * @return Restore password URL.
      */
     protected String getRestorePasswordUrl(String restorePasswordToken) {
-        return new StringBuilder(getServerAddress())
+        return new StringBuilder(getBaseUrl())
                 .append(reverseRouter.with(RestorePasswordController::restorePasswordGet))
                 .append("?restoreToken=")
                 .append(Escapers.encodePercent(restorePasswordToken))
                 .toString();
+    }
+
+    /**
+     * Constructs verification URL with sign up verification token.
+     *
+     * @param signUpVerificationToken Restore password token.
+     * @return Restore password URL.
+     */
+    protected String getSignUpVerificationUrl(String signUpVerificationToken) {
+        return new StringBuilder(getBaseUrl())
+                .append(reverseRouter.with(SignUpVerificationController::verifySignUpGet))
+                .append("?token=")
+                .append(Escapers.encodePercent(signUpVerificationToken))
+                .toString();
+    }
+
+    /**
+     * Clicks given element.
+     *
+     * @param elementCssSelector Element CSS selector.
+     */
+    protected void click(String elementCssSelector) {
+        this.webDriver.findElement(By.cssSelector(elementCssSelector)).click();
+    }
+
+    /**
+     * Send ENTER keypress for given element.
+     *
+     * @param elementCssSelector Element CSS selector.
+     */
+    protected void pressEnter(String elementCssSelector) {
+        this.webDriver.findElement(By.cssSelector(elementCssSelector)).sendKeys(Keys.ENTER);
+    }
+
+    /**
+     * Submits the first form on the page with javascript.
+     *
+     * @param index Optional form index.
+     */
+    protected void submitFormWithJavascript(int... index) {
+        if (webDriver instanceof HtmlUnitDriver) {
+            int optionalIndex = index != null && index.length > 0 ? index[0] : 0;
+            HtmlUnitDriver htmlUnitDriver = (HtmlUnitDriver) webDriver;
+            htmlUnitDriver.setJavascriptEnabled(true);
+            htmlUnitDriver.executeScript("document.forms[" + optionalIndex + "].submit();");
+        } else {
+            throw new UnsupportedOperationException(
+                    "Unable to execute Javascript to submit the form. Expected: "
+                            + HtmlUnitDriver.class.getCanonicalName() + " but got: "
+                            + webDriver.getClass().getCanonicalName());
+        }
     }
 
     /**

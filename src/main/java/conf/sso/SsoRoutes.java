@@ -1,6 +1,7 @@
 package conf.sso;
 
 import controllers.sso.UserController;
+import controllers.sso.admin.ApplicationStatisticsController;
 import controllers.sso.admin.users.EditAccessController;
 import controllers.sso.admin.users.EditContactDataController;
 import controllers.sso.admin.users.EditPasswordController;
@@ -105,5 +106,10 @@ public class SsoRoutes implements ApplicationRoutes {
         router.POST().route(subRoute + "/admin/user/{userId: [0-9]+}/send-email")
                 .with(SendEmailController::post);
 
+        // Application statistics.
+        router.GET().route(subRoute + "/admin/statistics")
+                .with(ApplicationStatisticsController::get);
+        router.GET().route(subRoute + "/admin/statistics/json")
+                .with(ApplicationStatisticsController::json);
     }
 }
