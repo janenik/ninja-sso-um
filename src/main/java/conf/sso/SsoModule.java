@@ -247,19 +247,20 @@ public class SsoModule extends AbstractModule {
         if (!csvFile.isPresent()) {
             countries = Collections.emptyList();
         } else {
-            countries = new ArrayList<>(300);
+            List<String> fileLines = getResourceLines(csvFile.get(), logger);
+            countries = new ArrayList<>(fileLines.size());
             int index = 0;
-            for (String line : getResourceLines(csvFile.get(), logger)) {
+            for (String line : fileLines) {
                 if (index++ == 0) {
                     continue;
                 }
                 String[] tokens = line.split(CSV_SPLIT_REGEXP);
                 countries.add(
                         new Country(
-                                tokens[0],
-                                tokens[1],
-                                tokens[2],
-                                tokens[3],
+                                unquote(tokens[0]),
+                                unquote(tokens[1]),
+                                unquote(tokens[2]),
+                                unquote(tokens[3]),
                                 tokens[4].isEmpty() ? null : Integer.valueOf(tokens[4]),
                                 Integer.valueOf(tokens[5])));
             }
@@ -400,5 +401,24 @@ public class SsoModule extends AbstractModule {
             logger.error("Error reading resource {}.", SsoModule.class.getProtectionDomain().getCodeSource(), ioe);
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * Removes " and ' characters from beginning and end of a given string.
+     *
+     * @param value Value to unquote.
+     * @return Unquoted value.
+     */
+    private static String unquote(String value) {
+        if (value == null) {
+            return "";
+        }
+        if (value.startsWith("\"") || value.startsWith("'")) {
+            value = value.substring(1);
+        }
+        if (value.endsWith("\"") || value.endsWith("'")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        return value;
     }
 }

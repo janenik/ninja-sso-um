@@ -50,6 +50,10 @@
   }
 }
 
+#countryIdButton {
+  overflow-x: hidden;
+}
+
 #countryIdDropdown {
   max-height: 350px;
   min-width: 500px;
