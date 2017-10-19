@@ -35,6 +35,8 @@ sso.statistics.ControllerChart.prototype.updateChart = function(columns, axisYTi
       }
     }
   });
+  this.chart.hide();
+  this.chart.show('ApplicationController.index');
 }
 
 sso.statistics.ControllerChart.prototype.sendDataRequest = function() {
