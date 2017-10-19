@@ -40,7 +40,8 @@ sso.statistics.ControllerChart.prototype.updateChart = function(columns, axisYTi
 }
 
 sso.statistics.ControllerChart.prototype.sendDataRequest = function() {
-  $.getJSON(this.serverUrl, this.onResponse.bind(this));
+  $.getJSON(this.serverUrl, this.onResponse.bind(this))
+    .fail(this.scheduleNextRequest.bind(this));
 };
 
 sso.statistics.ControllerChart.prototype.scheduleNextRequest = function() {
