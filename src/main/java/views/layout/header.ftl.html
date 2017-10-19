@@ -41,7 +41,7 @@
 
                 <#if context.getAttribute('authenticated')>
                     <li>
-                        <a href="#" onclick="$('#signOutForm').submit();return false;">Sign Out</a>
+                        <a href="#" onclick="$('#signOutForm').submit();return false;">${i18n('adminSignOut')}</a>
                         <form action="${contextPath}/auth/signout?lang=${lang?url}"
                               method="POST"
                               id="signOutForm"

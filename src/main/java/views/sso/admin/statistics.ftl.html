@@ -8,14 +8,16 @@
 
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
                 <h3>${i18n("adminAppStatistics")}</h3>
-
-                <p>${_mainMenuPage}</p>
+                <div id="chart"></div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script>
+   <#include "/assets/js/sso/statistics.js" />
+</script>
 
 </@layout.adminLayout>
