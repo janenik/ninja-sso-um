@@ -4,10 +4,10 @@ sso.statistics = sso.statistics || {};
 
 sso.statistics.Storage = {};
 
-sso.statistics.ControllerChart = function(serverUrl, requestIntervalMs, numberOfSamples) {
+sso.statistics.ControllerChart = function(serverUrl) {
   this.serverUrl = serverUrl;
-  this.requestInterval = requestIntervalMs || 1000; // In milliseconds
-  this.numberOfSamples = numberOfSamples || 300; // Which is equivalent to 5 minutes.
+  this.requestInterval = 1000; // In milliseconds
+  this.numberOfSamples = 300; // Which is equivalent to 5 minutes.
   this.scheduleNextRequest();
 };
 
@@ -23,8 +23,11 @@ sso.statistics.ControllerChart.prototype.updateChart = function(columns, axisYTi
     data: {
       columns: columns
     },
+    transition: {
+       duration: 0
+    },
     size: {
-      height: 600,
+      height: 600
     },
     axis: {
       y: {
@@ -49,21 +52,32 @@ sso.statistics.ControllerChart.prototype.scheduleNextRequest = function() {
 };
 
 sso.statistics.ControllerChart.prototype.onResponse = function(data) {
-  var columns = [];
+  var columns = [], previousCount, currentCount, lastValue, columnData, controllerData, controllerDataValue, rate, i;
   var lastValue;
   $.each(data.data, function(key, value) {
      if (!sso.statistics.Storage[value.name]) {
-       sso.statistics.Storage[value.name] = this.getNewEmptyControllerData(value.name);
+       sso.statistics.Storage[value.name] = [];//this.getNewEmptyControllerData(value.meanRate);
      }
-     var controllerData = sso.statistics.Storage[value.name];
+     controllerData = sso.statistics.Storage[value.name];
      controllerData.push(value);
-     if (controllerData.length > this.numberOfSamples) {
+     if (controllerData.length >= this.numberOfSamples) {
         controllerData.shift();
      }
-     var columnData = [];
+     previousCount = value.count;
+     columnData = [];
      columnData.push(this.getColumnName(value.name));
-     for (var i = 0; i < controllerData.length; i++) {
-        columnData.push(controllerData[i].oneMinuteRate || 0);
+     for (i = 0; i < controllerData.length; i++) {
+       controllerDataValue = controllerData[i];
+       if (controllerDataValue.prefillRate) {
+         columnData.push(controllerDataValue.prefillRate);
+         previousCount = controllerDataValue.prefillRate;
+       } else {
+         currentCount = controllerData[i].count;
+         rate = currentCount - previousCount;
+         rate = rate >= 0 ? rate : 0;
+         columnData.push(rate);
+         previousCount = currentCount;
+       }
      }
      columns.push(columnData);
      lastValue = value;
@@ -72,12 +86,11 @@ sso.statistics.ControllerChart.prototype.onResponse = function(data) {
   this.scheduleNextRequest();
 };
 
-sso.statistics.ControllerChart.prototype.getNewEmptyControllerData = function(controllerName) {
+sso.statistics.ControllerChart.prototype.getNewEmptyControllerData = function(defaultValue) {
   var column = [];
-  column.push(this.getColumnName(controllerName));
   for (var i = 0; i < this.numberOfSamples; i++) {
     column.push({
-      oneMinuteRate: 0
+      prefillRate: defaultValue
     });
   }
   return column;
@@ -91,5 +104,5 @@ sso.statistics.ControllerChart.prototype.getColumnName = function(controllerName
 };
 
 (function() {
-    new sso.statistics.ControllerChart('${contextPath}/auth/admin/statistics/json', 1000, 300);
+    new sso.statistics.ControllerChart('${contextPath}/auth/admin/statistics/json');
 })();

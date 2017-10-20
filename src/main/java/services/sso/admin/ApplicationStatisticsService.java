@@ -33,7 +33,7 @@ public class ApplicationStatisticsService {
     private final static String DURATION_UNIT_NAME = "DurationUnit";
 
     /**
-     *  Bean name prefix.
+     * Bean name prefix.
      */
     private final static String BEAN_NAME_PREFIX = "name=";
 
@@ -86,6 +86,12 @@ public class ApplicationStatisticsService {
                         "application.sso.admin.jmx.scope", "Ninja Web Application");
     }
 
+    /**
+     * Returns a list of statistic entries, entry per controller method.
+     *
+     * @return list of statistic entries, entry per controller method.
+     * @throws MBeanException In case of any exceptions with JMX Beans.
+     */
     public List<ApplicationStatisticsEntry> getStatistics() throws MBeanException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         List<ApplicationStatisticsEntry> statisticsEntries = new ArrayList<>();
@@ -106,6 +112,18 @@ public class ApplicationStatisticsService {
         return statisticsEntries;
     }
 
+    /**
+     * Extracts statistic entry for given object name.
+     *
+     * @param server     JMX bean server.
+     * @param objectName Object name.
+     * @return Optional with result.
+     * @throws AttributeNotFoundException In case of any exceptions with JMX Beans.
+     * @throws MBeanException In case of any exceptions with JMX Beans.
+     * @throws ReflectionException In case of any exceptions with JMX Beans.
+     * @throws InstanceNotFoundException In case of any exceptions with JMX Beans.
+     * @throws IntrospectionException In case of any exceptions with JMX Beans.
+     */
     private Optional<ApplicationStatisticsEntry> readStatisticsEntry(
             MBeanServer server,
             ObjectName objectName)

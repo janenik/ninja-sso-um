@@ -26,8 +26,8 @@ import java.util.UUID;
 
 /**
  * AES password based encryptor/decryptor. May use 128-bit encryption without JCE Unlimited Strength Jurisdiction
- * Policy jars. 192 and 256-bit eare available with these jars installed.
- * Encrypted message contains: key size/64, generated salt size and salt itself, initialization vector size and vector
+ * Policy jars. 192 and 256-bit encryption available with these jars installed.
+ * Encrypted message contains: key size/128, generated salt size and salt itself, initialization vector size and vector
  * itself, encrypted message.
  */
 public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
@@ -128,9 +128,9 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
             DataOutputStream dos = new DataOutputStream(outputStream);
 
             // 1. Key size into the data stream.
-            // Since this is power of two and no one needs keys less than 64 bits we can divide it
-            // by 2^6. This allows to use keys up to 8192 bits and have it packed in single byte.
-            dos.write(keySize >>> 6);
+            // Since this is power of two and no one needs keys less than 128 bits we can divide it
+            // by 2^7. This allows to use keys up to 16384 bits and have it packed in single byte.
+            dos.write(keySize >>> 7);
             // 2. Write key specification + salt length.
             dos.writeShort(keySpecAndSalt.salt.length);
             // 3. Write initialization vector length.
@@ -167,8 +167,8 @@ public class AesPasswordBasedEncryptor implements PasswordBasedEncryptor {
     public void decrypt(InputStream inputStream, OutputStream outputStream) throws IOException, DecryptionException {
         DataInputStream dis = new DataInputStream(inputStream);
 
-        // 1. Read key size and restore it by multiplying it by 2^6.
-        short encryptedKeySize = (short) (dis.read() << 6);
+        // 1. Read key size and restore it by multiplying it by 2^7.
+        short encryptedKeySize = (short) (dis.read() << 7);
         // 2. Read key specification + salt length.
         short encryptedSaltLength = dis.readShort();
         // 3. Read initialization vector length.
